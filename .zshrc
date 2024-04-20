@@ -59,6 +59,9 @@ export REPORTTIME=5
 # specific environments                                       {{{
 #################################################################
 
+# start a keychain if available
+[ $(command -v keychain) ] && eval "$(keychain --nogui --quiet --eval --agents ssh id_ed25519)"
+
 # disable gnome/kde-ssh keyring nonsense on remote servers
 [ -n "$SSH_CONNECTION" ] && unset SSH_ASKPASS
 
@@ -115,7 +118,13 @@ alias tmux="tmux -2"
 alias fric='vim ${HOME}/notes/valence_computing/fric.md'
 alias nvpn='nmcli connection up nvidia\ beaverton'
 alias gpg-kill-agent='gpgconf --kill gpg-agent'
+alias ssh-kill-agent='pkill ssh-agent'
 alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME' # dotfile management
+function agent-ssh() {
+  eval "$(ssh-agent -s)"
+  ssh-add ${HOME}/.ssh/id_ed25519
+}
+
 
 # check git repos under current directory
 # needs some work and cleanup
