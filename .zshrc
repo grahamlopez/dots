@@ -115,7 +115,7 @@ alias tmux="tmux -2"
 [ $(command -v nvim) ] && alias vim="nvim"
 
 # shortcuts
-alias fric='vim ${HOME}/notes/valence_computing/fric.md'
+alias fric='vim ${HOME}/Sync/notes/valence_computing/fric.md'
 alias nvpn='nmcli connection up nvidia\ beaverton'
 alias gpg-kill-agent='gpgconf --kill gpg-agent'
 alias ssh-kill-agent='pkill ssh-agent'

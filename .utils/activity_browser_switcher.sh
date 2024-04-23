@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# This script changes the default browser based on KDE "activity" switching
+# This script monitors KDE "activity" changing and changes the default browser
+# It's incomplete
 
 host=$(hostname)
 output_log_file="/tmp/activity_browser_switcher_${host}.log"
