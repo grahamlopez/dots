@@ -124,6 +124,27 @@ function agent-ssh() {
   eval "$(ssh-agent -s)"
   ssh-add ${HOME}/.ssh/id_ed25519
 }
+alias dark_theme='plasma-apply-lookandfeel -a org.kde.breezedark.desktop'
+alias light_theme='plasma-apply-lookandfeel -a org.kde.breeze.desktop'
+function uninstall_nvim() {
+  if [ -z "$1" ]; then
+    echo "uninstalling main nvim state"
+    rm -rf ${HOME}/.local/share/nvim
+    rm -rf ${HOME}/.local/state/nvim
+    rm -rf ${HOME}/.cache/nvim
+  else
+    echo "uninstalling nvim.$1 state"
+    rm -rf ${HOME}/.local/share/nvim.$1
+    rm -rf ${HOME}/.local/state/nvim.$1
+    rm -rf ${HOME}/.cache/nvim.$1
+  fi
+}
+function reinstall_lazyvim() {
+  uninstall_nvim "lazyvim"
+  rm -rf ${HOME}/.config/nvim.lazyvim
+  mkdir -p ${HOME}/.config/nvim.lazyvim
+  /usr/bin/git clone https://github.com/LazyVim/starter ${HOME}/.config/nvim.lazyvim
+}
 
 
 # check git repos under current directory

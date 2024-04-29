@@ -30,7 +30,7 @@ local M = {
 
 function M.config()
   local lspconfig = require("lspconfig")
-  lspconfig.bashls.setup({})
+  -- lspconfig.bashls.setup({})
   lspconfig.clangd.setup({})
   -- https://luals.github.io/wiki/configuration/
   lspconfig.lua_ls.setup({
