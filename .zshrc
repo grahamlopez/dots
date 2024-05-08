@@ -205,18 +205,19 @@ typeset -Ag abbreviations
 abbreviations=(
   "lxe"   "lxc exec __CURSOR__ -- sudo --login --user ubuntu"
   "lxg"   "lxc exec __CURSOR__ -- su --login graham"
+  "no"    "~/Sync/notes/__CURSOR__"
 )
 
 magic-abbrev-expand() {
     local MATCH
-    LBUFFER=${LBUFFER%%(#m)[_a-zA-Z-1-9]#}
+    LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
     command=${abbreviations[$MATCH]}
     LBUFFER+=${command:-$MATCH}
 
     if [[ "${command}" =~ "__CURSOR__" ]]
     then
-        RBUFFER=${LBUFFER[(ws:__CURSOR__:)1]}
-        LBUFFER=${LBUFFER[(ws:__CURSOR__:)0]}
+        RBUFFER=${LBUFFER[(ws:__CURSOR__:)2]}
+        LBUFFER=${LBUFFER[(ws:__CURSOR__:)1]}
     else
         zle self-insert
     fi
