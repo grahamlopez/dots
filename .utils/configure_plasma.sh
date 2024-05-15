@@ -133,6 +133,32 @@ else
   echo "not adding activity_browswer_switcher.sh to autostart"
 fi
 
+echo "add kmonad to autostart"
+if confirm; then
+  echo "adding kmonad to autostart"
+cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
+[Desktop Entry]
+Comment=
+Comment=
+Exec=/home/graham/.local/bin/kmonad /home/graham/.config/kmonad_config.kbd
+GenericName=
+GenericName=
+Icon=
+MimeType=
+Name=kmonad
+Name=kmonad
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+EFO
+else
+  echo "not adding kmonad to autostart"
+fi
+
 # set up konsole
 echo "install mgl profile for Konsole"
 if confirm; then
