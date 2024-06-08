@@ -13,6 +13,8 @@ local M = {
 function M.config()
   local servers = {
     -- "bashls",
+    -- "clangd",
+    -- "clang-format",
     "lua_ls",
     -- "marksman",
   }

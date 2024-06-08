@@ -145,6 +145,12 @@ function reinstall_lazyvim() {
   mkdir -p ${HOME}/.config/nvim.lazyvim
   /usr/bin/git clone https://github.com/LazyVim/starter ${HOME}/.config/nvim.lazyvim
 }
+function reinstall_kickstart() {
+  uninstall_nvim "kickstart"
+  rm -rf ${HOME}/.config/nvim.kickstart
+  mkdir -p ${HOME}/.config/nvim.kickstart
+  /usr/bin/git clone https://github.com/nvim-lua/kickstart.nvim.git ${HOME}/.config/nvim.kickstart
+}
 
 
 # check git repos under current directory
@@ -162,6 +168,7 @@ showAllReposWithChanges() {
 
 # messing with neovim
 alias lazyvim="NVIM_APPNAME=nvim.lazyvim nvim"
+alias kvim="NVIM_APPNAME=nvim.kickstart nvim"
 
 
 # more homegrown functions
