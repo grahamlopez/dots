@@ -171,7 +171,6 @@ alias lazyvim="NVIM_APPNAME=nvim.lazyvim nvim"
 alias kvim="NVIM_APPNAME=nvim.kickstart nvim"
 alias k2vim="NVIM_APPNAME=nvim.kickstart2 nvim"
 
-
 # more homegrown functions
 
 # for config file management
@@ -181,6 +180,11 @@ function git() {
   else
     command git "$@"
   fi
+}
+
+# python and conda related stuff
+function conda_zsh_init() {
+  eval "$(/home/graham/local/apps/miniconda3/bin/conda shell.zsh hook)"
 }
 
 # for docker cleanup
