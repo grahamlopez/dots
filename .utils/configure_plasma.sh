@@ -2,7 +2,7 @@
 
 # to capture settings
 # inotifywait -m -r ./config
-# kwriteconfig5 --file kxkbrc --group Layout --key Options ctrl:swap_lwin_lctl
+# kwriteconfig6 --file kxkbrc --group Layout --key Options ctrl:swap_lwin_lctl
 
 function confirm() {
   while true; do
@@ -20,30 +20,30 @@ echo "set up keyboard and keybindings"
 if confirm; then
   echo "setting up keyboard/bindings"
   # capslock as control
-  kwriteconfig5 --file kxkbrc --group Layout --key Options ctrl:nocaps
-  kwriteconfig5 --file kxkbrc --group Layout --type bool --key ResetOldOptions true
+  kwriteconfig6 --file kxkbrc --group Layout --key Options ctrl:nocaps
+  kwriteconfig6 --file kxkbrc --group Layout --type bool --key ResetOldOptions true
   
   # FIXME the groups take hardware specifics into account
   # set up trackpad FIXME only if a trackpad is present
-  # kwriteconfig5 --file kcminputrc --group Libinput --key PointerAcceleration '0.400'
-  # kwriteconfig5 --file kcminputrc --group Libinput --key PointerAccelerationProfile '2'
-  # kwriteconfig5 --file kcminputrc --group Libinput --type bool --key TapToClick true
+  # kwriteconfig6 --file kcminputrc --group Libinput --key PointerAcceleration '0.400'
+  # kwriteconfig6 --file kcminputrc --group Libinput --key PointerAccelerationProfile '2'
+  # kwriteconfig6 --file kcminputrc --group Libinput --type bool --key TapToClick true
   
   # hjkl for window tiling
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' 'Meta+Down	Meta+J,Meta+Down,Quick Tile Window to the Bottom'
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' 'Meta+Up	Meta+K,Meta+Up,Quick Tile Window to the Top'
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' 'Meta+Left	Meta+H,Meta+Left,Quick Tile Window to the Left'
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' 'Meta+Right	Meta+L,Meta+Right,Quick Tile Window to the Right'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' 'Meta+Down	Meta+J,Meta+Down,Quick Tile Window to the Bottom'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' 'Meta+Up	Meta+K,Meta+Up,Quick Tile Window to the Top'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' 'Meta+Left	Meta+H,Meta+Left,Quick Tile Window to the Left'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' 'Meta+Right	Meta+L,Meta+Right,Quick Tile Window to the Right'
   
   # maximize and minimize
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Maximize' 'Meta+PgUp	Meta+M,Meta+PgUp,Maximize Window'
-  kwriteconfig5 --file kglobalshortcutsrc --group kwin --key 'Window Minimize' 'Meta+PgDn	Meta+N,Meta+PgDn,Minimize Window'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Maximize' 'Meta+PgUp	Meta+M,Meta+PgUp,Maximize Window'
+  kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Minimize' 'Meta+PgDn	Meta+N,Meta+PgDn,Minimize Window'
   
   # ctrl-9 for opening yakuake
-  kwriteconfig5 --file kglobalshortcutsrc --group yakuake --key 'toggle-window-state' 'Ctrl+9	F12,F12,Open/Retract Yakuake'
+  kwriteconfig6 --file kglobalshortcutsrc --group yakuake --key 'toggle-window-state' 'Ctrl+9	F12,F12,Open/Retract Yakuake'
   
   # ctrl-x for screenlock
-  kwriteconfig5 --file kglobalshortcutsrc --group ksmserver --key 'Lock Session' 'Meta+X	Screensaver,Meta+L	Screensaver,Lock Session'
+  kwriteconfig6 --file kglobalshortcutsrc --group ksmserver --key 'Lock Session' 'Meta+X	Screensaver,Meta+L	Screensaver,Lock Session'
 else
   echo "skipping keyboard/bindings"
 fi
@@ -51,10 +51,12 @@ fi
 echo "set up panel"
 if confirm; then
   echo "setting up panel"
-  kwriteconfig5 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key thickness 32
+  kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key thickness 32
   # panel to top position
-  qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'var panels = panels(); for (var i = 0; i < panels.length; i++) { panels[i].location = "top"; }'
-  # check out kwriteconfig5 and file 'plasma-org.kde.plasma.desktop-appletsrc' for these
+  # qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'var panels = panels(); for (var i = 0; i < panels.length; i++) { panels[i].location = "top"; }'
+  # TODO panel to top doesn't work
+  kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key position top
+  # check out kwriteconfig6 and file 'plasma-org.kde.plasma.desktop-appletsrc' for these
   # activity pager to the right position
   # desktop pager to the right position
   # battery monitor "command output" widget
@@ -66,9 +68,11 @@ fi
 echo "set up yakuake"
 if confirm; then
   echo "setting up yakuake"
-  kwriteconfig5 --file yakuakerc --group Window --type bool --key KeepOpen false
-  kwriteconfig5 --file yakuakerc --group Window --type bool --key ShowTabBar false
-  kwriteconfig5 --file yakuakerc --group Window --key Width 60
+  kwriteconfig6 --file yakuakerc --group Window --type bool --key KeepOpen false
+  kwriteconfig6 --file yakuakerc --group Window --type bool --key ShowTabBar false
+  # hide title bar (get to menu with ctrl+shift+,
+  kwriteconfig6 --file yakuakerc --group Window --type bool --key ShowTitleBar false
+  kwriteconfig6 --file yakuakerc --group Window --key Width 60
 else
   echo "skipping yakuake setup"
 fi
@@ -136,7 +140,7 @@ fi
 echo "add kmonad to autostart"
 if confirm; then
   echo "adding kmonad to autostart"
-cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
+cat << EOF > ${HOME}/.config/autostart/kmonad.desktop
 [Desktop Entry]
 Comment=
 Comment=
@@ -154,7 +158,7 @@ TerminalOptions=
 Type=Application
 X-KDE-SubstituteUID=false
 X-KDE-Username=
-EFO
+EOF
 else
   echo "not adding kmonad to autostart"
 fi
@@ -162,8 +166,12 @@ fi
 # set up konsole
 echo "install mgl profile for Konsole"
 if confirm; then
-  kwriteconfig5 --file konsolerc --group '<default>' --key MenuBar Disabled
-  kwriteconfig5 --file konsolerc --group "Desktop Entry" --key DefaultProfile mgl.profile
+  kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile mgl.profile
+  # TODO hiding toolbars doesn't work
+  kwriteconfig6 --file konsolerc --group "MainWindow" --key MenuBar Disabled
+  kwriteconfig6 --file konsolerc --group "MainWindow" --key StatusBar Disabled
+  kwriteconfig6 --file konsolerc --group "KonsoleWindow" --key ShowMenuBarByDefault false
+  # TODO test for Hack Nerd Font, install it automatically, or use a sensible alternative
   echo "installing mgl profile"
 cat << EOF > ${HOME}/.local/share/konsole/mgl.profile
 [Appearance]
@@ -285,10 +293,10 @@ fi
 
 
 # FIXME set up automatic nightcolor based on location
-# kwriteconfig5 --file kwinrc --group NightColor --type bool --key Active true
-# kwriteconfig5 --file kwinrc --group NightColor --key LatitudeFixed '38.47'
-# kwriteconfig5 --file kwinrc --group NightColor --key LongitudeFixed '-83.91'
-# kwriteconfig5 --file kwinrc --group NightColor --key Mode Location
+# kwriteconfig6 --file kwinrc --group NightColor --type bool --key Active true
+# kwriteconfig6 --file kwinrc --group NightColor --key LatitudeFixed '38.47'
+# kwriteconfig6 --file kwinrc --group NightColor --key LongitudeFixed '-83.91'
+# kwriteconfig6 --file kwinrc --group NightColor --key Mode Location
 
 # set up activities
 # create gentoo and nvidia activities
