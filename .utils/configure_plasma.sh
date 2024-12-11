@@ -6,12 +6,12 @@
 
 function confirm() {
   while true; do
-    read -p "Do you want to proceed? ([Y]es/[N]o/[C]ancel) " yn
+    read -p "Do you want to proceed? ([Y]es/[N]o/[A]bort) " yn
     case $yn in
       [Yy]* ) return 0;;  # Proceed with the operation
       [Nn]* ) return 1;;  # Abort the operation
-      [Cc]* ) exit;;      # Exit script
-      * ) echo "Please answer Yes, No, or Cancel.";;
+      [Aa]* ) exit;;      # Abort script
+      * ) echo "Please answer Yes, No, or Abort.";;
     esac
   done
 }
@@ -22,26 +22,26 @@ if confirm; then
   # capslock as control
   kwriteconfig6 --file kxkbrc --group Layout --key Options ctrl:nocaps
   kwriteconfig6 --file kxkbrc --group Layout --type bool --key ResetOldOptions true
-  
+
   # FIXME the groups take hardware specifics into account
   # set up trackpad FIXME only if a trackpad is present
   # kwriteconfig6 --file kcminputrc --group Libinput --key PointerAcceleration '0.400'
   # kwriteconfig6 --file kcminputrc --group Libinput --key PointerAccelerationProfile '2'
   # kwriteconfig6 --file kcminputrc --group Libinput --type bool --key TapToClick true
-  
+
   # hjkl for window tiling
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Bottom' 'Meta+Down	Meta+J,Meta+Down,Quick Tile Window to the Bottom'
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Top' 'Meta+Up	Meta+K,Meta+Up,Quick Tile Window to the Top'
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Left' 'Meta+Left	Meta+H,Meta+Left,Quick Tile Window to the Left'
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Quick Tile Right' 'Meta+Right	Meta+L,Meta+Right,Quick Tile Window to the Right'
-  
+
   # maximize and minimize
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Maximize' 'Meta+PgUp	Meta+M,Meta+PgUp,Maximize Window'
   kwriteconfig6 --file kglobalshortcutsrc --group kwin --key 'Window Minimize' 'Meta+PgDn	Meta+N,Meta+PgDn,Minimize Window'
-  
+
   # ctrl-9 for opening yakuake
   kwriteconfig6 --file kglobalshortcutsrc --group yakuake --key 'toggle-window-state' 'Ctrl+9	F12,F12,Open/Retract Yakuake'
-  
+
   # ctrl-x for screenlock
   kwriteconfig6 --file kglobalshortcutsrc --group ksmserver --key 'Lock Session' 'Meta+X	Screensaver,Meta+L	Screensaver,Lock Session'
 else
@@ -55,8 +55,10 @@ if confirm; then
   # panel to top position
   # qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'var panels = panels(); for (var i = 0; i < panels.length; i++) { panels[i].location = "top"; }'
   # TODO panel to top doesn't work
+  kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --key floating 1
   kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key position top
   # check out kwriteconfig6 and file 'plasma-org.kde.plasma.desktop-appletsrc' for these
+  # need to change location=0 to location=3 for the 2nd and 3rd instances
   # activity pager to the right position
   # desktop pager to the right position
   # battery monitor "command output" widget
@@ -102,81 +104,82 @@ else
   echo "not adding yakuake to autostart"
 fi
 
-echo "add syncthing to autostart"
-if confirm; then
-  echo "adding syncthing to autostart"
-cat << EOF > ${HOME}/.config/autostart/syncthing-start.desktop
-i[Desktop Entry]
-Categories=Network;FileTransfer;P2P
-Comment=Starts the main syncthing process in the background.
-Exec=/usr/bin/syncthing serve --no-browser --logfile=default
-GenericName=File synchronization
-Icon=syncthing
-Keywords=synchronization;daemon;
-Name=Start Syncthing
-Terminal=false
-Type=Application
-EOF
-else
-  echo "not adding syncthing to autostart"
-fi
-
-echo "add activity_browswer_switcher.sh to autostart"
-if confirm; then
-  echo "adding activity_browswer_switcher.sh to autostart"
-cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
-[Desktop Entry]
-Exec=/home/graham/.utils/activity_browser_switcher.sh
-Icon=
-Name=activity_browser_switcher.sh
-Path=
-Terminal=False
-Type=Application
-EOF
-else
-  echo "not adding activity_browswer_switcher.sh to autostart"
-fi
-
-echo "add kmonad to autostart"
-if confirm; then
-  echo "adding kmonad to autostart"
-cat << EOF > ${HOME}/.config/autostart/kmonad.desktop
-[Desktop Entry]
-Comment=
-Comment=
-Exec=/home/graham/.local/bin/kmonad /home/graham/.config/kmonad_config.kbd
-GenericName=
-GenericName=
-Icon=
-MimeType=
-Name=kmonad
-Name=kmonad
-Path=
-StartupNotify=true
-Terminal=false
-TerminalOptions=
-Type=Application
-X-KDE-SubstituteUID=false
-X-KDE-Username=
-EOF
-else
-  echo "not adding kmonad to autostart"
-fi
+#echo "add syncthing to autostart"
+#if confirm; then
+#  echo "adding syncthing to autostart"
+#cat << EOF > ${HOME}/.config/autostart/syncthing-start.desktop
+#i[Desktop Entry]
+#Categories=Network;FileTransfer;P2P
+#Comment=Starts the main syncthing process in the background.
+#Exec=/usr/bin/syncthing serve --no-browser --logfile=default
+#GenericName=File synchronization
+#Icon=syncthing
+#Keywords=synchronization;daemon;
+#Name=Start Syncthing
+#Terminal=false
+#Type=Application
+#EOF
+#else
+#  echo "not adding syncthing to autostart"
+#fi
+#
+#echo "add activity_browswer_switcher.sh to autostart"
+#if confirm; then
+#  echo "adding activity_browswer_switcher.sh to autostart"
+#cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
+#[Desktop Entry]
+#Exec=/home/graham/.utils/activity_browser_switcher.sh
+#Icon=
+#Name=activity_browser_switcher.sh
+#Path=
+#Terminal=False
+#Type=Application
+#EOF
+#else
+#  echo "not adding activity_browswer_switcher.sh to autostart"
+#fi
+#
+#echo "add kmonad to autostart"
+#if confirm; then
+#  echo "adding kmonad to autostart"
+#cat << EOF > ${HOME}/.config/autostart/kmonad.desktop
+#[Desktop Entry]
+#Comment=
+#Comment=
+#Exec=/home/graham/.local/bin/kmonad /home/graham/.config/kmonad_config.kbd
+#GenericName=
+#GenericName=
+#Icon=
+#MimeType=
+#Name=kmonad
+#Name=kmonad
+#Path=
+#StartupNotify=true
+#Terminal=false
+#TerminalOptions=
+#Type=Application
+#X-KDE-SubstituteUID=false
+#X-KDE-Username=
+#EOF
+#else
+#  echo "not adding kmonad to autostart"
+#fi
 
 # set up konsole
 echo "install mgl profile for Konsole"
 if confirm; then
   kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile mgl.profile
   # TODO hiding toolbars doesn't work
-  kwriteconfig6 --file konsolerc --group "MainWindow" --key MenuBar Disabled
-  kwriteconfig6 --file konsolerc --group "MainWindow" --key StatusBar Disabled
-  kwriteconfig6 --file konsolerc --group "KonsoleWindow" --key ShowMenuBarByDefault false
+  # the changes happen to a binary entry in .local/state/konsolestaterc
+  # kwriteconfig6 --file konsolerc --group "KonsoleWindow" --key ShowMenuBarByDefault false
+  # kwriteconfig6 --file konsolerc --group "MainWindow" --key MenuBar Disabled
+  # kwriteconfig6 --file konsolerc --group "MainWindow" --key StatusBar Disabled
   # TODO test for Hack Nerd Font, install it automatically, or use a sensible alternative
   echo "installing mgl profile"
 cat << EOF > ${HOME}/.local/share/konsole/mgl.profile
 [Appearance]
 ColorScheme=transparent
-Font=Hack Nerd Font,14,-1,5,50,0,0,0,0,0
+#Font=Hack Nerd Font,14,-1,5,50,0,0,0,0,0
 
 [General]
 Name=mgl
