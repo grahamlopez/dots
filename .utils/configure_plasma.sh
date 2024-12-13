@@ -53,10 +53,10 @@ if confirm; then
   echo "setting up panel"
   kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key thickness 32
   # panel to top position
-  # qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'var panels = panels(); for (var i = 0; i < panels.length; i++) { panels[i].location = "top"; }'
-  # TODO panel to top doesn't work
   kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --key floating 1
   kwriteconfig6 --file plasmashellrc --group PlasmaViews --group 'Panel 2' --group Defaults --key position top
+  sed -i '/location=4/{N;/plugin=org\.kde\.panel/s/location=4/location=3/}' ${HOME}/.config/plasma-org.kde.plasma.desktop-appletsrc
+  sed -i '/location=4/{N;/plugin=org\.kde\.plasma.private.systemtray/s/location=4/location=3/}' ${HOME}/.config/plasma-org.kde.plasma.desktop-appletsrc
   # check out kwriteconfig6 and file 'plasma-org.kde.plasma.desktop-appletsrc' for these
   # need to change location=0 to location=3 for the 2nd and 3rd instances
   # activity pager to the right position
@@ -123,22 +123,6 @@ fi
 #  echo "not adding syncthing to autostart"
 #fi
 #
-#echo "add activity_browswer_switcher.sh to autostart"
-#if confirm; then
-#  echo "adding activity_browswer_switcher.sh to autostart"
-#cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
-#[Desktop Entry]
-#Exec=/home/graham/.utils/activity_browser_switcher.sh
-#Icon=
-#Name=activity_browser_switcher.sh
-#Path=
-#Terminal=False
-#Type=Application
-#EOF
-#else
-#  echo "not adding activity_browswer_switcher.sh to autostart"
-#fi
-#
 #echo "add kmonad to autostart"
 #if confirm; then
 #  echo "adding kmonad to autostart"
@@ -169,7 +153,7 @@ fi
 echo "install mgl profile for Konsole"
 if confirm; then
   kwriteconfig6 --file konsolerc --group "Desktop Entry" --key DefaultProfile mgl.profile
-  # TODO hiding toolbars doesn't work
+  # hiding toolbars doesn't work
   # the changes happen to a binary entry in .local/state/konsolestaterc
   # kwriteconfig6 --file konsolerc --group "KonsoleWindow" --key ShowMenuBarByDefault false
   # kwriteconfig6 --file konsolerc --group "MainWindow" --key MenuBar Disabled
@@ -295,22 +279,78 @@ else
 fi
 
 
-# FIXME set up automatic nightcolor based on location
-# kwriteconfig6 --file kwinrc --group NightColor --type bool --key Active true
-# kwriteconfig6 --file kwinrc --group NightColor --key LatitudeFixed '38.47'
-# kwriteconfig6 --file kwinrc --group NightColor --key LongitudeFixed '-83.91'
-# kwriteconfig6 --file kwinrc --group NightColor --key Mode Location
+# set up automatic nightcolor based on location
+echo "enable NightColor based on location?"
+if confirm; then
+  kwriteconfig6 --file kwinrc --group NightColor --type bool --key Active true
+  kwriteconfig6 --file kwinrc --group NightColor --key LatitudeFixed '36.00'
+  kwriteconfig6 --file kwinrc --group NightColor --key LongitudeFixed '-84.00'
+  kwriteconfig6 --file kwinrc --group NightColor --key Mode Location
+else
+  echo "not enabling NightColor"
+fi
 
 # set up activities
+#
 # create gentoo and nvidia activities
+echo "create gentoo and nvidia activities?"
+if confirm; then
+  NEW_ACTIVITY_ID=$(qdbus6 org.kde.ActivityManager /ActivityManager/Activities AddActivity "Temporary Activity")
+  qdbus6 org.kde.ActivityManager /ActivityManager/Activities SetActivityName $NEW_ACTIVITY_ID "gentoo"
+  NEW_ACTIVITY_ID=$(qdbus6 org.kde.ActivityManager /ActivityManager/Activities AddActivity "Temporary Activity")
+  qdbus6 org.kde.ActivityManager /ActivityManager/Activities SetActivityName $NEW_ACTIVITY_ID "nvidia"
+
+  # Delete the "Default" activity
+  TARGET_ACTIVITY_NAME="Default"
+
+  # Find the activity ID matching the name
+  TARGET_ACTIVITY_ID=""
+  for activity_id in $(qdbus6 org.kde.ActivityManager /ActivityManager/Activities ListActivities); do
+      name=$(qdbus6 org.kde.ActivityManager /ActivityManager/Activities ActivityName "$activity_id")
+      if [ "$name" = "$TARGET_ACTIVITY_NAME" ]; then
+          TARGET_ACTIVITY_ID="$activity_id"
+          break
+      fi
+  done
+
+  # Check if an activity with the given name was found
+  if [ -z "$TARGET_ACTIVITY_ID" ]; then
+      echo "Activity '$TARGET_ACTIVITY_NAME' not found. No action taken."
+      exit 1
+  fi
+
+  # Delete the activity
+  qdbus6 org.kde.ActivityManager /ActivityManager/Activities RemoveActivity "$TARGET_ACTIVITY_ID"
+  echo "Activity '$TARGET_ACTIVITY_NAME' has been deleted."
+else
+  echo "not creating gentoo and nvidia activites"
+fi
+
 # set wallpapers for each activity
 #   gentoo: ~/Pictures/wallpapers/tech
 #   nvidia: ~/Pictures/wallpapers/nvidia
-# set up default browser switcher
-#   add .utils/activity_browser_switcher.sh to startup apps
+#
 # set up different default favorites
 #   gentoo: firefox, konsole
 #   nvidia: edge, konsole
+#
 # pin to taskmanager
 #   gentoo: settings, firefox, konsole
 #   nvidia: slack, edge, logseq
+#
+echo "add activity_browswer_switcher.sh to autostart"
+if confirm; then
+  echo "adding activity_browswer_switcher.sh to autostart"
+cat << EOF > ${HOME}/.config/autostart/activity_browser_switcher.sh.desktop
+[Desktop Entry]
+Exec=/home/graham/.utils/activity_browser_switcher.sh
+Icon=
+Name=activity_browser_switcher.sh
+Path=
+Terminal=False
+Type=Application
+EOF
+else
+  echo "not adding activity_browswer_switcher.sh to autostart"
+fi
+
