@@ -283,9 +283,11 @@ fi
 echo "enable NightColor based on location?"
 if confirm; then
   kwriteconfig6 --file kwinrc --group NightColor --type bool --key Active true
-  kwriteconfig6 --file kwinrc --group NightColor --key LatitudeFixed '36.00'
-  kwriteconfig6 --file kwinrc --group NightColor --key LongitudeFixed '-84.00'
+  kwriteconfig6 --file kwinrc --group NightColor --key LatitudeFixed 36.00
+  kwriteconfig6 --file kwinrc --group NightColor --key LongitudeFixed 84.00
   kwriteconfig6 --file kwinrc --group NightColor --key Mode Location
+  # can't pass negative key value, so fix it up
+  sed -i 's/LongitudeFixed=84\.00/LongitudeFixed=-84\.00/' ${HOME}/.config/kwinrc
 else
   echo "not enabling NightColor"
 fi
@@ -326,18 +328,6 @@ else
   echo "not creating gentoo and nvidia activites"
 fi
 
-# set wallpapers for each activity
-#   gentoo: ~/Pictures/wallpapers/tech
-#   nvidia: ~/Pictures/wallpapers/nvidia
-#
-# set up different default favorites
-#   gentoo: firefox, konsole
-#   nvidia: edge, konsole
-#
-# pin to taskmanager
-#   gentoo: settings, firefox, konsole
-#   nvidia: slack, edge, logseq
-#
 echo "add activity_browswer_switcher.sh to autostart"
 if confirm; then
   echo "adding activity_browswer_switcher.sh to autostart"
@@ -354,3 +344,15 @@ else
   echo "not adding activity_browswer_switcher.sh to autostart"
 fi
 
+# set wallpapers for each activity
+#   gentoo: ~/Pictures/wallpapers/tech
+#   nvidia: ~/Pictures/wallpapers/nvidia
+#
+# set up different default favorites
+#   gentoo: firefox, konsole
+#   nvidia: edge, konsole
+#
+# pin to taskmanager
+#   gentoo: settings, firefox, konsole
+#   nvidia: slack, edge, logseq
+#
