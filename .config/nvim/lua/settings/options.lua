@@ -68,6 +68,7 @@ vim.opt.virtualedit = "block"
 vim.opt.inccommand = "split"
 vim.opt.foldmethod = "expr" -- enable treesitter-based folding
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+--vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = true
 vim.opt.foldlevel = 9
 

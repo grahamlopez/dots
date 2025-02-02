@@ -7,48 +7,70 @@ local function reload_config()
       package.loaded[name] = nil
     end
   end
-  dofile('/home/graham/.config/grahamvim/init.lua')
+  dofile('/home/graham/.config/nvim/init.lua')
 end
 vim.api.nvim_create_user_command('ReloadConfig', reload_config, { desc = 'Reload Neovim configuration' })
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
 -- Ensure this happens before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.mapleader = ","
+vim.g.maplocalleader = ","
 
-require("user.launch")
-require("user.options")
-require("user.keymaps")
--- require("user.autocmds")
-spec("user.colorscheme")
-spec("user.devicons")
-spec("user.treesitter")
-spec("user.mason")
--- spec("user.cmp")
-spec("user.lspconfig")
-spec("user.telescope")
--- spec("user.none-ls")
--- spec("user.illuminate")
--- spec("user.gitsigns")
--- spec("user.comment")
-spec("user.lualine")
--- spec("user.navic")
--- spec("user.breadcrumbs")
--- spec("user.harpoon")
--- spec("user.neotest")
--- spec("user.nvimtree")
--- spec("user.autopairs")
--- spec("user.neogit")
--- spec("user.alpha")
--- spec("user.project")
--- spec("user.indentline")
--- spec("user.toggleterm")
-spec("user.aerial")
-spec("user.highlightedyank")
-spec("user.whichkey")
-require("user.lazy")
+-- https://github.com/folke/lazy.nvim
+--[[
+    get lazy if it isn't already there
+    .e.g try `:lua print(vim.fn.stdpath("data"))`
+    and even `:lua print(vim.fn.stdpath "data" .. "/lazy/lazy.nvim")
+--]]
+local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system {
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  }
+end
+-- now prepend it to the runtime path
+vim.opt.rtp:prepend(lazypath)
 
+--[[
+    configure the lazy plugin manager itself. see
+    https://lazy.folke.io/configuration
+--]]
+require("lazy").setup({
+  import = "plugins",
+  ui = {
+    border = "rounded",
+  },
+  change_detection = {
+    enabled = true,
+    notify = false,
+  },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        -- "gzip",
+        -- "matchit",
+        -- "matchparen",
+        "netrw",
+        "netrwPlugin",
+        -- "tarPlugin",
+        "tohtml",
+        "tutor",
+        -- "zipPlugin",
+      },
+    },
+  },
+})
+
+-- could move these to 'plugin' like teejdv
+require("settings.options")
+require("settings.autocmds")
+require("settings.keymaps")
 
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   callback = function()
@@ -62,10 +84,19 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 
 --[[
     Resources:
+    TJ DeVries
+    - personal config rewrite 2024: https://www.youtube.com/watch?v=kJVqxFnhIuw&t=5s
+      - how lazy works for loading plugins
+      - how to structure plugin configuration for fast iteration
+      - after/ftplugins for language-specific options and mappings
     chris@machine "Ultimate Neovim Config | 2024 | Launch.vim" YT vid: https://www.youtube.com/watch?v=KGJV0n70Mxs
     Vhyrro on YT "Understanding Neovim" playlist: https://www.youtube.com/playlist?list=PLx2ksyallYzW4WNYHD9xOFrPRYGlntAft
     Typecraft "Neovim for Newbs" YT playlist: https://www.youtube.com/playlist?list=PLsz00TDipIffreIaUNk64KxTIkQaGguqn
     The Rad Lectures "How to setup Neovim from Scratch" YT vid: https://www.youtube.com/watch?v=ZjMzBd1Dqz8
+
+    Configuration examples:
+    https://github.com/tjdevries/config.nvim
+    https://github.com/LunarVim/Launch.nvim
 
     Usage hints, since I don't have a better place right now
     - to get error messages from language server, use 'gl'
