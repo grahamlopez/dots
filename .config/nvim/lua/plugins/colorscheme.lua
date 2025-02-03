@@ -119,9 +119,9 @@ local M = {
       -- }
       -- require("transparent").clear_prefix("NvimTree")
       -- vim.cmd.TransparentDisable()
+      vim.cmd.colorscheme("default")
     end,
   },
-  vim.cmd.colorscheme("default")
 }
 
 return M

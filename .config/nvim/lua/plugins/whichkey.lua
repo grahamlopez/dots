@@ -60,7 +60,6 @@ function M.config()
       name = " [a]pps",
       a = { "<cmd>AerialToggle!<cr>", "[a]erial toggle" },
     },
-
     b = {
       name = " [b]uffer",
       -- TODO make <leader><tab> switch buffers?
@@ -70,7 +69,16 @@ function M.config()
       n = { "<cmd>bnext<cr>", "b[n]ext" },
       p = { "<cmd>bprevious<cr>", "b[p]revious" },
     },
-
+    f = {
+      name = " [f]ind stuff",
+      C = { function() find_configs() end, "neovim [C]onfig", },
+      b = { "<cmd>lua require'telescope.builtin'.buffers()<cr>", "find [b]uffers" },
+      e = { "<cmd>NvimTreeToggle<cr>", "[e]xplorer" },
+      F = { "<cmd>lua require'telescope.builtin'.find_files()<cr>", "find [F]iles" }, -- TODO needs to be DRY'ed with telescope.lua
+      f = { "<cmd>lua require'telescope.builtin'.grep_string( { path_display = { 'smart'}, only_sort_text = true, word_match = '-w', search = '' } )<cr>", "[f]uzzy find" },
+      g = { "<cmd>lua require'telescope.builtin'.live_grep()<cr>", "[g]rep" },
+      h = { "<cmd>lua require'telescope.builtin'.help_tags()<cr>", "[h]elp tags" },
+    },
     h = {
       name = " [h]elp",
       h = {
@@ -93,25 +101,12 @@ function M.config()
         "get [v]ertical help",
       },
     },
-
-    f = {
-      name = " [f]ind stuff",
-      C = { function() find_configs() end, "neovim [C]onfig", },
-      b = { "<cmd>lua require'telescope.builtin'.buffers()<cr>", "find [b]uffers" },
-      e = { "<cmd>NvimTreeToggle<cr>", "[e]xplorer" },
-      F = { "<cmd>lua require'telescope.builtin'.find_files()<cr>", "find [F]iles" }, -- TODO needs to be DRY'ed with telescope.lua
-      f = { "<cmd>lua require'telescope.builtin'.grep_string( { path_display = { 'smart'}, only_sort_text = true, word_match = '-w', search = '' } )<cr>", "[f]uzzy find" },
-      g = { "<cmd>lua require'telescope.builtin'.live_grep()<cr>", "[g]rep" },
-      h = { "<cmd>lua require'telescope.builtin'.help_tags()<cr>", "[h]elp tags" },
-    },
-
     l = {
       name = " [l]anguage server",
       d = { "<cmd>lua vim.lsp.buf.definition()<CR>", "goto [d]efinition" },
       f = { "<cmd>lua vim.lsp.buf.format({async = true})<cr>", "Format" },
       k = { "<cmd>lua vim.lsp.buf.hover()<CR>", "[h]over" },
     },
-
     s = {
       name = " [s]elect (TS)", -- optional group name
       s = {
@@ -125,7 +120,6 @@ function M.config()
       },
       d = { "<cmd>lua require'nvim-treesitter.incremental_selection'.node_decremental()<CR>", "[d]ecrement" },
     },
-
     u = {
       -- wrap, textwidth, conceal, spelling, diagnostics
       name = " [u]i",
@@ -133,6 +127,47 @@ function M.config()
       c = { "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", "[c]olorscheme" },
       t = { "<cmd>TransparentToggle<cr>", "[t]oggle transparent background" },
     },
+
+    --The new way suggested by :checkhealth which-key on nvwin
+    --
+    --{ "<leader>a", group = " [a]pps" },
+    --{ "<leader>aa", "<cmd>AerialToggle!<cr>", desc = "[a]erial toggle" },
+
+    --{ "<leader>b", group = " [b]uffer" },
+    --{ "<leader>bb", "<cmd>edit #<cr>", desc = "[b]uffer switch" },
+    --{ "<leader>bd", "<cmd>bdelete<cr>", desc = "[b]delete" },
+    --{ "<leader>bl", "<cmd>lua require'telescope.builtin'.buffers()<cr>", desc = "[f]ind buffers" },
+    --{ "<leader>bn", "<cmd>bnext<cr>", desc = "b[n]ext" },
+    --{ "<leader>bp", "<cmd>bprevious<cr>", desc = "b[p]revious" },
+
+    --{ "<leader>f", group = " [f]ind stuff" },
+    --{ "<leader>fC", function() find_configs() end, desc = "neovim [C]onfig" },
+    --{ "<leader>fF", "<cmd>lua require'telescope.builtin'.find_files()<cr>", desc = "find [F]iles" },
+    --{ "<leader>fb", "<cmd>lua require'telescope.builtin'.buffers()<cr>", desc = "find [b]uffers" },
+    --{ "<leader>fe", "<cmd>NvimTreeToggle<cr>", desc = "[e]xplorer" },
+    --{ "<leader>ff", "<cmd>lua require'telescope.builtin'.grep_string( { path_display = { 'smart'}, only_sort_text = true, word_match = '-w', search = '' } )<cr>", desc = "[f]uzzy find" },
+
+    --{ "<leader>h", group = " [h]elp" },
+    --{ "<leader>hh", function() run_cmd_winput("help") end, desc = "get [h]elp" },
+    --{ "<leader>hk", ":help |<c-r><c-w><cr>|", desc = "help for word under cursor" },
+    --{ "<leader>hm", function() run_cmd_winput("map") end, desc = "show key [m]apping" },
+    --{ "<leader>hv", function() run_cmd_winput("vert help") end, desc = "get [v]ertical help" },
+
+    --{ "<leader>l", group = " [l]anguage server" },
+    --{ "<leader>ld", "<cmd>lua vim.lsp.buf.definition()<CR>", desc = "goto [d]efinition" },
+    --{ "<leader>lf", "<cmd>lua vim.lsp.buf.format({async = true})<cr>", desc = "Format" },
+    --{ "<leader>lk", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "[h]over" },
+
+    --{ "<leader>s", group = " [s]elect (TS)" },
+    --{ "<leader>sc", "<cmd>lua require'nvim-treesitter.incremental_selection'.scope_incremental()<CR>", desc = "s[c]ope incremental" },
+    --{ "<leader>sd", "<cmd>lua require'nvim-treesitter.incremental_selection'.node_decremental()<CR>", desc = "[d]ecrement" },
+    --{ "<leader>si", "<cmd>lua require'nvim-treesitter.incremental_selection'.node_incremental()<CR>", desc = "[i]ncrement" },
+    --{ "<leader>ss", "<cmd>lua require'nvim-treesitter.incremental_selection'.node_incremental()<CR>", desc = "[s]tart selection" },
+
+    --{ "<leader>u", group = " [u]i" },
+    --{ "<leader>uC", "<cmd>Togglecolorcolumn<cr>", desc = "[c]olorcolumn toggle at textwidth" },
+    --{ "<leader>uc", "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", desc = "[c]olorscheme" },
+    --{ "<leader>ut", "<cmd>TransparentToggle<cr>", desc = "[t]oggle transparent background" },
   }
 
   local nvs_mode_opts = {
