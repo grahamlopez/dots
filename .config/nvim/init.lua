@@ -42,7 +42,7 @@ vim.opt.rtp:prepend(lazypath)
     https://lazy.folke.io/configuration
 --]]
 require("lazy").setup({
-  import = "plugins",
+  import = "plugins", -- use 'enabled = false' if needed
   ui = {
     border = "rounded",
   },
@@ -67,7 +67,8 @@ require("lazy").setup({
   },
 })
 
--- could move these to 'plugin' like teejdv
+-- These could also go in 'plugin/' like teejdv.
+-- Not sure about which of these options is best for ordering, etc.
 require("settings.options")
 require("settings.autocmds")
 require("settings.keymaps")
@@ -112,6 +113,11 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     4. Optimize startup time
     5. Read docs for plugins and further configuration
     6. Fixmes and todos
+
+    Configuration fixes
+    - treesitter-based folding that includes lua comment blocks
+    - 'gq' in visual mode doesn't work for lua comments, but when typing past col 80 for
+      single line comments, it automatically breaks and adds the '--' (as if 'gq' should work)
 
     Ideas for extending
     - use inline virtual text (ghost text) with completions:

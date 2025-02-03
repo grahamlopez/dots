@@ -40,7 +40,10 @@ end, { desc = 'toggle the colorcolumn at textwidth', nargs = 0 })
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
-
+-- execute the current line and current file
+vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
+vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
+vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
 
 -- some ideas from https://www.youtube.com/watch?v=KGJV0n70Mxs
 
