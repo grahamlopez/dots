@@ -87,6 +87,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     Resources:
     TJ DeVries
     - personal config rewrite 2024: https://www.youtube.com/watch?v=kJVqxFnhIuw&t=5s
+      - full stream at https://www.youtube.com/@teej_daily/videos
       - how lazy works for loading plugins
       - how to structure plugin configuration for fast iteration
       - after/ftplugins for language-specific options and mappings
@@ -115,6 +116,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     6. Fixmes and todos
 
     Configuration fixes
+    - :Inspect doesn't work
     - treesitter-based folding that includes lua comment blocks
     - 'gq' in visual mode doesn't work for lua comments, but when typing past col 80 for
       single line comments, it automatically breaks and adds the '--' (as if 'gq' should work)

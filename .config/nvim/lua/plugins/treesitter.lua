@@ -5,8 +5,7 @@
     see what is being used.
 
     The textobjects and refactor modules seem kinda cool, but have been really
-    buggy for me, so
-    they are disabled for now
+    buggy for me, so they are disabled for now
 --]]
 local M = {
   "nvim-treesitter/nvim-treesitter",

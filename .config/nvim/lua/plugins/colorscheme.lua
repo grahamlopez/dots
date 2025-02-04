@@ -2,6 +2,49 @@
 --
 local M = {
   {
+    -- TODO fix helpNote highlight group e.g. in :aerial-filetype-map
+    "xiyaowong/transparent.nvim",
+    lazy = false,
+    priority = 900,
+    config = function()
+      -- not needed anymore? I'm not sure why not
+      -- require("transparent").setup {
+      -- extra_groups = { -- define additional groups that should be clear
+      --   'help',
+      --   'Help',
+      --   'helpKeyword',
+      --   'helpHyperTextJump',
+      --   'helpHyperTextEntry',
+      --   'helpCommand',
+      --   'helpHeader',
+      --   'helpSectionDelim',
+      --   'helpSectionDelim',
+      --   'helpHyperTextEntry',
+      --   'helpOption',
+      --   'helpNote',
+      --   'helpVim',
+      --   'helpHyperTextEntry',
+      --   'helpURL',
+      --   'helpHyperTextEntry',
+      --   'helpTag',
+      --   'helpSpecial',
+      --   'helpExample',
+      --   'helpComment',
+      --   --'helpTodo',
+      --   'NormalFloat', -- plugins like Lazy, Mason, LspInfo
+      -- },
+      -- }
+      -- require("transparent").clear_prefix("NvimTree")
+      -- vim.cmd.TransparentDisable()
+      vim.cmd.colorscheme("default")
+    end,
+  },
+}
+
+return M
+
+--[[
+  {
     "catppuccin/nvim",
     lazy = false,
     priority = 1000,
@@ -16,30 +59,26 @@ local M = {
       })
     end,
   },
-  --[[
-  {
-    "dracula/vim",
-    name = "dracula_vim",
-  },
-  {
-    "mofiqul/dracula.nvim",
-  },
-  {
-    "cocopon/iceberg.vim",
-  },
-  --]]
+  -- {
+  --   "dracula/vim",
+  --   name = "dracula_vim",
+  -- },
+  -- {
+  --   "mofiqul/dracula.nvim",
+  -- },
+  -- {
+  --   "cocopon/iceberg.vim",
+  -- },
   {
     "rebelot/kanagawa.nvim",
   },
-  --[[
-  {
-    "Tsuzat/NeoSolarized.nvim",
-  },
-  {
-    "nordtheme/vim",
-    name = "nord_vim",
-  },
-  --]]
+  -- {
+  --   "Tsuzat/NeoSolarized.nvim",
+  -- },
+  -- {
+  --   "nordtheme/vim",
+  --   name = "nord_vim",
+  -- },
   {
     "EdenEast/nightfox.nvim",
     lazy = false,
@@ -84,44 +123,4 @@ local M = {
     --     vim.cmd.colorscheme('zenbones')
     end
   },
-  {
-    -- TODO fix helpNote highlight group e.g. in :aerial-filetype-map
-    "xiyaowong/transparent.nvim",
-    lazy = false,
-    priority = 900,
-    config = function()
-      -- not needed anymore? I'm not sure why not
-      -- require("transparent").setup {
-      -- extra_groups = { -- define additional groups that should be clear
-      --   'help',
-      --   'Help',
-      --   'helpKeyword',
-      --   'helpHyperTextJump',
-      --   'helpHyperTextEntry',
-      --   'helpCommand',
-      --   'helpHeader',
-      --   'helpSectionDelim',
-      --   'helpSectionDelim',
-      --   'helpHyperTextEntry',
-      --   'helpOption',
-      --   'helpNote',
-      --   'helpVim',
-      --   'helpHyperTextEntry',
-      --   'helpURL',
-      --   'helpHyperTextEntry',
-      --   'helpTag',
-      --   'helpSpecial',
-      --   'helpExample',
-      --   'helpComment',
-      --   --'helpTodo',
-      --   'NormalFloat', -- plugins like Lazy, Mason, LspInfo
-      -- },
-      -- }
-      -- require("transparent").clear_prefix("NvimTree")
-      -- vim.cmd.TransparentDisable()
-      vim.cmd.colorscheme("default")
-    end,
-  },
-}
-
-return M
+--]]
