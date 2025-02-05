@@ -128,8 +128,36 @@ function agent-ssh() {
   eval "$(ssh-agent -s)"
   ssh-add ${HOME}/.ssh/id_ed25519
 }
-alias dark_theme='plasma-apply-lookandfeel -a org.kde.breezedark.desktop'
-alias light_theme='plasma-apply-lookandfeel -a org.kde.breeze.desktop'
+
+function dark_theme() {
+  # change for plasma desktop - covers almost everything
+  plasma-apply-lookandfeel -a org.kde.breezedark.desktop
+
+  # change for all running konsole instances
+  for instance in $(qdbus6 | grep org.kde.konsole); do
+    for session in $(qdbus6 "$instance" | grep -E '^/Sessions/'); do
+      qdbus6 "$instance" "$session" org.kde.konsole.Session.setProfile "Dark"
+    done
+  done
+  # change default for new konsole instances
+  sed -i "s/^DefaultProfile=.*/DefaultProfile=Dark.profile/g" "$HOME/.config/konsolerc"
+}
+
+function light_theme() {
+  plasma-apply-lookandfeel -a org.kde.breeze.desktop
+
+  # change for all running konsole instances
+  for instance in $(qdbus6 | grep org.kde.konsole); do
+    for session in $(qdbus6 "$instance" | grep -E '^/Sessions/'); do
+      qdbus6 "$instance" "$session" org.kde.konsole.Session.setProfile "Light"
+    done
+  done
+  # change default for new konsole instances
+  sed -i "s/^DefaultProfile=.*/DefaultProfile=Light.profile/g" "$HOME/.config/konsolerc"
+}
+
+
+
 function uninstall_nvim() {
   if [ -z "$1" ]; then
     echo "uninstalling main nvim state"
