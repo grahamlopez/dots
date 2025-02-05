@@ -144,6 +144,7 @@ function dark_theme() {
 }
 
 function light_theme() {
+  # change for plasma desktop - covers almost everything
   plasma-apply-lookandfeel -a org.kde.breeze.desktop
 
   # change for all running konsole instances

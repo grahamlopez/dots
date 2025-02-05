@@ -1,6 +1,6 @@
 -- other good themes
 --
-local M = {
+return {
   {
     -- TODO fix helpNote highlight group e.g. in :aerial-filetype-map
     "xiyaowong/transparent.nvim",
@@ -39,9 +39,13 @@ local M = {
       vim.cmd.colorscheme("default")
     end,
   },
+  {
+    -- neovim detects terminal background at startup, BUT
+    -- doesn't work inside tmux
+    -- doesn't affect already-running instances
+    { "f-person/auto-dark-mode.nvim", opts = {} }, -- https://github.com/f-person/auto-dark-mode.nvim
+  },
 }
-
-return M
 
 --[[
   {
