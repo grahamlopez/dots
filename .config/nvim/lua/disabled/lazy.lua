@@ -34,7 +34,7 @@ require("lazy").setup {
   },
   change_detection = {
     enabled = true,
-    notify = false,
+    notify = false, -- FIXME doesn't seem to work?
   },
   performance = {
     rtp = {

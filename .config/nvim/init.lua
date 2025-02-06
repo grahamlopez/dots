@@ -67,6 +67,9 @@ require("lazy").setup({
   },
 })
 
+-- workaround for nvim 0.10.3 when using :Inspect
+vim.hl = vim.highlight
+
 -- These could also go in 'plugin/' like teejdv.
 -- Not sure about which of these options is best for ordering, etc.
 require("settings.options")
@@ -81,24 +84,26 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   end
 })
 
--- bookmarked: https://www.youtube.com/live/KGJV0n70Mxs?si=wTR54z6DlkwDDa90&t=6843
-
 --[[
+    Configuration examples:
+
+    https://github.com/tjdevries/config.nvim
+    https://github.com/nvim-lua/kickstart.nvim
+    https://github.com/LunarVim/Launch.nvim
+
     Resources:
+
     TJ DeVries
     - personal config rewrite 2024: https://www.youtube.com/watch?v=kJVqxFnhIuw&t=5s
       - full stream at https://www.youtube.com/@teej_daily/videos
       - how lazy works for loading plugins
       - how to structure plugin configuration for fast iteration
       - after/ftplugins for language-specific options and mappings
+
     chris@machine "Ultimate Neovim Config | 2024 | Launch.vim" YT vid: https://www.youtube.com/watch?v=KGJV0n70Mxs
     Vhyrro on YT "Understanding Neovim" playlist: https://www.youtube.com/playlist?list=PLx2ksyallYzW4WNYHD9xOFrPRYGlntAft
     Typecraft "Neovim for Newbs" YT playlist: https://www.youtube.com/playlist?list=PLsz00TDipIffreIaUNk64KxTIkQaGguqn
     The Rad Lectures "How to setup Neovim from Scratch" YT vid: https://www.youtube.com/watch?v=ZjMzBd1Dqz8
-
-    Configuration examples:
-    https://github.com/tjdevries/config.nvim
-    https://github.com/LunarVim/Launch.nvim
 
     Usage hints, since I don't have a better place right now
     - to get error messages from language server, use 'gl'
@@ -116,7 +121,6 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     6. Fixmes and todos
 
     Configuration fixes
-    - :Inspect doesn't work
     - treesitter-based folding that includes lua comment blocks
     - 'gq' in visual mode doesn't work for lua comments, but when typing past col 80 for
       single line comments, it automatically breaks and adds the '--' (as if 'gq' should work)

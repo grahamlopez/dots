@@ -57,7 +57,7 @@ vim.opt.winminwidth = 5
 -- Behavior
 vim.opt.undofile = true                         -- Save undo history
 vim.opt.splitbelow = true
-vim.opt.splitright = true
+-- vim.opt.splitright = true
 vim.opt.hidden = true
 vim.opt.mouse = ''                              -- Disable mouse. Enable mouse mode with 'a'
 vim.opt.clipboard = 'unnamedplus'               -- Sync clipboard between OS and Neovim.
@@ -67,8 +67,8 @@ vim.opt.timeoutlen = 500                        -- time to wait for a mapped seq
 vim.opt.virtualedit = "block"
 vim.opt.inccommand = "split"
 vim.opt.foldmethod = "expr" -- enable treesitter-based folding
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
---vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+--vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = true
 vim.opt.foldlevel = 9
 
