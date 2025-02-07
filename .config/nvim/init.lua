@@ -121,6 +121,9 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     6. Fixmes and todos
 
     Configuration fixes
+    - how to see all mappings for any given situation (which-key display, when using telescope, when
+      on the command prompt, etc.)
+    - Telescope man_pages only displays section 1 manuals
     - treesitter-based folding that includes lua comment blocks
     - 'gq' in visual mode doesn't work for lua comments, but when typing past col 80 for
       single line comments, it automatically breaks and adds the '--' (as if 'gq' should work)

@@ -57,6 +57,7 @@ vim.opt.winminwidth = 5
 -- Behavior
 vim.opt.undofile = true                         -- Save undo history
 vim.opt.splitbelow = true
+vim.cmd [[set iskeyword-=_]]
 -- vim.opt.splitright = true
 vim.opt.hidden = true
 vim.opt.mouse = ''                              -- Disable mouse. Enable mouse mode with 'a'
@@ -112,7 +113,6 @@ vim.opt.foldlevel = 9
 -- vim.opt.shortmess:append "c"
 --
 -- vim.cmd "set whichwrap+=<,>,[,],h,l"
--- vim.cmd [[set iskeyword+=-]]
 --
 -- vim.g.netrw_banner = 0
 -- vim.g.netrw_mouse = 2
