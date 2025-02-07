@@ -14,8 +14,8 @@ vim.api.nvim_create_user_command('ReloadConfig', reload_config, { desc = 'Reload
 -- Set <space> as the leader key
 -- See `:help mapleader`
 -- Ensure this happens before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ","
-vim.g.maplocalleader = ","
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- https://github.com/folke/lazy.nvim
 --[[
@@ -112,13 +112,13 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     - to see contents of internal tables like 'vim.treesitter' and 'vim.lsp', use
       `:lua print(vim.lsp)` or a shortcut `:=vim.lsp`
 
-    Working notes and plan
-    1. Harvest YT videos above for plugin and configuration ideas
-    2. Enable plugin set
-    3. Configure keybinging set (check lazyvim etc. for ideas)
-    4. Optimize startup time
-    5. Read docs for plugins and further configuration
-    6. Fixmes and todos
+    Todo
+    - neovim config hacking: shortcuts to get to it, dots repo aware
+    - markdown
+    - folding
+    - git
+    - projects
+    - completion
 
     Configuration fixes
     - how to see all mappings for any given situation (which-key display, when using telescope, when

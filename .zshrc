@@ -202,7 +202,7 @@ showAllReposWithChanges() {
 # messing with neovim
 alias lazyvim="NVIM_APPNAME=nvim.lazyvim nvim"
 alias kvim="NVIM_APPNAME=nvim.kickstart nvim"
-alias k2vim="NVIM_APPNAME=nvim.kickstart2 nvim"
+alias nvchad="NVIM_APPNAME=nvim.nvchad nvim"
 
 # more homegrown functions
 
