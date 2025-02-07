@@ -38,7 +38,7 @@ return {
         padding = { 1, 3 },
         title = true,
         title_pos = "center",
-        wo = { winblend = 20 },
+        wo = { winblend = 15 },
       },
       icons = {
         mappings = false,

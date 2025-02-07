@@ -161,11 +161,20 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     Other plugins to be aware of
     -- schemastore -- lint/complete using schemas for json, yaml, toml
     -- file browsers: nvim-tree, oil, telescope-file-browser (stay away from neotree)
-    -- close buffer but leave split open: https://github.com/qpkorr/vim-bufkill or https://github.com/ojroques/nvim-bufdel
+    -- close buffer but leave split open:
+    --  https://github.com/qpkorr/vim-bufkill or https://github.com/ojroques/nvim-bufdel
     --  - can also approximate with keymappings like ":bp<cr>:bd #"
-    --  dressing.nvim
-    --  document/code outline+navigation: stevearc/aerial and hedyhli/outline
-    --  https://github.com/onsails/lspkind.nvim for vscode-like pictograms for lsp
+    -- dressing.nvim
+    -- document/code outline+navigation: stevearc/aerial and hedyhli/outline
+    -- https://github.com/onsails/lspkind.nvim for vscode-like pictograms for lsp
+    --
+    --  https://dotfyle.com/neovim/plugins/trending
+    --  https://neovimcraft.com/
+    --  neopopes as identified by Justin Keyes
+    --    https://github.com/echasnovski
+    --    https://github.com/folke
+    --    https://github.com/mfussenegger
+    --    https://github.com/nvchad
 
     For writing mode
     -- https://trebaud.github.io/posts/neovim-for-writers/
