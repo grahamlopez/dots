@@ -81,6 +81,7 @@ vim.keymap.set('n', '<leader>hh', tb.help_tags, { desc = 'help tags' })
 vim.keymap.set('n', '<leader>hm', tb.man_pages, { desc = 'man pages' })
 vim.keymap.set('n', '<leader>hw', "<cmd>WhichKey<cr>", { desc = 'which-key' })
 
+vim.keymap.set('n', '<leader>la', "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = 'LSP code actions' })
 vim.keymap.set('n', '<leader>lc', tb.lsp_incoming_calls, { desc = 'LSP incoming calls' })
 vim.keymap.set('n', '<leader>lC', tb.lsp_outgoing_calls, { desc = 'LSP outgoing calls' })
 vim.keymap.set('n', '<leader>ld', tb.lsp_definitions, { desc = 'LSP definitions' })

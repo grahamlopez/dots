@@ -49,6 +49,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.colorcolumn = ''
 vim.opt.scrolloff = 5
 vim.opt.completeopt = { "menuone", "noselect", "noinsert" } -- For a better completion experience (mostly just for cmp)
+vim.opt.shortmess:append "c"
 vim.opt.breakindent = true                      -- Enable break indent
 vim.opt.winheight = 5
 vim.opt.winminheight = 5
