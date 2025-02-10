@@ -57,7 +57,7 @@ vim.opt.winminwidth = 5
 -- Behavior
 vim.opt.undofile = true                         -- Save undo history
 vim.opt.splitbelow = true
-vim.cmd [[set iskeyword-=_]]
+-- vim.cmd [[set iskeyword-=_]]
 -- vim.opt.splitright = true
 vim.opt.hidden = true
 vim.opt.mouse = ''                              -- Disable mouse. Enable mouse mode with 'a'

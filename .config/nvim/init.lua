@@ -24,7 +24,7 @@ vim.g.maplocalleader = " "
     and even `:lua print(vim.fn.stdpath "data" .. "/lazy/lazy.nvim")
 --]]
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
     "git",
     "clone",
@@ -47,7 +47,7 @@ require("lazy").setup({
     border = "rounded",
   },
   change_detection = {
-    enabled = true,
+    enabled = false,
     notify = false,
   },
   performance = {
