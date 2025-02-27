@@ -336,7 +336,7 @@ export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUPSTREAM="auto"
 export GIT_PS1_SHOWCOLORHINTS=true
 
-PROMPT='$WHITE%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
+PROMPT='$GRAY%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
 RPROMPT='$RED%(?..[%?]) $CYAN|$WHITE%*$NOCOLOR'
 
 export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
