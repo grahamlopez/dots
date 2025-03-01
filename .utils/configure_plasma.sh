@@ -160,6 +160,7 @@ if confirm; then
   # kwriteconfig6 --file konsolerc --group "MainWindow" --key StatusBar Disabled
   # TODO test for Hack Nerd Font, install it automatically, or use a sensible alternative
   echo "installing mgl profile"
+
 cat << EOF > ${HOME}/.local/share/konsole/mgl.profile
 [Appearance]
 ColorScheme=transparent
@@ -172,6 +173,7 @@ Parent=FALLBACK/
 [Scrolling]
 ScrollBarPosition=2
 EOF
+
 cat << EOF > ${HOME}/.local/share/konsole/transparent.colorscheme
 [Background]
 Color=0,0,0
@@ -274,6 +276,7 @@ Wallpaper=
 WallpaperFlipType=NoFlip
 WallpaperOpacity=1
 EOF
+
 cat << EOF > ${HOME}/.local/share/konsole/transparent-light.colorscheme
 [Background]
 Color=255,255,255
