@@ -182,4 +182,12 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- https://bhupesh.me/writing-like-a-pro-with-vale-and-neovim/
     -- https://www.reddit.com/r/neovim/comments/z26vhz/how_could_i_use_neovim_for_general_writing_and/
     -- can a proportional font be used?
+    -- I started a config at .config/nvim.writin - see hash 2c5f0eb for latest
+    
+    Previously discovered plugins that were in git - mostly only partially configured/explored
+    See hash 2c5f0eb in dotfiles repo for latest state before removal
+    -- alpha, autopairs, breadcrumbs, comment, gitsigns, harpoon, icons,
+    -- illuminate, indentline, launch, lazy, navic, neogit, neotest, none-ls,
+    -- nvimtree, project, toggleterm, aerial, devicons, highlightedyank,
+    -- lspconfig, mason, whichkey
 --]]
