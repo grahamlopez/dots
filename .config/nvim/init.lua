@@ -159,6 +159,8 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     - aerial syncing with buffer
 
     Other plugins to be aware of
+    -- fzf-lua as alternative to telescope (picker); faster for large directories
+    -- mini files for a filesystem browser
     -- schemastore -- lint/complete using schemas for json, yaml, toml
     -- file browsers: nvim-tree, oil, telescope-file-browser (stay away from neotree)
     -- close buffer but leave split open:
