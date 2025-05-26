@@ -16,7 +16,7 @@ if [ -z "$perp_workspace" ]; then
 	echo "start"
 
   # open a new firefox window with perplexity
-	hyprctl dispatch -- exec "[float; size 1200 800; move 526 50]" "firefox-bin --new-window 'ext+container:name=Personal&url=https://perplexity.ai'"
+	hyprctl dispatch -- exec "firefox-bin --new-window 'ext+container:name=Personal&url=https://perplexity.ai'"
 
   sleep 0.2
 
@@ -32,8 +32,8 @@ if [ -z "$perp_workspace" ]; then
   # bring the window to our current workspace and float
 	hyprctl dispatch movetoworkspace ${current_ws}, address:${perp_address}
 	hyprctl dispatch setfloating address:${perp_address}
-	hyprctl dispatch resizewindowpixel exact 1600 1200,address:${perp_address}
-	hyprctl dispatch movewindowpixel exact 326 50,address:${perp_address}
+	hyprctl dispatch resizewindowpixel exact 1400 1300,address:${perp_address}
+	hyprctl dispatch movewindowpixel exact 750 150,address:${perp_address}
 
 elif [ "$perp_workspace" == "special:perp" ]; then
 
