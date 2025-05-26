@@ -161,6 +161,8 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     Other plugins to be aware of
     -- fzf-lua as alternative to telescope (picker); faster for large directories
     -- mini files for a filesystem browser
+    -- hardtime.nvim for breaking bad habits
+    -- REST client: https://github.com/mistweaverco/kulala.nvim
     -- schemastore -- lint/complete using schemas for json, yaml, toml
     -- file browsers: nvim-tree, oil, telescope-file-browser (stay away from neotree)
     -- close buffer but leave split open:
@@ -178,6 +180,12 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     --    https://github.com/mfussenegger
     --    https://github.com/nvchad
 
+    AI/LLM tools
+    -- https://neovim.discourse.group/t/what-is-the-current-and-future-state-of-ai-integration-in-neovim/5303
+    -- https://github.com/olimorris/codecompanion.nvim
+    -- https://www.reddit.com/r/neovim/comments/1krv35v/announcing_sllmnvim_chat_with_llms_directly_in/
+    -- https://github.com/yetone/avante.nvim
+    
     For writing mode
     -- https://trebaud.github.io/posts/neovim-for-writers/
     -- https://miragiancycle.github.io/OVIWrite/
