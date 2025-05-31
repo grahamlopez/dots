@@ -96,9 +96,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
         - between separate nvim processes
         - interaction with system clipboard
         - can an nvim open shortcut + picker replace something like clipse?
-    - [ ] session management with persistence.nvim
-        - better keybindings (toplevel c-s to select a session)
-        - shortcut to pick session files for deletion (wait on snacks explorer)
+    - [ ] shortcut to pick session files for deletion (wait on snacks explorer)
 
 
     Configuration examples:

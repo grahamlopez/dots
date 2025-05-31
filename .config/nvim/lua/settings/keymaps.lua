@@ -22,9 +22,9 @@ vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true })
 -- automatically open help in vertical split
 vim.keymap.set("c", "vh", "vert help ", { noremap = true })
 vim.keymap.set("n", "<leader>cd", function()
-	local dir = vim.fn.expand("%:p:h")
-	-- Feed keys: ':' to enter command mode, then 'cd ', then the path
-	vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
+  local dir = vim.fn.expand("%:p:h")
+  -- Feed keys: ':' to enter command mode, then 'cd ', then the path
+  vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
 end, { desc = "Pre-fill :cd with current buffer path" })
 
 -- Remap for dealing with word wrap
@@ -37,11 +37,11 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 
 -- A function and keymapping to toggle colorcolum
 vim.api.nvim_create_user_command("Togglecolorcolumn", function()
-	if vim.o.colorcolumn == "" then
-		vim.o.colorcolumn = "+1"
-	else
-		vim.o.colorcolumn = ""
-	end
+  if vim.o.colorcolumn == "" then
+    vim.o.colorcolumn = "+1"
+  else
+    vim.o.colorcolumn = ""
+  end
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
 -- buffers - TODO how to ignore while in nvim-tree, telescope, etc.
@@ -78,25 +78,31 @@ wk.add({
 })
 
 -- NON-LEADER
-vim.keymap.set("n", "<c-b>", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set("n", "<c-f>", function() sp.lines() end, { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>*", function() sp.grep_word() end, { desc = "grep cwd for word under cursor" })
-vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1"})
-vim.keymap.set('n', "<M-2>", "<cmd>BufferLineGoToBuffer 2<cr>", { desc = "goto visible buffer 2"})
-vim.keymap.set('n', "<M-3>", "<cmd>BufferLineGoToBuffer 3<cr>", { desc = "goto visible buffer 3"})
-vim.keymap.set('n', "<M-4>", "<cmd>BufferLineGoToBuffer 4<cr>", { desc = "goto visible buffer 4"})
-vim.keymap.set('n', "<M-5>", "<cmd>BufferLineGoToBuffer 5<cr>", { desc = "goto visible buffer 5"})
-vim.keymap.set('n', "<M-6>", "<cmd>BufferLineGoToBuffer 6<cr>", { desc = "goto visible buffer 6"})
-vim.keymap.set('n', "<M-7>", "<cmd>BufferLineGoToBuffer 7<cr>", { desc = "goto visible buffer 7"})
-vim.keymap.set('n', "<M-8>", "<cmd>BufferLineGoToBuffer 8<cr>", { desc = "goto visible buffer 8"})
-vim.keymap.set('n', "<M-9>", "<cmd>BufferLineGoToBuffer 9<cr>", { desc = "goto visible buffer 9"})
-vim.keymap.set('n', "<M-0>", "<cmd>BufferLineGoToBuffer 10<cr>", { desc = "goto visible buffer 10"})
-vim.keymap.set('n', "<M-l>", "<c-^>", { desc = "edit last <c-^>"})
-vim.keymap.set('n', "<c-n>", "<cmd>BufferLineCycleNext<cr>", { desc = "next visible buffer"})     -- try this to find conflicts
-vim.keymap.set('n', "<c-p>", "<cmd>BufferLineCyclePrev<cr>", { desc = "previous visible buffer"}) -- try this to find conflicts
-vim.keymap.set('n', "<M-L>", "<cmd>BufferLineMoveNext<cr>", { desc = "move buffer tab right"})
-vim.keymap.set('n', "<M-H>", "<cmd>BufferLineMovePrev<cr>", { desc = "move buffer tab left"})
+vim.keymap.set({ "n", "x", "o"}, "s", function() require("flash").jump() end, { desc = "Flash" })
+vim.keymap.set({ "n", "x", "o"}, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
+vim.keymap.set({ "x", "o"}, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
+vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
+
+vim.keymap.set("n", "<c-b>", function() sp.buffers() end, { desc = "buffers" })
+vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
+vim.keymap.set('n', "<M-2>", "<cmd>BufferLineGoToBuffer 2<cr>", { desc = "goto visible buffer 2" })
+vim.keymap.set('n', "<M-3>", "<cmd>BufferLineGoToBuffer 3<cr>", { desc = "goto visible buffer 3" })
+vim.keymap.set('n', "<M-4>", "<cmd>BufferLineGoToBuffer 4<cr>", { desc = "goto visible buffer 4" })
+vim.keymap.set('n', "<M-5>", "<cmd>BufferLineGoToBuffer 5<cr>", { desc = "goto visible buffer 5" })
+vim.keymap.set('n', "<M-6>", "<cmd>BufferLineGoToBuffer 6<cr>", { desc = "goto visible buffer 6" })
+vim.keymap.set('n', "<M-7>", "<cmd>BufferLineGoToBuffer 7<cr>", { desc = "goto visible buffer 7" })
+vim.keymap.set('n', "<M-8>", "<cmd>BufferLineGoToBuffer 8<cr>", { desc = "goto visible buffer 8" })
+vim.keymap.set('n', "<M-9>", "<cmd>BufferLineGoToBuffer 9<cr>", { desc = "goto visible buffer 9" })
+vim.keymap.set('n', "<M-0>", "<cmd>BufferLineGoToBuffer 10<cr>", { desc = "goto visible buffer 10" })
+vim.keymap.set('n', "<M-l>", "<c-^>", { desc = "edit last <c-^>" })
+vim.keymap.set('n', "<c-n>", "<cmd>BufferLineCycleNext<cr>", { desc = "next visible buffer" })     -- try this to find conflicts
+vim.keymap.set('n', "<c-p>", "<cmd>BufferLineCyclePrev<cr>", { desc = "previous visible buffer" }) -- try this to find conflicts
+vim.keymap.set('n', "<M-L>", "<cmd>BufferLineMoveNext<cr>", { desc = "move buffer tab right" })
+vim.keymap.set('n', "<M-H>", "<cmd>BufferLineMovePrev<cr>", { desc = "move buffer tab left" })
 
 -- TOP LEVEL
 vim.keymap.set("n", "<leader>/", function() sp.grep() end, { desc = "grep" })
