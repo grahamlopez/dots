@@ -8,7 +8,7 @@ return {
     opts = {
       picker = {
         enabled = true,
-         layout = {
+        layout = {
           cycle = true,
           --- Use the default layout or vertical if the window is too narrow
           preset = function()
@@ -41,11 +41,13 @@ return {
               -- ["<a-m>"] = { "toggle_maximize", mode = { "i", "n" } },
               -- ["<a-p>"] = { "toggle_preview", mode = { "i", "n" } },
               -- ["<a-w>"] = { "cycle_win", mode = { "i", "n" } },
+              ["<a-s>"] = { "flash", mode = { "n", "i" } },
               -- ["<c-a>"] = { "select_all", mode = { "n", "i" } },
               -- ["<c-b>"] = { "preview_scroll_up", mode = { "i", "n" } },
-              ["<c-e>"] = { "preview_scroll_up", mode = { 'n', 'i' }, },
+              ["<c-y>"] = { "preview_scroll_up", mode = { "n", "i" } },
               -- ["<c-d>"] = { "list_scroll_down", mode = { "i", "n" } },
               -- ["<c-f>"] = { "preview_scroll_down", mode = { "i", "n" } },
+              ["<c-e>"] = { "preview_scroll_down", mode = { "i", "n" } },
               -- ["<c-g>"] = { "toggle_live", mode = { "i", "n" } },
               -- ["<c-j>"] = { "list_down", mode = { "i", "n" } },
               -- ["<c-k>"] = { "list_up", mode = { "i", "n" } },
@@ -99,9 +101,10 @@ return {
               -- ["<a-w>"] = "cycle_win",
               -- ["<c-a>"] = "select_all",
               -- ["<c-b>"] = "preview_scroll_up",
-              ["<c-e>"] = "preview_scroll_up",
+              ["<c-y>"] = "preview_scroll_up",
               -- ["<c-d>"] = "list_scroll_down",
               -- ["<c-f>"] = "preview_scroll_down",
+              ["<c-e>"] = "preview_scroll_down",
               -- ["<c-j>"] = "list_down",
               -- ["<c-k>"] = "list_up",
               -- ["<c-n>"] = "list_down",
@@ -247,7 +250,7 @@ return {
     --         Snacks.debug.backtrace()
     --       end
     --       vim.print = _G.dd -- Override print to use snacks for `:=` command
-  
+
     --       -- Create some toggle mappings
     --       Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us")
     --       Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
@@ -275,35 +278,31 @@ return {
 
     config = function()
       local actions = require("telescope.actions")
-      require("telescope").setup {
+      require("telescope").setup({
         defaults = {
-          layout_strategy = 'vertical',
+          layout_strategy = "vertical",
           mappings = { -- https://github.com/nvim-telescope/telescope.nvim#default-mappings
 
             -- use '<C-/>' and '?' in insert and normal mode, respectively, to
             -- show the actions mapped to your picker
 
-              i = {
-                  ["<C-d>"] = actions.results_scrolling_down,
-                  ["<C-u>"] = actions.results_scrolling_up,
-                  ["<C-f>"] = actions.preview_scrolling_down,
-                  ["<C-b>"] = actions.preview_scrolling_up,
-              },
-              n = {
-                  ["<C-d>"] = actions.results_scrolling_down,
-                  ["<C-u>"] = actions.results_scrolling_up,
-                  ["<C-f>"] = actions.preview_scrolling_down,
-                  ["<C-b>"] = actions.preview_scrolling_up,
-              },
-
+            i = {
+              ["<C-d>"] = actions.results_scrolling_down,
+              ["<C-u>"] = actions.results_scrolling_up,
+              ["<C-f>"] = actions.preview_scrolling_down,
+              ["<C-b>"] = actions.preview_scrolling_up,
+            },
+            n = {
+              ["<C-d>"] = actions.results_scrolling_down,
+              ["<C-u>"] = actions.results_scrolling_up,
+              ["<C-f>"] = actions.preview_scrolling_down,
+              ["<C-b>"] = actions.preview_scrolling_up,
+            },
           },
           pickers = { -- https://github.com/nvim-telescope/telescope.nvim#pickers
-
           },
         },
-      }
-    end
+      })
+    end,
   },
 }
-
-

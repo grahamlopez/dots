@@ -74,6 +74,8 @@ vim.opt.foldmethod = "expr" -- enable treesitter-based folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldenable = true
 vim.opt.foldlevel = 9
+vim.opt.sessionoptions:append('globals') -- part of what's needed to preserve bufferline ordering
+
 
 
 

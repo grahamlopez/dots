@@ -71,7 +71,7 @@ return {
     --    ---@param opts bufferline.IconFetcherOpts
     --    get_element_icon = function(opts)
     --      return LazyVim.config.icons.ft[opts.filetype]
-    --    end,
+        numbers = "ordinal",
       },
     },
     config = function(_, opts)

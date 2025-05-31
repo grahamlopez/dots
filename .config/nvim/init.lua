@@ -7,9 +7,9 @@ local function reload_config()
       package.loaded[name] = nil
     end
   end
-  dofile('/home/graham/.config/nvim/init.lua')
+  dofile("/home/graham/.config/nvim/init.lua")
 end
-vim.api.nvim_create_user_command('ReloadConfig', reload_config, { desc = 'Reload Neovim configuration' })
+vim.api.nvim_create_user_command("ReloadConfig", reload_config, { desc = "Reload Neovim configuration" })
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -23,16 +23,16 @@ vim.g.maplocalleader = " "
     .e.g try `:lua print(vim.fn.stdpath("data"))`
     and even `:lua print(vim.fn.stdpath "data" .. "/lazy/lazy.nvim")
 --]]
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
-  vim.fn.system {
+  vim.fn.system({
     "git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
     "--branch=stable",
     lazypath,
-  }
+  })
 end
 -- now prepend it to the runtime path
 vim.opt.rtp:prepend(lazypath)
@@ -81,7 +81,8 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- set this to match line numbering?
     -- FIXME adapt to dark/light theme
     vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 235, bg = "#121212" })
-  end
+    vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
+  end,
 })
 
 --[[
@@ -90,10 +91,6 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
     TODO:
-    - [ ] figure out where ui keybindings are coming from
-    - [ ] have a fast way to change buffers
-        - c-n/p?
-        - alt+number? alt+shift+number to move?
     - [ ] tell neovim where the git repo root is for my neovim config
     - [ ] understand clipboards
         - between separate nvim processes

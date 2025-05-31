@@ -82,6 +82,21 @@ vim.keymap.set("n", "<c-b>", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set("n", "<c-f>", function() sp.lines() end, { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>*", function() sp.grep_word() end, { desc = "grep cwd for word under cursor" })
+vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1"})
+vim.keymap.set('n', "<M-2>", "<cmd>BufferLineGoToBuffer 2<cr>", { desc = "goto visible buffer 2"})
+vim.keymap.set('n', "<M-3>", "<cmd>BufferLineGoToBuffer 3<cr>", { desc = "goto visible buffer 3"})
+vim.keymap.set('n', "<M-4>", "<cmd>BufferLineGoToBuffer 4<cr>", { desc = "goto visible buffer 4"})
+vim.keymap.set('n', "<M-5>", "<cmd>BufferLineGoToBuffer 5<cr>", { desc = "goto visible buffer 5"})
+vim.keymap.set('n', "<M-6>", "<cmd>BufferLineGoToBuffer 6<cr>", { desc = "goto visible buffer 6"})
+vim.keymap.set('n', "<M-7>", "<cmd>BufferLineGoToBuffer 7<cr>", { desc = "goto visible buffer 7"})
+vim.keymap.set('n', "<M-8>", "<cmd>BufferLineGoToBuffer 8<cr>", { desc = "goto visible buffer 8"})
+vim.keymap.set('n', "<M-9>", "<cmd>BufferLineGoToBuffer 9<cr>", { desc = "goto visible buffer 9"})
+vim.keymap.set('n', "<M-0>", "<cmd>BufferLineGoToBuffer 10<cr>", { desc = "goto visible buffer 10"})
+vim.keymap.set('n', "<M-l>", "<c-^>", { desc = "edit last <c-^>"})
+vim.keymap.set('n', "<c-n>", "<cmd>BufferLineCycleNext<cr>", { desc = "next visible buffer"})     -- try this to find conflicts
+vim.keymap.set('n', "<c-p>", "<cmd>BufferLineCyclePrev<cr>", { desc = "previous visible buffer"}) -- try this to find conflicts
+vim.keymap.set('n', "<M-L>", "<cmd>BufferLineMoveNext<cr>", { desc = "move buffer tab right"})
+vim.keymap.set('n', "<M-H>", "<cmd>BufferLineMovePrev<cr>", { desc = "move buffer tab left"})
 
 -- TOP LEVEL
 vim.keymap.set("n", "<leader>/", function() sp.grep() end, { desc = "grep" })
@@ -92,9 +107,10 @@ vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { d
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
 
--- FILES
+-- FINDS
 -- stylua: ignore
 vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
+vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
 vim.keymap.set("n", "<leader>ff", function() sp.files() end, { desc = "find files" })
 vim.keymap.set("n", "<leader>fg", function() sp.grep() end, { desc = "live grep" })
 vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
