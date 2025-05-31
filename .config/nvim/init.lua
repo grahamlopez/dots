@@ -90,6 +90,16 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
     TODO:
+    - [ ] understand working directory, LazyVim's concept of a "root" for grep
+        - 3 kinds: window, tab, global
+        - use :verbose pwd to see what kind(s) are set
+        - see :help current-directory
+    - [ ] have a fast way to open my neovim config
+        - snacks picker
+    - [ ] have a fast way to change buffers
+        - c-n/p?
+        - alt+number? alt+shift+number to move?
+    - [ ] tell neovim where the git repo root is for my neovim config
 
 
     Configuration examples:
