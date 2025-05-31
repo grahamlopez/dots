@@ -64,6 +64,19 @@ vim.keymap.set("v", ">", ">gv")
 -- first, some conveniences for use in the following mapping specs
 local tb = require('telescope.builtin')
 local sp = require('snacks').picker
+local wk = require("which-key")
+
+-- WHICHKEY
+wk.add({
+  mode = { "n", "v", },
+  { "<leader>b", group = "Buffer" },
+  { "<leader>f", group = "Find" },
+  { "<leader>g", group = "Git" },
+  { "<leader>h", group = "Help" },
+  { "<leader>l", group = "LSP" },
+  { "<leader>t", group = "Telescope" },
+  { "<leader>u", group = "UI" },
+})
 
 -- NON-LEADER
 vim.keymap.set('n', "<c-b>", function() sp.buffers() end, { desc = "buffers" } )
@@ -155,17 +168,6 @@ vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute 
 
 
 
-local wk = require("which-key")
-wk.add({
-  mode = { "n", "v", },
-  { "<leader>b", group = "Buffer" },
-  { "<leader>f", group = "Find" },
-  { "<leader>g", group = "Git" },
-  { "<leader>h", group = "Help" },
-  { "<leader>l", group = "LSP" },
-  { "<leader>t", group = "Telescope" },
-  { "<leader>u", group = "UI" },
-})
 ------------------------------------------------------------------------
 ---
 --- Iconirific version (not synced / up-to-date)
