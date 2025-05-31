@@ -208,7 +208,7 @@ alias nvchad="NVIM_APPNAME=nvim.nvchad nvim"
 
 # for config file management
 function git() {
-  if [[ $(pwd) == ${HOME} ]] ; then
+  if [[ $(pwd) == ${HOME} || $(pwd) == ${HOME}/.config/nvim ]] ; then
     command git --git-dir=$HOME/.dots-git/ --work-tree=$HOME "$@"
   else
     command git "$@"

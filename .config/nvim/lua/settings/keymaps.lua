@@ -128,19 +128,24 @@ vim.keymap.set("n", "<leader>fh", function() sp.help() end, { desc = "help" })
 vim.keymap.set("n", "<leader>fp", function() sp.projects() end, { desc = "projects" })
 vim.keymap.set("n", "<leader>fr", function() sp.recent() end, { desc = "recent" })
 
--- GIT
-vim.keymap.set("n", "<leader>gb", function() sp.git_branches() end, { desc = "git branches search" })
-vim.keymap.set({ "n", "v" }, "<leader>gB", function() require("snacks").gitbrowse() end, { desc = "git browse" })
-vim.keymap.set("n", "<leader>gd", function() sp.git_diff() end, { desc = "git diff search" })
-vim.keymap.set("n", "<leader>gf", function() sp.git_log_file() end, { desc = "git logfile search" })
-vim.keymap.set("v", "<leader>gl", function() sp.git_log() end, { desc = "git log search" })
-vim.keymap.set("n", "<leader>gL", function() sp.git_log_line() end, { desc = "git log lines search" })
-vim.keymap.set("n", "<leader>gs", function() sp.git_status() end, { desc = "git status search" })
-vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
+-- GIT - disabling these until I understand them
+vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
+-- vim.keymap.set("n", "<leader>gb", function() sp.git_branches() end, { desc = "git branches search" })
+-- vim.keymap.set({ "n", "v" }, "<leader>gB", function() require("snacks").gitbrowse() end, { desc = "open github" })
+-- vim.keymap.set("n", "<leader>gd", function() sp.git_diff() end, { desc = "git diff search" })
+-- vim.keymap.set("n", "<leader>gf", function() sp.git_log_file() end, { desc = "git logfile search" })
+-- vim.keymap.set("v", "<leader>gl", function() sp.git_log() end, { desc = "git log search" })
+-- vim.keymap.set("n", "<leader>gL", function() sp.git_log_line() end, { desc = "git log lines search" })
+-- vim.keymap.set("n", "<leader>gs", function() sp.git_status() end, { desc = "git status search" })
+-- vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
 
 -- HELP
-vim.keymap.set("n", "<leader>hh", tb.help_tags, { desc = "help tags" })
-vim.keymap.set("n", "<leader>hm", tb.man_pages, { desc = "man pages" })
+vim.keymap.set("n", "<leader>hth", tb.help_tags, { desc = "help" })
+vim.keymap.set("n", "<leader>htk", tb.keymaps, { desc = "keymaps" })
+vim.keymap.set("n", "<leader>htm", tb.man_pages, { desc = "man pages" })
+vim.keymap.set("n", "<leader>hh", function() sp.help() end, { desc = "help" })
+vim.keymap.set("n", "<leader>hm", function() sp.man() end, { desc = "man pages" })
+vim.keymap.set("n", "<leader>hk", function() sp.keymaps() end, { desc = "keymaps" })
 vim.keymap.set("n", "<leader>hw", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP

@@ -82,6 +82,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- FIXME adapt to dark/light theme
     vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 235, bg = "#121212" })
     vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { ctermbg = "NONE", bg = "NONE" })
   end,
 })
 
@@ -102,11 +103,12 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
     TODO:
+    - [ ] implement ui toggles
     - [ ] understand clipboards
         - between separate nvim processes
         - interaction with system clipboard
         - can an nvim open shortcut + picker replace something like clipse?
-    - [ ] shortcut to pick session files for deletion (wait on snacks explorer)
+    - [ ] understand git workflows
 
 
     Configuration examples:
