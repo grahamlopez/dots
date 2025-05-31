@@ -86,10 +86,11 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 
 --[[
     Summer 2025:
-    I think LazyVim has evolved to be pretty close to what I want, but I still want to 
+    I think LazyVim has evolved to be pretty close to what I want, but I still want to
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
     TODO:
+    - [ ] figure out where ui keybindings are coming from
     - [ ] have a fast way to change buffers
         - c-n/p?
         - alt+number? alt+shift+number to move?
@@ -101,7 +102,6 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     - [ ] session management with persistence.nvim
         - better keybindings (toplevel c-s to select a session)
         - shortcut to pick session files for deletion (wait on snacks explorer)
-    - [ ] lua and code formatting
 
 
     Configuration examples:
@@ -209,7 +209,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- https://github.com/olimorris/codecompanion.nvim
     -- https://www.reddit.com/r/neovim/comments/1krv35v/announcing_sllmnvim_chat_with_llms_directly_in/
     -- https://github.com/yetone/avante.nvim
-    
+
     For writing mode
     -- https://trebaud.github.io/posts/neovim-for-writers/
     -- https://miragiancycle.github.io/OVIWrite/
@@ -217,7 +217,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- https://www.reddit.com/r/neovim/comments/z26vhz/how_could_i_use_neovim_for_general_writing_and/
     -- can a proportional font be used?
     -- I started a config at .config/nvim.writin - see hash 2c5f0eb for latest
-    
+
     Previously discovered plugins that were in git - mostly only partially configured/explored
     See hash 2c5f0eb in dotfiles repo for latest state before removal
     -- alpha, autopairs, breadcrumbs, comment, gitsigns, harpoon, icons,

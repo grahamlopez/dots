@@ -40,6 +40,7 @@ return {
       "clangd",
       "clang-format",
       "lua_ls",
+      "stylua",
       "tectonic",
       -- "marksman",
     }
