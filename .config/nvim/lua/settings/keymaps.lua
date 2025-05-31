@@ -59,13 +59,21 @@ vim.keymap.set("v", ">", ">gv")
 local tb = require('telescope.builtin')
 
 -- NON-LEADER
-vim.keymap.set('n', '<c-b>', tb.buffers, { desc = 'buffer list' })
-vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = 'find in current buffer' })
-vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = 'live grep' })
-vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = 'grep cwd for word under cursor' })
+-- vim.keymap.set('n', '<c-b>', tb.buffers, { desc = 'buffer list' })
+-- vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = 'find in current buffer' })
+-- vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = 'live grep' })
+-- vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = 'grep cwd for word under cursor' })
+vim.keymap.set('n', "<c-b>", function() require("snacks").picker.buffers() end, { desc = "buffers" } )
+vim.keymap.set('n', "<c-f>", function() require("snacks").picker.lines() end, { desc = "find in buffer" } )
+vim.keymap.set('n', "<c-g>", function() require("snacks").picker.grep() end, { desc = "grep" } )
+vim.keymap.set('n', '<leader>*', function() require("snacks").picker.grep_word() end, { desc = 'grep cwd for word under cursor' })
 
 -- TOP LEVEL
-vim.keymap.set('n', '<leader>/', tb.live_grep, { desc = 'grep cwd for word under cursor' })
+-- vim.keymap.set('n', '<leader>/', tb.live_grep, { desc = 'grep cwd for word under cursor' })
+vim.keymap.set('n', "<leader>/", function() require("snacks").picker.grep() end, { desc = "grep" } )
+vim.keymap.set('n', "<leader>,", function() require("snacks").picker.buffers() end, { desc = "buffers" } )
+vim.keymap.set('n', "<leader>:", function() require("snacks").picker.command_history() end, { desc = "command history" } )
+vim.keymap.set({ 'n', 'v' }, "<leader>n", function() require("snacks").picker.notifications() end, { desc = "notification history" } )
 
 -- BUFFERS
 vim.keymap.set('n', '<leader>bb', tb.buffers, { desc = 'buffer list' })
