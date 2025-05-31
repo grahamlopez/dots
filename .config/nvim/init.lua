@@ -85,13 +85,23 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   end,
 })
 
+-- Set environment variables for git when working on nvim config
+local home = os.getenv("HOME")
+vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
+  callback = function()
+    if vim.fn.getcwd() == home .. "/.config/nvim" then
+      vim.env.GIT_DIR = home .. "/.dots-git/"
+      vim.env.GIT_WORK_TREE = home
+    end
+  end,
+})
+
 --[[
     Summer 2025:
     I think LazyVim has evolved to be pretty close to what I want, but I still want to
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
     TODO:
-    - [ ] tell neovim where the git repo root is for my neovim config
     - [ ] understand clipboards
         - between separate nvim processes
         - interaction with system clipboard

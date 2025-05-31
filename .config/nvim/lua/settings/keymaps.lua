@@ -73,7 +73,11 @@ wk.add({
 	{ "<leader>g", group = "Git" },
 	{ "<leader>h", group = "Help" },
 	{ "<leader>l", group = "LSP" },
-	{ "<leader>t", group = "Telescope" },
+	{ "<leader>lv", group = "Vim" },
+	{ "<leader>lt", group = "Telescope" },
+	{ "<leader>q", group = "Session/Quit" },
+	{ "<leader>s", group = "Search" },
+	{ "<leader>st", group = "Telescope" },
 	{ "<leader>u", group = "UI" },
 })
 
@@ -109,26 +113,30 @@ vim.keymap.set("n", "<leader>/", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>,", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set("n", "<leader>:", function() sp.command_history() end, { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
+vim.keymap.set( "n", "<leader>e", function() require("snacks").explorer() end, { desc = "file explorer" })
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
 
 -- FINDS
--- stylua: ignore
+vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
 vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
 vim.keymap.set("n", "<leader>ff", function() sp.files() end, { desc = "find files" })
-vim.keymap.set("n", "<leader>fg", function() sp.grep() end, { desc = "live grep" })
-vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
+vim.keymap.set("n", "<leader>fg", function() sp.git_files() end, { desc = "live grep" })
 vim.keymap.set("n", "<leader>fh", function() sp.help() end, { desc = "help" })
+vim.keymap.set("n", "<leader>fp", function() sp.projects() end, { desc = "projects" })
+vim.keymap.set("n", "<leader>fr", function() sp.recent() end, { desc = "recent" })
 
 -- GIT
-vim.keymap.set("n", "<leader>gb", tb.git_branches, { desc = "git branches" })
-vim.keymap.set("v", "<leader>gc", tb.git_bcommits, { desc = "git commits (range)" })
-vim.keymap.set("n", "<leader>gc", tb.git_bcommits, { desc = "git commits (buffer)" })
-vim.keymap.set("n", "<leader>gC", tb.git_commits, { desc = "git commits (all)" })
-vim.keymap.set("n", "<leader>gs", tb.git_status, { desc = "git status" })
-vim.keymap.set("n", "<leader>gS", tb.git_stash, { desc = "git stash" })
+vim.keymap.set("n", "<leader>gb", function() sp.git_branches() end, { desc = "git branches search" })
+vim.keymap.set({ "n", "v" }, "<leader>gB", function() require("snacks").gitbrowse() end, { desc = "git browse" })
+vim.keymap.set("n", "<leader>gd", function() sp.git_diff() end, { desc = "git diff search" })
+vim.keymap.set("n", "<leader>gf", function() sp.git_log_file() end, { desc = "git logfile search" })
+vim.keymap.set("v", "<leader>gl", function() sp.git_log() end, { desc = "git log search" })
+vim.keymap.set("n", "<leader>gL", function() sp.git_log_line() end, { desc = "git log lines search" })
+vim.keymap.set("n", "<leader>gs", function() sp.git_status() end, { desc = "git status search" })
+vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
 
 -- HELP
 vim.keymap.set("n", "<leader>hh", tb.help_tags, { desc = "help tags" })
@@ -136,18 +144,32 @@ vim.keymap.set("n", "<leader>hm", tb.man_pages, { desc = "man pages" })
 vim.keymap.set("n", "<leader>hw", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP
-vim.keymap.set("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "LSP code actions" })
+vim.keymap.set("n", "<leader>ltf", function() require("conform").format({ async = true }) end, { desc = "Format" })
+
+vim.keymap.set("n", "<leader>l,", function() sp.lsp_config() end, { desc = "LSP config" })
 vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
-vim.keymap.set("n", "<leader>ld", tb.lsp_definitions, { desc = "LSP definitions" })
-vim.keymap.set("n", "<leader>lD", tb.diagnostics, { desc = "LSP diagnostics" })
--- vim.keymap.set('n', '<leader>lf', "<cmd>lua vim.lsp.buf.format({async = true})<cr>", { desc = "Format" })
-vim.keymap.set("n", "<leader>lf", function() require("conform").format({ async = true }) end, { desc = "Format" })
-vim.keymap.set("n", "<leader>li", tb.lsp_implementations, { desc = "LSP implementations" })
-vim.keymap.set("n", "<leader>lr", tb.lsp_references, { desc = "LSP references" })
-vim.keymap.set("n", "<leader>ls", tb.lsp_document_symbols, { desc = "LSP document symbols" })
-vim.keymap.set("n", "<leader>lS", tb.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
-vim.keymap.set("n", "<leader>lt", tb.lsp_type_definitions, { desc = "LSP type definitions" })
+vim.keymap.set("n", "<leader>ld", function() sp.lsp_definitions() end, { desc = "LSP definitions" })
+vim.keymap.set("n", "<leader>lD", function() sp.lsp_declarations() end, { desc = "LSP declarations" })
+vim.keymap.set("n", "<leader>li", function() sp.lsp_implementations() end, { desc = "LSP implementations" })
+vim.keymap.set("n", "<leader>lr", function() sp.lsp_references() end, { desc = "LSP references" })
+vim.keymap.set("n", "<leader>ls", function() sp.lsp_symbols() end, { desc = "LSP document symbols" })
+vim.keymap.set("n", "<leader>lS", function() sp.lsp_workspace_symbols() end, { desc = "LSP workspace symbols" })
+vim.keymap.set("n", "<leader>lt", function() sp.lsp_type_definitions() end, { desc = "LSP type definitions" })
+vim.keymap.set("n", "<leader>lw", function() sp.diagnostics() end, { desc = "LSP diagnostics (warnings)" })
+
+vim.keymap.set("n", "<leader>lva", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "LSP code actions" })
+vim.keymap.set('n', '<leader>lvf', "<cmd>lua vim.lsp.buf.format({async = true})<cr>", { desc = "Format" })
+
+vim.keymap.set("n", "<leader>ltc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
+vim.keymap.set("n", "<leader>ltC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
+vim.keymap.set("n", "<leader>ltd", tb.lsp_definitions, { desc = "LSP definitions" })
+vim.keymap.set("n", "<leader>lti", tb.lsp_implementations, { desc = "LSP implementations" })
+vim.keymap.set("n", "<leader>ltr", tb.lsp_references, { desc = "LSP references" })
+vim.keymap.set("n", "<leader>lts", tb.lsp_document_symbols, { desc = "LSP document symbols" })
+vim.keymap.set("n", "<leader>ltS", tb.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
+vim.keymap.set("n", "<leader>ltt", tb.lsp_type_definitions, { desc = "LSP type definitions" })
+vim.keymap.set("n", "<leader>ltw", tb.diagnostics, { desc = "LSP diagnostics (warnings)" })
 
 -- SESSIONS
 vim.keymap.set("n", "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
@@ -156,37 +178,60 @@ vim.keymap.set("n", "<leader>qs", function() require("persistence").select() end
 vim.keymap.set("n", "<leader>ql", function() require("persistence").load({ last = true }) end, { desc = "Restore Last Session" })
 vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, { desc = "Don't Save Current Session" })
 
--- TELESCOPE
-vim.keymap.set("n", "<leader>ta", tb.autocommands, { desc = "autocommands" })
-vim.keymap.set("n", "<leader>tb", tb.buffers, { desc = "buffers" })
-vim.keymap.set("n", "<leader>tc", tb.commands, { desc = "commands" })
-vim.keymap.set("n", "<leader>tC", tb.command_history, { desc = "command history" })
-vim.keymap.set("n", "<leader>tf", tb.filetypes, { desc = "file types" })
-vim.keymap.set("n", "<leader>th", tb.help_tags, { desc = "help tags" })
-vim.keymap.set("n", "<leader>tH", tb.highlights, { desc = "highlights" })
-vim.keymap.set("n", "<leader>tj", tb.jumplist, { desc = "jump list" })
-vim.keymap.set("n", "<leader>tk", tb.keymaps, { desc = "normal mode keymaps" })
-vim.keymap.set("n", "<leader>tl", tb.loclist, { desc = "location list" })
-vim.keymap.set("n", "<leader>tm", tb.marks, { desc = "marks" })
-vim.keymap.set("n", "<leader>tM", tb.man_pages, { desc = "man pages" })
-vim.keymap.set("n", "<leader>ti", tb.symbols, { desc = "unicode icons" })
-vim.keymap.set("n", "<leader>to", tb.oldfiles, { desc = "oldfiles" })
-vim.keymap.set("n", "<leader>tq", tb.quickfix, { desc = "quickfix" })
-vim.keymap.set("n", "<leader>tQ", tb.quickfixhistory, { desc = "quickfix history" })
-vim.keymap.set("n", "<leader>tr", tb.registers, { desc = "registers" })
-vim.keymap.set("n", "<leader>ts", tb.spell_suggest, { desc = "spell suggest" })
-vim.keymap.set("n", "<leader>tS", tb.search_history, { desc = "search history" })
-vim.keymap.set("n", "<leader>tt", tb.treesitter, { desc = "treesitter" })
-vim.keymap.set("n", "<leader>tT", tb.tags, { desc = "tags" })
-vim.keymap.set("n", "<leader>tv", tb.vim_options, { desc = "vim options" })
+-- SEARCH
+vim.keymap.set("n", '<leader>s"', function() sp.registers() end, { desc = "registers" })
+vim.keymap.set("n", '<leader>sa', function() sp.autocmds() end, { desc = "autocommands" })
+vim.keymap.set("n", '<leader>sb', function() sp.buffers() end, { desc = "buffers" })
+vim.keymap.set("n", '<leader>sc', function() sp.commands() end, { desc = "commands" })
+vim.keymap.set("n", '<leader>sC', function() sp.command_history() end, { desc = "command_history" })
+vim.keymap.set("n", "<leader>sh", function() sp.help() end, { desc = "help" })
+vim.keymap.set("n", "<leader>sH", function() sp.highlights() end, { desc = "highlights" })
+vim.keymap.set("n", "<leader>si", function() sp.icons() end, { desc = "icons" })
+vim.keymap.set("n", "<leader>sj", function() sp.jumps() end, { desc = "jump list" })
+vim.keymap.set("n", "<leader>sk", function() sp.keymaps() end, { desc = "jump list" })
+vim.keymap.set("n", "<leader>sl", function() sp.loclist() end, { desc = "location list" })
+vim.keymap.set("n", "<leader>sm", function() sp.marks() end, { desc = "marks" })
+vim.keymap.set("n", "<leader>sm", function() sp.man() end, { desc = "man pages" })
+vim.keymap.set("n", "<leader>sq", function() sp.qflist() end, { desc = "quickfix" })
+vim.keymap.set("n", '<leader>sd', function() sp.diagnostics() end, { desc = "diagnostics" })
+vim.keymap.set("n", '<leader>sD', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
+vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "search for plugin spec" })
+vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" })
+vim.keymap.set("n", '<leader>sS', function() sp.search_history() end, { desc = "search history" })
+vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
+
+vim.keymap.set("n", '<leader>st"', tb.registers, { desc = "registers" })
+vim.keymap.set("n", '<leader>sta', tb.autocommands, { desc = "autocommands" })
+vim.keymap.set("n", "<leader>stb", tb.buffers, { desc = "buffers" })
+vim.keymap.set("n", "<leader>stc", tb.commands, { desc = "commands" })
+vim.keymap.set("n", "<leader>stC", tb.command_history, { desc = "command history" })
+vim.keymap.set("n", "<leader>sth", tb.help_tags, { desc = "help" })
+vim.keymap.set("n", "<leader>stH", tb.highlights, { desc = "highlights" })
+vim.keymap.set("n", "<leader>sti", tb.symbols, { desc = "icons" })
+vim.keymap.set("n", "<leader>stj", tb.jumplist, { desc = "jump list" })
+vim.keymap.set("n", "<leader>stk", tb.keymaps, { desc = "normal mode keymaps" })
+vim.keymap.set("n", "<leader>stl", tb.loclist, { desc = "location list" })
+vim.keymap.set("n", "<leader>stm", tb.marks, { desc = "marks" })
+vim.keymap.set("n", "<leader>stM", tb.man_pages, { desc = "man pages" })
+vim.keymap.set("n", "<leader>stf", tb.filetypes, { desc = "file types" })
+vim.keymap.set("n", "<leader>sto", tb.oldfiles, { desc = "oldfiles" })
+vim.keymap.set("n", "<leader>stQ", tb.quickfixhistory, { desc = "quickfix history" })
+vim.keymap.set("n", "<leader>sts", tb.spell_suggest, { desc = "spell suggest" })
+vim.keymap.set("n", "<leader>stS", tb.search_history, { desc = "search history" })
+vim.keymap.set("n", "<leader>stt", tb.treesitter, { desc = "treesitter" })
+vim.keymap.set("n", "<leader>stT", tb.tags, { desc = "tags" })
+vim.keymap.set("n", "<leader>stv", tb.vim_options, { desc = "vim options" })
 
 -- UI
 vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
-vim.keymap.set( "n", "<leader>uC",
-	"<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>",
-	{ desc = "colorscheme" }
-)
+vim.keymap.set("n", '<leader>uC', function() sp.colorschemes()() end, { desc = "colorscheme" })
+-- vim.keymap.set( "n", "<leader>uC",
+-- 	"<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>",
+-- 	{ desc = "colorscheme" }
+-- )
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
+vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
+vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen() end, { desc = "Zen zoom" })
 
 -- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
