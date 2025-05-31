@@ -1,5 +1,6 @@
 -- https://github.com/LunarVim/Launch.nvim/blob/master/lua/user/telescope.lua
 return {
+  {
   "nvim-telescope/telescope.nvim", -- https://github.com/nvim-telescope/telescope.nvim
   tag = "0.1.5",
   dependencies = {
@@ -38,6 +39,7 @@ return {
       },
     }
   end
+  },
 }
 
 

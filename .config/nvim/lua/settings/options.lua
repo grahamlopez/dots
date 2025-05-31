@@ -55,6 +55,7 @@ vim.opt.winheight = 5
 vim.opt.winminheight = 5
 vim.opt.winwidth = 5
 vim.opt.winminwidth = 5
+vim.opt.showtabline = 2
 -- Behavior
 vim.opt.undofile = true                         -- Save undo history
 vim.opt.splitbelow = true

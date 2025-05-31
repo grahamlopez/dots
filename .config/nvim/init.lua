@@ -85,6 +85,13 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
 })
 
 --[[
+    Summer 2025:
+    I think LazyVim has evolved to be pretty close to what I want, but I still want to 
+    build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
+
+    TODO:
+
+
     Configuration examples:
 
     https://github.com/tjdevries/config.nvim
@@ -158,7 +165,12 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
       -- looks like a bug? the sections are properly nested under :InspectTree
     - aerial syncing with buffer
 
+    How to conditionally enable/disable plugins using an environment variable at neovim start
+    https://youtu.be/M0B_24d0MWw?si=dEKMd606Gg6oC82A&t=376
+
     Other plugins to be aware of
+    -- hedyhil/outline.nvim and stevearc/aerial.nvim for outline navigation
+    -- https://github.com/ThePrimeagen/harpoon/tree/harpoon2 for arbitrary shortcuts
     -- fzf-lua as alternative to telescope (picker); faster for large directories
     -- mini files for a filesystem browser
     -- hardtime.nvim for breaking bad habits

@@ -30,7 +30,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
 -- vim.keymap.set("n", "<leader>w", ":lua vim.wo.wrap = not vim.wo.wrap<CR>", { noremap = true, silent = true })
 
--- A function and keymapping to toggle cursor position highlighting
+-- A function and keymapping to toggle colorcolum
 vim.api.nvim_create_user_command('Togglecolorcolumn', function()
   if vim.o.colorcolumn == '' then
     vim.o.colorcolumn = '+1'
@@ -58,18 +58,25 @@ vim.keymap.set("v", ">", ">gv")
 -- first, some conveniences for use in the following mapping specs
 local tb = require('telescope.builtin')
 
+-- NON-LEADER
 vim.keymap.set('n', '<c-b>', tb.buffers, { desc = 'buffer list' })
 vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = 'find in current buffer' })
 vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = 'live grep' })
 vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = 'grep cwd for word under cursor' })
 
+-- TOP LEVEL
+vim.keymap.set('n', '<leader>/', tb.live_grep, { desc = 'grep cwd for word under cursor' })
+
+-- BUFFERS
 vim.keymap.set('n', '<leader>bb', tb.buffers, { desc = 'buffer list' })
 
+-- FILES
 vim.keymap.set('n', '<leader>ff', tb.find_files, { desc = 'find files' })
 vim.keymap.set('n', '<leader>fg', tb.live_grep, { desc = 'live grep' })
 vim.keymap.set('n', '<leader>fb', tb.buffers, { desc = 'buffers' })
 vim.keymap.set('n', '<leader>fh', tb.help_tags, { desc = 'help tags' })
 
+-- GIT
 vim.keymap.set('n', '<leader>gb', tb.git_branches, { desc = 'git branches' })
 vim.keymap.set('v', '<leader>gc', tb.git_bcommits, { desc = 'git commits (range)' })
 vim.keymap.set('n', '<leader>gc', tb.git_bcommits, { desc = 'git commits (buffer)' })
@@ -77,10 +84,12 @@ vim.keymap.set('n', '<leader>gC', tb.git_commits, { desc = 'git commits (all)' }
 vim.keymap.set('n', '<leader>gs', tb.git_status, { desc = 'git status' })
 vim.keymap.set('n', '<leader>gS', tb.git_stash, { desc = 'git stash' })
 
+-- HELP
 vim.keymap.set('n', '<leader>hh', tb.help_tags, { desc = 'help tags' })
 vim.keymap.set('n', '<leader>hm', tb.man_pages, { desc = 'man pages' })
 vim.keymap.set('n', '<leader>hw', "<cmd>WhichKey<cr>", { desc = 'which-key' })
 
+-- LSP
 vim.keymap.set('n', '<leader>la', "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = 'LSP code actions' })
 vim.keymap.set('n', '<leader>lc', tb.lsp_incoming_calls, { desc = 'LSP incoming calls' })
 vim.keymap.set('n', '<leader>lC', tb.lsp_outgoing_calls, { desc = 'LSP outgoing calls' })
@@ -92,6 +101,7 @@ vim.keymap.set('n', '<leader>ls', tb.lsp_document_symbols, { desc = 'LSP documen
 vim.keymap.set('n', '<leader>lS', tb.lsp_workspace_symbols, { desc = 'LSP workspace symbols' })
 vim.keymap.set('n', '<leader>lt', tb.lsp_type_definitions, { desc = 'LSP type definitions' })
 
+-- TELESCOPE
 vim.keymap.set('n', '<leader>ta', tb.autocommands, { desc = 'autocommands' })
 vim.keymap.set('n', '<leader>tb', tb.buffers, { desc = 'buffers' })
 vim.keymap.set('n', '<leader>tc', tb.commands, { desc = 'commands' })
@@ -115,9 +125,12 @@ vim.keymap.set('n', '<leader>tt', tb.treesitter, { desc = 'treesitter' })
 vim.keymap.set('n', '<leader>tT', tb.tags, { desc = 'tags' })
 vim.keymap.set('n', '<leader>tv', tb.vim_options, { desc = 'vim options' })
 
-vim.keymap.set('n', '<leader>uc', "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = 'colorscheme' })
+-- UI
+vim.keymap.set('n', '<leader>uc', "<cmd>Togglecolorcolumn<cr>", { desc = 'ColorColumn Toggle' })
+vim.keymap.set('n', '<leader>uC', "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = 'colorscheme' })
 vim.keymap.set('n', '<leader>ut', "<cmd>TransparentToggle<cr>", { desc = 'Transparent Toggle' })
 
+-- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
 vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
