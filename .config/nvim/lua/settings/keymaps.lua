@@ -21,6 +21,12 @@ vim.keymap.set('n', '<c-y>', '5<c-y>', { silent = true })
 
 -- automatically open help in vertical split
 vim.keymap.set('c', 'vh', 'vert help ', { noremap = true })
+vim.keymap.set('n', '<leader>cd', function()
+  local dir = vim.fn.expand('%:p:h')
+  -- Feed keys: ':' to enter command mode, then 'cd ', then the path
+  vim.api.nvim_feedkeys(':' .. 'lcd ' .. dir, 'n', false)
+end, { desc = 'Pre-fill :cd with current buffer path' })
+
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -57,32 +63,29 @@ vim.keymap.set("v", ">", ">gv")
 
 -- first, some conveniences for use in the following mapping specs
 local tb = require('telescope.builtin')
+local sp = require('snacks').picker
 
 -- NON-LEADER
--- vim.keymap.set('n', '<c-b>', tb.buffers, { desc = 'buffer list' })
--- vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = 'find in current buffer' })
--- vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = 'live grep' })
--- vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = 'grep cwd for word under cursor' })
-vim.keymap.set('n', "<c-b>", function() require("snacks").picker.buffers() end, { desc = "buffers" } )
-vim.keymap.set('n', "<c-f>", function() require("snacks").picker.lines() end, { desc = "find in buffer" } )
-vim.keymap.set('n', "<c-g>", function() require("snacks").picker.grep() end, { desc = "grep" } )
-vim.keymap.set('n', '<leader>*', function() require("snacks").picker.grep_word() end, { desc = 'grep cwd for word under cursor' })
+vim.keymap.set('n', "<c-b>", function() sp.buffers() end, { desc = "buffers" } )
+vim.keymap.set('n', "<c-f>", function() sp.lines() end, { desc = "find in buffer" } )
+vim.keymap.set('n', "<c-g>", function() sp.grep() end, { desc = "grep" } )
+vim.keymap.set('n', '<leader>*', function() sp.grep_word() end, { desc = 'grep cwd for word under cursor' })
 
 -- TOP LEVEL
--- vim.keymap.set('n', '<leader>/', tb.live_grep, { desc = 'grep cwd for word under cursor' })
-vim.keymap.set('n', "<leader>/", function() require("snacks").picker.grep() end, { desc = "grep" } )
-vim.keymap.set('n', "<leader>,", function() require("snacks").picker.buffers() end, { desc = "buffers" } )
-vim.keymap.set('n', "<leader>:", function() require("snacks").picker.command_history() end, { desc = "command history" } )
-vim.keymap.set({ 'n', 'v' }, "<leader>n", function() require("snacks").picker.notifications() end, { desc = "notification history" } )
+vim.keymap.set('n', "<leader>/", function() sp.grep() end, { desc = "grep" } )
+vim.keymap.set('n', "<leader>,", function() sp.buffers() end, { desc = "buffers" } )
+vim.keymap.set('n', "<leader>:", function() sp.command_history() end, { desc = "command history" } )
+vim.keymap.set({ 'n', 'v' }, "<leader>n", function() sp.notifications() end, { desc = "notification history" } )
 
 -- BUFFERS
-vim.keymap.set('n', '<leader>bb', tb.buffers, { desc = 'buffer list' })
+vim.keymap.set('n', '<leader>bb', function() sp.buffers() end, { desc = 'buffer list' })
 
 -- FILES
-vim.keymap.set('n', '<leader>ff', tb.find_files, { desc = 'find files' })
-vim.keymap.set('n', '<leader>fg', tb.live_grep, { desc = 'live grep' })
-vim.keymap.set('n', '<leader>fb', tb.buffers, { desc = 'buffers' })
-vim.keymap.set('n', '<leader>fh', tb.help_tags, { desc = 'help tags' })
+vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
+vim.keymap.set('n', '<leader>ff', function() sp.files() end, { desc = 'find files' })
+vim.keymap.set('n', '<leader>fg', function() sp.grep() end, { desc = 'live grep' })
+vim.keymap.set('n', '<leader>fb', function() sp.buffers() end, { desc = 'buffers' })
+vim.keymap.set('n', '<leader>fh', function() sp.help() end, { desc = 'help' })
 
 -- GIT
 vim.keymap.set('n', '<leader>gb', tb.git_branches, { desc = 'git branches' })
@@ -108,6 +111,13 @@ vim.keymap.set('n', '<leader>lr', tb.lsp_references, { desc = 'LSP references' }
 vim.keymap.set('n', '<leader>ls', tb.lsp_document_symbols, { desc = 'LSP document symbols' })
 vim.keymap.set('n', '<leader>lS', tb.lsp_workspace_symbols, { desc = 'LSP workspace symbols' })
 vim.keymap.set('n', '<leader>lt', tb.lsp_type_definitions, { desc = 'LSP type definitions' })
+
+-- SESSIONS
+vim.keymap.set('n', "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
+vim.keymap.set('n', "<leader>qr", function() require("persistence").load() end, { desc = "Restore Session" })
+vim.keymap.set('n', "<leader>qs", function() require("persistence").select() end, { desc = "Select Session" })
+vim.keymap.set('n', "<leader>ql", function() require("persistence").load({ last = true }) end, { desc = "Restore Last Session" })
+vim.keymap.set('n', "<leader>qd", function() require("persistence").stop() end, { desc = "Don't Save Current Session" })
 
 -- TELESCOPE
 vim.keymap.set('n', '<leader>ta', tb.autocommands, { desc = 'autocommands' })
