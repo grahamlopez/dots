@@ -117,12 +117,14 @@ vim.keymap.set( "n", "<leader>e", function() require("snacks").explorer() end, {
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
+-- delete buffer (bdelete or bufferline or snacks.bufdelete())
 
 -- FINDS
 vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
 vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
-vim.keymap.set("n", "<leader>ff", function() sp.files() end, { desc = "find files" })
+vim.keymap.set("n", "<leader>ff", function() sp.smart() end, { desc = "find files (smart)" })
+vim.keymap.set("n", "<leader>fF", function() sp.files() end, { desc = "find files" })
 vim.keymap.set("n", "<leader>fg", function() sp.git_files() end, { desc = "live grep" })
 vim.keymap.set("n", "<leader>fh", function() sp.help() end, { desc = "help" })
 vim.keymap.set("n", "<leader>fp", function() sp.projects() end, { desc = "projects" })
@@ -184,11 +186,13 @@ vim.keymap.set("n", "<leader>ql", function() require("persistence").load({ last 
 vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, { desc = "Don't Save Current Session" })
 
 -- SEARCH
+vim.keymap.set("n", '<leader>s/', function() sp.lines() end, { desc = "search current buffer" }) -- FIXME
 vim.keymap.set("n", '<leader>s"', function() sp.registers() end, { desc = "registers" })
 vim.keymap.set("n", '<leader>sa', function() sp.autocmds() end, { desc = "autocommands" })
 vim.keymap.set("n", '<leader>sb', function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set("n", '<leader>sc', function() sp.commands() end, { desc = "commands" })
 vim.keymap.set("n", '<leader>sC', function() sp.command_history() end, { desc = "command_history" })
+vim.keymap.set("n", "<leader>sg", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>sh", function() sp.help() end, { desc = "help" })
 vim.keymap.set("n", "<leader>sH", function() sp.highlights() end, { desc = "highlights" })
 vim.keymap.set("n", "<leader>si", function() sp.icons() end, { desc = "icons" })
@@ -205,6 +209,7 @@ vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" 
 vim.keymap.set("n", '<leader>sS', function() sp.search_history() end, { desc = "search history" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
 
+vim.keymap.set("n", '<leader>st/', tb.current_buffer_fuzzy_find, { desc = "current buffer fuzzy" })
 vim.keymap.set("n", '<leader>st"', tb.registers, { desc = "registers" })
 vim.keymap.set("n", '<leader>sta', tb.autocommands, { desc = "autocommands" })
 vim.keymap.set("n", "<leader>stb", tb.buffers, { desc = "buffers" })
@@ -236,7 +241,16 @@ vim.keymap.set("n", '<leader>uC', function() sp.colorschemes()() end, { desc = "
 -- )
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
-vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen() end, { desc = "Zen zoom" })
+vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
+-- line numbers
+-- relative number
+-- vim.opt.cursorline
+-- spell
+-- wrap
+-- diagnostics
+-- conceal
+-- indent guides
+-- smooth scroll
 
 -- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })

@@ -102,13 +102,23 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
     I think LazyVim has evolved to be pretty close to what I want, but I still want to
     build it up from scratch. So I'm drawing a lot of hints and inspiration from there.
 
+    a neat book to double-check understanding: https://lazyvim-ambitious-devs.phillips.codes/course/chapter-1/
+
     TODO:
     - [ ] implement ui toggles
+    - [ ] zoom window / tab workflow
+        - for "zooming" windows (:tab split)
+        - for isolating cwd
+        - how to minimize cognitive load
+          - visual cues (bufferline?)
+          - keybindings
     - [ ] understand clipboards
         - between separate nvim processes
         - interaction with system clipboard
         - can an nvim open shortcut + picker replace something like clipse?
     - [ ] understand git workflows
+    - [ ] fixme/todo, etc. handling
+    - [ ] enable mouse for bufferline (select and close)
 
 
     Configuration examples:

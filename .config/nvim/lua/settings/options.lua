@@ -43,10 +43,11 @@ vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in 
 vim.opt.smartcase = true
 -- Appearance
 vim.opt.number = true        -- Make line numbers default
-vim.opt.relativenumber = false
+vim.opt.relativenumber = true
 vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this (most do)
 vim.opt.signcolumn = 'yes'
 vim.opt.colorcolumn = ''
+vim.opt.cursorline = true
 vim.opt.scrolloff = 5
 vim.opt.completeopt = { "menuone", "noselect", "noinsert" } -- For a better completion experience (mostly just for cmp)
 vim.opt.shortmess:append "c"
@@ -91,12 +92,9 @@ vim.opt.sessionoptions:append('globals') -- part of what's needed to preserve bu
 -- vim.opt.pumheight = 10 -- pop-up menu height
 -- vim.opt.pumblend = 10 -- transparency-ish for pop-up menu
 -- vim.opt.showmode = false -- we don't need to see things like -- INSERT -- anymore
--- vim.opt.showtabline = 1 -- always show tabs
--- vim.opt.smartindent = true -- make indenting smarter again
 -- vim.opt.swapfile = false -- creates a swapfile
 -- vim.opt.undofile = true -- enable persistent undo
 -- vim.opt.writebackup = false -- if a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited
--- vim.opt.cursorline = true -- highlight the current line
 -- vim.opt.laststatus = 3
 -- vim.opt.showcmd = false
 -- vim.opt.ruler = false
