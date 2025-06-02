@@ -48,6 +48,7 @@ vim.opt.termguicolors = true -- NOTE: You should make sure your terminal support
 vim.opt.signcolumn = 'yes'
 vim.opt.colorcolumn = ''
 vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number'
 vim.opt.scrolloff = 5
 vim.opt.completeopt = { "menuone", "noselect", "noinsert" } -- For a better completion experience (mostly just for cmp)
 vim.opt.shortmess:append "c"

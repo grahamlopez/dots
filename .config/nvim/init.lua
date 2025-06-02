@@ -122,6 +122,8 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
     - [ ] consistent and predictable 'gq' line-wrapping behavior
         - currently a problem especially in markdown files and lua comments
 
+    WSL:
+    - [ ] whichkey window shows text from underneath and is generally garbled
 
     Configuration examples:
 

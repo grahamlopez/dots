@@ -145,6 +145,12 @@ vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { 
 -- vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
 
 -- HELP
+-- FIXME open help for word under cursor
+-- vim.keymap.set("n", "<leader>h*", function() 
+--   local keys = vim.api.nvim_replace_termcodes('<c-r><c-w>', true, false, true)
+--   sp.help()
+--   vim.api.nvim_feedkeys(keys, 'i', false)
+-- end, { desc = "help for cword" })
 vim.keymap.set("n", "<leader>hth", tb.help_tags, { desc = "help" })
 vim.keymap.set("n", "<leader>htk", tb.keymaps, { desc = "keymaps" })
 vim.keymap.set("n", "<leader>htm", tb.man_pages, { desc = "man pages" })
@@ -210,6 +216,9 @@ vim.keymap.set("n", '<leader>sD', function() sp.diagnostics_buffer() end, { desc
 vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "search for plugin spec" })
 vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" })
 vim.keymap.set("n", '<leader>sS', function() sp.search_history() end, { desc = "search history" })
+-- FIXME Needs folke/todo-comments.nvim
+-- vim.keymap.set("n", '<leader>sf', function() sp.todo_comments() end, { desc = "TODO" })
+-- vim.keymap.set("n", '<leader>sF', function() sp.todo_comments({ keywords = { "TODO", "FIXME", }}) end, { desc = "TODO FIXME" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
 
 vim.keymap.set("n", '<leader>st/', tb.current_buffer_fuzzy_find, { desc = "current buffer fuzzy" })
@@ -242,6 +251,7 @@ vim.keymap.set("n", '<leader>uC', function() sp.colorschemes()() end, { desc = "
 -- 	"<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>",
 -- 	{ desc = "colorscheme" }
 -- )
+vim.keymap.set("n", "<leader>ul", function() require("snacks").toggle.option("cursorline") end, { desc = "cursorline" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
@@ -254,6 +264,7 @@ vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, {
 -- conceal
 -- indent guides
 -- smooth scroll
+-- cursorline highlight
 
 -- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
