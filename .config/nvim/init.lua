@@ -110,7 +110,7 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
         - for "zooming" windows (:tab split)
         - for isolating cwd
         - how to minimize cognitive load
-          - visual cues (bufferline?)
+          - visual cues (lualine config)
           - keybindings
     - [ ] understand clipboards
         - between separate nvim processes
@@ -119,6 +119,8 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
     - [ ] understand git workflows
     - [ ] fixme/todo, etc. handling
     - [ ] enable mouse for bufferline (select and close)
+    - [ ] consistent and predictable 'gq' line-wrapping behavior
+        - currently a problem especially in markdown files and lua comments
 
 
     Configuration examples:

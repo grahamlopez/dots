@@ -117,7 +117,10 @@ vim.keymap.set( "n", "<leader>e", function() require("snacks").explorer() end, {
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
--- delete buffer (bdelete or bufferline or snacks.bufdelete())
+-- delete buffer - preserve window (switch to alternate, "|" to chain, delete alternate)
+-- FIXME this could be extended with "... | wshada | ..." to preserve marks
+-- (cursor position), but can be an issue when using multiple instances
+vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" })
 
 -- FINDS
 vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })

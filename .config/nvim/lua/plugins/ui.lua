@@ -16,9 +16,10 @@ return {
       require('lualine').setup {
         options = {
           theme = 'nord',
+          globalstatus = true,
         },
         sections = {
-          lualine_c = { 'buffers' },
+          lualine_c = { 'tabs' },
         },
       }
 
