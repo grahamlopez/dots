@@ -35,14 +35,36 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
 -- vim.keymap.set("n", "<leader>w", ":lua vim.wo.wrap = not vim.wo.wrap<CR>", { noremap = true, silent = true })
 
+-- A generic function for toggling values. Seems a bit hacky FIXME
+local function vim_opt_toggle(opt, on, off, name)
+  local val = vim.opt[opt]:get()
+  local is_off = false
+
+  if type(val) == "boolean" then
+    is_off = not val
+  elseif type(val) == "string" then
+    is_off = (val == off)
+  elseif type(val) == "table" then
+    is_off = (#val == 0) or (#val == 1 and val[1] == "")
+  else
+    is_off = (val == off)
+  end
+
+  if is_off then
+    vim.opt[opt] = on
+    vim.notify((name or opt) .. " Enabled")
+  else
+    vim.opt[opt] = off
+    vim.notify((name or opt) .. " Disabled")
+  end
+end
+
 -- A function and keymapping to toggle colorcolum
 vim.api.nvim_create_user_command("Togglecolorcolumn", function()
-  if vim.o.colorcolumn == "" then
-    vim.o.colorcolumn = "+1"
-  else
-    vim.o.colorcolumn = ""
-  end
+  vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn')
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
+
+
 
 -- buffers - TODO how to ignore while in nvim-tree, telescope, etc.
 -- vim.keymap.set('n', '<c-n>', ":bnext<cr>", { silent = true })
@@ -245,26 +267,24 @@ vim.keymap.set("n", "<leader>stT", tb.tags, { desc = "tags" })
 vim.keymap.set("n", "<leader>stv", tb.vim_options, { desc = "vim options" })
 
 -- UI
-vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
-vim.keymap.set("n", '<leader>uC', function() sp.colorschemes()() end, { desc = "colorscheme" })
+-- vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
+vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end, { desc = "ColorColumn Toggle" })
+vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
 -- vim.keymap.set( "n", "<leader>uC",
 -- 	"<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>",
--- 	{ desc = "colorscheme" }
--- )
-vim.keymap.set("n", "<leader>ul", function() require("snacks").toggle.option("cursorline") end, { desc = "cursorline" })
+-- 	{ desc = "colorscheme" })
+vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
+vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
+vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
--- line numbers
--- relative number
--- vim.opt.cursorline
 -- spell
 -- wrap
 -- diagnostics
 -- conceal
 -- indent guides
 -- smooth scroll
--- cursorline highlight
 
 -- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
