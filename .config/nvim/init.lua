@@ -97,6 +97,65 @@ require("settings.keymaps")
     It might be time to plan something top-down, as this seems to become very piecemeal
     and fragile
 
+    A new picture. Just because a plugin is present doesn't mean it is required. Current plugins are
+    shown here to help understand context and organization.
+
+    lua/
+      after/
+        ftplugin/
+          lua.lula
+      plugins/
+        ai.lua
+          (code agent)
+        appearance.lua
+          (theming)
+            transparent.nvim
+            auto-dark-mode.nvim
+          (ui elements appearance)
+            nvim-lualine/lualine.nvim
+              nvim-tree/nvim-web-devicons
+            akinsho/bufferline.nvim
+          (zen/focus modes)
+          (outline)
+        coding.lua
+          (code formatting)
+            conform.nvim
+          (git)
+            gitsigns.nvim
+          (lsp)
+            neovim/nvim-lspconfig
+              williamboman/mason.nvim
+              willialmboman/mason-lspconfig.nvim
+              WhoIsSethDaniel/mason-tool-installer.nvim
+              folke/lazydev.nvim
+              j-hui/fidget.nvim
+          (fixme/todo)
+          (debugging)
+        ui.lua
+          (movement)
+            folke/flash.nvim
+          (pickers)
+            folke/snacks.nvim (picker)
+            nvim-telescope/telescope.nvim
+          (keybinding)
+            folke/which-key.nvim
+          (completion)
+          (file explorer)
+          (tab pages, zoom window)
+        utility.lua
+          (syntax)
+            nvim-treesitter/nvim-treesitter
+            nvim-treesitter/nvim-treesitter-context
+          (session)
+            folke/persistence.nvim
+          (clipboards/registers)
+          (spell)
+          (folding)
+      settings/
+        autocmds.lua
+        keymaps.lua
+        options.lua
+
     TODO:
     - [ ] zoom window / tab workflow
         - for "zooming" windows (:tab split)
