@@ -21,11 +21,6 @@ vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true })
 
 -- automatically open help in vertical split
 vim.keymap.set("c", "vh", "vert help ", { noremap = true })
-vim.keymap.set("n", "<leader>cd", function()
-  local dir = vim.fn.expand("%:p:h")
-  -- Feed keys: ':' to enter command mode, then 'cd ', then the path
-  vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
-end, { desc = "Pre-fill :cd with current buffer path" })
 
 -- Remap for dealing with word wrap
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -61,10 +56,8 @@ end
 
 -- A function and keymapping to toggle colorcolum
 vim.api.nvim_create_user_command("Togglecolorcolumn", function()
-  vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn')
+  vim_opt_toggle("colorcolumn", "+1", "", "colorcolumn")
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
-
-
 
 -- buffers - TODO how to ignore while in nvim-tree, telescope, etc.
 -- vim.keymap.set('n', '<c-n>', ":bnext<cr>", { silent = true })
@@ -144,6 +137,12 @@ vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer 
 -- (cursor position), but can be an issue when using multiple instances
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" })
 
+-- quicker change-directory
+vim.keymap.set("n", "<leader>cd", function()
+  local dir = vim.fn.expand("%:p:h")
+  vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
+end,{ desc = "Pre-fill :cd with current buffer path" })
+
 -- FINDS
 vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
@@ -183,13 +182,12 @@ vim.keymap.set("n", "<leader>hk", function() sp.keymaps() end, { desc = "keymaps
 vim.keymap.set("n", "<leader>hw", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP
-vim.keymap.set("n", "<leader>ltf", function() require("conform").format({ async = true }) end, { desc = "Format" })
-
 vim.keymap.set("n", "<leader>l,", function() sp.lsp_config() end, { desc = "LSP config" })
 vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
 vim.keymap.set("n", "<leader>ld", function() sp.lsp_definitions() end, { desc = "LSP definitions" })
 vim.keymap.set("n", "<leader>lD", function() sp.lsp_declarations() end, { desc = "LSP declarations" })
+vim.keymap.set("n", "<leader>lf", function() require("conform").format({ async = true }) end, { desc = "Format" })
 vim.keymap.set("n", "<leader>li", function() sp.lsp_implementations() end, { desc = "LSP implementations" })
 vim.keymap.set("n", "<leader>lr", function() sp.lsp_references() end, { desc = "LSP references" })
 vim.keymap.set("n", "<leader>ls", function() sp.lsp_symbols() end, { desc = "LSP document symbols" })
