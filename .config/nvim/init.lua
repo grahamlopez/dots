@@ -76,27 +76,6 @@ require("settings.options")
 require("settings.autocmds")
 require("settings.keymaps")
 
-vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
-  callback = function()
-    -- set this to match line numbering?
-    -- FIXME adapt to dark/light theme
-    vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 235, bg = "#121212" })
-    vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
-    vim.api.nvim_set_hl(0, "NormalFloat", { ctermbg = "NONE", bg = "NONE" })
-  end,
-})
-
--- Set environment variables for git when working on nvim config
-local home = os.getenv("HOME")
-vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
-  callback = function()
-    if vim.fn.getcwd() == home .. "/.config/nvim" then
-      vim.env.GIT_DIR = home .. "/.dots-git/"
-      vim.env.GIT_WORK_TREE = home
-    end
-  end,
-})
-
 --[[
     Summer 2025:
     I think LazyVim has evolved to be pretty close to what I want, but I still want to
@@ -104,8 +83,21 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
 
     a neat book to double-check understanding: https://lazyvim-ambitious-devs.phillips.codes/course/chapter-1/
 
+    As I go along trying to set up the various pieces of snacks.nvim, I keep hitting little
+    annoying problems. I guess I might be going back to "completely from scratch" even if
+    I use LazyVim as a demonstration of what should be possible.
+
+    snacks problems:
+    - todo-comments.nvim and snacks.picker.todo_comments()
+    - snacks.toggle
+    - snacks.indent
+    - generally poor documentation
+    - seemingly incomplete functionality made up for in other places in LazyVim (could be skill issue)
+
+    It might be time to plan something top-down, as this seems to become very piecemeal
+    and fragile
+
     TODO:
-    - [ ] implement ui toggles
     - [ ] zoom window / tab workflow
         - for "zooming" windows (:tab split)
         - for isolating cwd
@@ -116,11 +108,13 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
         - between separate nvim processes
         - interaction with system clipboard
         - can an nvim open shortcut + picker replace something like clipse?
-    - [ ] understand git workflows
-    - [ ] fixme/todo, etc. handling
+    - [ ] git workflows
+    - [ ] fixme/todo, etc. handling (folke/todo-comments.nvim)
     - [ ] enable mouse for bufferline (select and close)
     - [ ] consistent and predictable 'gq' line-wrapping behavior
         - currently a problem especially in markdown files and lua comments
+    - [ ] integrated AI: first task is to help me with my nvim configs
+    - [ ] read through and understand spell checking settings, files, workflows
 
     WSL:
     - [ ] whichkey window shows text from underneath and is generally garbled

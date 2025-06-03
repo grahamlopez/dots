@@ -29,6 +29,8 @@ return {
       },
     },
 
+    -- Fidget is an unintrusive window in the corner of your editor for notifications 
+    -- that manages its own lifetime.
     { "j-hui/fidget.nvim", opts = {} } -- https://github.com/j-hui/fidget.nvim
 
   },

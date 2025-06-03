@@ -169,9 +169,10 @@ vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { 
 -- HELP
 -- FIXME open help for word under cursor
 -- vim.keymap.set("n", "<leader>h*", function() 
---   local keys = vim.api.nvim_replace_termcodes('<c-r><c-w>', true, false, true)
+--   local keys = vim.api.nvim_replace_termcodes('<C-r><C-w>', true, false, true)
 --   sp.help()
---   vim.api.nvim_feedkeys(keys, 'i', false)
+--   vim.wait(500, function() return false end)
+--   vim.api.nvim_feedkeys(keys, 'n', false)
 -- end, { desc = "help for cword" })
 vim.keymap.set("n", "<leader>hth", tb.help_tags, { desc = "help" })
 vim.keymap.set("n", "<leader>htk", tb.keymaps, { desc = "keymaps" })
@@ -238,7 +239,6 @@ vim.keymap.set("n", '<leader>sD', function() sp.diagnostics_buffer() end, { desc
 vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "search for plugin spec" })
 vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" })
 vim.keymap.set("n", '<leader>sS', function() sp.search_history() end, { desc = "search history" })
--- FIXME Needs folke/todo-comments.nvim
 -- vim.keymap.set("n", '<leader>sf', function() sp.todo_comments() end, { desc = "TODO" })
 -- vim.keymap.set("n", '<leader>sF', function() sp.todo_comments({ keywords = { "TODO", "FIXME", }}) end, { desc = "TODO FIXME" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
@@ -270,21 +270,17 @@ vim.keymap.set("n", "<leader>stv", tb.vim_options, { desc = "vim options" })
 -- vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end, { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
--- vim.keymap.set( "n", "<leader>uC",
--- 	"<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>",
--- 	{ desc = "colorscheme" })
+-- vim.keymap.set( "n", "<leader>uC", "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = "colorscheme" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
 vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
+-- TODO vim.keymap.set("n", "<leader>us", function() require("snacks").scroll.disable() end, { desc = "smooth scrolling" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
+vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
--- spell
--- wrap
--- diagnostics
--- conceal
--- indent guides
--- smooth scroll
+-- TODO diagnostics
+-- TODO indent guides
 
 -- EXECUTE
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
