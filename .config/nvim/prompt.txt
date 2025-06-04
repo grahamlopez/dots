@@ -1,0 +1,96 @@
+
+I want to build a neovim (nvim) 0.11 configuration that provides modern editor
+and IDE features for productivity. I like the general features and UI of the
+most current LazyVim config distribution, but I want my configuration to be as
+minimal and simple as possible. It should be optimized for speed and 
+responsiveness.
+
+Here are the features I want in my nvim experience. Please group nvim and plugin
+configurations corresponding to these general categories. To help with this,
+here is how I would like my config to have the following directory and file layout
+under .config/nvim/
+
+init.lua
+lua/
+  after/
+    ftplugin/
+  plugins/
+    appearance.lua
+    coding.lua
+    ui.lua
+    utility.lua
+  settings/
+    autocmds.lua
+    keymaps.lua
+    options.lua
+
+I am providing what I already have in these files to build upon.
+
+appearance.lua:
+I am happy with the default colorscheme, but I like for any colorscheme that I
+happen to be using to automatically follow the light and dark preference set by my desktop
+environment; this should work on both linux and in WSL. I have had success with
+auto-dark-mode.nvim but it isn't required.
+
+I also like to be able to toggle the transparency of the background using a keybinding. 
+
+I use lualine.nvim to display useful information in a global statusline that is
+always displayed along the bottom of nvim no matter how many window splits are
+open. 
+
+And I use bufferline.nvim to show buffer information along the top, as well as directly
+navigate to buffers based on their ordinal numbering shown by bufferline.nvim 
+using <alt+1>, <alt+2>, etc.
+
+I would like to be able to use a keybinding to show an outline of the current
+file whether it is markdown or code, and ideally be able to navigate the file
+and manipulate folds with this outline as well.
+
+Finally, I would like to be able to toggle some kind of zen or focus mode to
+help with more productive writing and coding.
+
+coding.lua:
+I would like nvim to provide a modern coding experience for c, c++, lua, bash,
+latex, and markdown. This should include language server provided automatic code
+formatting, real time diagnostics and fixes, lsp-based completions, and lsp 
+codebase navigation. Please set up keybindings for all of these features.
+
+ui.lua
+      (movement)
+        folke/flash.nvim
+      (pickers)
+        folke/snacks.nvim (picker)
+        nvim-telescope/telescope.nvim
+      (keybinding)
+        folke/which-key.nvim
+      (completion)
+      (file explorer)
+      (tab pages, zoom window)
+
+For the general user interface enhancements, please set up a picker and
+corresponding keybindings for fuzzy finding files, grep within a single file and
+across the files of the current working directory. Set up a nice file explorer
+and corresponsing keybindings.
+
+utility.lua:
+      (syntax)
+        nvim-treesitter/nvim-treesitter
+        nvim-treesitter/nvim-treesitter-context
+      (session)
+        folke/persistence.nvim
+      (clipboards/registers)
+      (spell)
+
+I like the use of pickers like telescope or snacks to quickly fuzzy find files,
+grep words, help pages, and all the other things they can do.
+I would like the nvim clipboard/registers to integrate seamlessly with the
+system clipboard, and a way to use interactively browse clipboard entries using
+a picker. There should be excellent support for folding of all file types. Good
+spell checking support should be off by default but easily toggled on and used
+via keybindings. A minimal and featureful file explorer should be included.
+
+Keybindings:
+I like the use of which-key.nvim to be able to easily group and get a reminder
+of available keybindings. I use the space key as the leader key, and group
+related actions together under the same letter in a sensible way.
+

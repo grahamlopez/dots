@@ -1,48 +1,120 @@
 return {
   {
+
+    --
+    --      Code Formatting
+    --
+
     "stevearc/conform.nvim",
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
-    -- keys = {
-    --   {
-    --     -- Customize or remove this keymap to your liking
-    --     "<leader>f",
-    --     function()
-    --       require("conform").format({ async = true })
-    --     end,
-    --     mode = "",
-    --     desc = "Format buffer",
-    --   },
-    -- },
     -- This will provide type hinting with LuaLS
     ---@module "conform"
     ---@type conform.setupOpts
     opts = {
-      -- Define your formatters
       formatters_by_ft = {
         lua = { "stylua" },
       },
-      -- Set default options
       default_format_opts = {
         lsp_format = "fallback",
       },
-      -- Set up format-on-save
-      -- format_on_save = { timeout_ms = 500 },
-      -- Customize formatters
-      -- formatters = {
-      -- 	shfmt = {
-      -- 		prepend_args = { "-i", "2" },
-      -- 	},
-      -- },
     },
     init = function()
       -- If you want the formatexpr, here is the place to set it
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
     end,
   },
+
+  --
+  --      Git
+  --
+
   {
     -- https://github.com/lewis6991/gitsigns.nvim
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",
+  },
+
+  --
+  --      TODO/FIXME
+  --
+
+  --
+  --      Debugging
+  --
+
+  --
+  --      LSP
+  --
+
+  {
+    -- some ideas from
+    -- https://github.com/tjdevries/config.nvim/blob/master/lua/custom/plugins/lsp.lua
+    --   other plugins in TJ's config:
+    --   - https://git.sr.ht/~whynothugo/lsp_lines.nvim
+    --
+    --   use ':echo executable("lua-language-server")' etc. to make sure neovim can
+    --   find and execute the various language servers
+    "neovim/nvim-lspconfig", -- https://github.com/neovim/nvim-lspconfig
+    dependencies = {
+
+      "williamboman/mason.nvim", -- https://github.com/williamboman/mason.nvim
+      "williamboman/mason-lspconfig.nvim", -- https://github.com/williamboman/mason-lspconfig.nvim
+      "WhoIsSethDaniel/mason-tool-installer.nvim", -- https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim
+      {
+        -- removes need for e.g. lua_ls.setup ({ diagnostics = { globals = { "vim" } } })
+        "folke/lazydev.nvim", -- https://github.com/folke/lazydev.nvim
+        ft = "lua", -- only load on lua files
+        opts = {
+          library = {
+            -- See the configuration section for more details
+            -- Load luvit types when the `vim.uv` word is found
+            { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+          },
+        },
+      },
+
+      -- Fidget is an unintrusive window in the corner of your editor for notifications
+      -- that manages its own lifetime.
+      { "j-hui/fidget.nvim", opts = {} }, -- https://github.com/j-hui/fidget.nvim
+    },
+
+    config = function()
+      local server_list = {
+        -- "bashls", -- requires npm
+        "clangd",
+        "clang-format",
+        "lua_ls",
+        "stylua",
+        "tectonic",
+        -- "marksman",
+      }
+
+      -- plugin setup order recommended by
+      -- https://github.com/williamboman/mason-lspconfig.nvim?tab=readme-ov-file#setup
+
+      require("mason").setup({
+        ui = {
+          border = "rounded",
+          icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗",
+          },
+        },
+      })
+
+      ---@diagnostic disable-next-line: missing-fields
+      require("mason-lspconfig").setup({})
+
+      require("mason-tool-installer").setup({
+        ensure_installed = server_list,
+      })
+
+      require("lspconfig").clangd.setup({})
+
+      -- https://luals.github.io/wiki/configuration/
+      require("lspconfig").lua_ls.setup({})
+    end,
   },
 }
