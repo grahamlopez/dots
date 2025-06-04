@@ -80,6 +80,29 @@ local tb = require("telescope.builtin")
 local sp = require("snacks").picker
 local wk = require("which-key")
 
+vim.g.current_picker = "telescope"
+
+local function TogglePicker()
+  if vim.g.current_picker == "telescope" then
+    vim.g.current_picker = "snacks"
+    vim.notify("Switched to Snacks picker")
+  else
+    vim.g.current_picker = "telescope"
+    vim.notify("Switched to Telescope picker")
+  end
+end
+
+local function pick(telescope_fn, snacks_fn)
+  return function()
+    if vim.g.current_picker == "telescope" then
+      require("telescope.builtin")[telescope_fn]()
+    else
+      require("snacks.picker")[snacks_fn]()
+    end
+  end
+end
+
+
 -- WHICHKEY
 wk.add({
   mode = { "n", "v" },
@@ -153,9 +176,10 @@ vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers
 vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
   { desc = 'find config files' })
 vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
-vim.keymap.set("n", "<leader>ff", function() sp.smart() end, { desc = "find files (smart)" })
+vim.keymap.set("n", "<leader>ff", pick("find_files", "files"), { desc = "Find files" })
+vim.keymap.set("n", "<leader>fg", pick("live_grep", "grep"), { desc = "Live grep" })
 vim.keymap.set("n", "<leader>fF", function() sp.files() end, { desc = "find files" })
-vim.keymap.set("n", "<leader>fg", function() sp.git_files() end, { desc = "live grep" })
+--vim.keymap.set("n", "<leader>fg", function() sp.git_files() end, { desc = "live grep" })
 vim.keymap.set("n", "<leader>fh", function() sp.help() end, { desc = "help" })
 vim.keymap.set("n", "<leader>fp", function() sp.projects() end, { desc = "projects" })
 vim.keymap.set("n", "<leader>fr", function() sp.recent() end, { desc = "recent" })
@@ -189,6 +213,7 @@ vim.keymap.set("n", "<leader>hw", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP
 vim.keymap.set("n", "<leader>l,", function() sp.lsp_config() end, { desc = "LSP config" })
+vim.keymap.set("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "Code Action" })
 vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
 vim.keymap.set("n", "<leader>ld", function() sp.lsp_definitions() end, { desc = "LSP definitions" })
@@ -281,6 +306,7 @@ vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursor
 vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
   { desc = "relative numbers" })
+vim.keymap.set("n", "<leader>up", function() TogglePicker() end, { desc = "Toggle Picker" })
 -- TODO vim.keymap.set("n", "<leader>us", function() require("snacks").scroll.disable() end, { desc = "smooth scrolling" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })

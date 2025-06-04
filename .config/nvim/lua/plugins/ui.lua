@@ -118,6 +118,7 @@ return {
       local actions = require("telescope.actions")
       require("telescope").setup({
         defaults = {
+          -- TODO unify with snacks: vertical if >160 columnss available
           layout_strategy = "vertical",
           mappings = { -- https://github.com/nvim-telescope/telescope.nvim#default-mappings
 
