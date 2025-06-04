@@ -82,28 +82,28 @@ local wk = require("which-key")
 
 -- WHICHKEY
 wk.add({
-	mode = { "n", "v" },
-	{ "<leader>b", group = "Buffer" },
-	{ "<leader>f", group = "Find" },
-	{ "<leader>g", group = "Git" },
-	{ "<leader>h", group = "Help" },
-	{ "<leader>l", group = "LSP" },
-	{ "<leader>lv", group = "Vim" },
-	{ "<leader>lt", group = "Telescope" },
-	{ "<leader>q", group = "Session/Quit" },
-	{ "<leader>s", group = "Search" },
-	{ "<leader>st", group = "Telescope" },
-	{ "<leader>u", group = "UI" },
+  mode = { "n", "v" },
+  { "<leader>b",  group = "Buffer" },
+  { "<leader>f",  group = "Find" },
+  { "<leader>g",  group = "Git" },
+  { "<leader>h",  group = "Help" },
+  { "<leader>l",  group = "LSP" },
+  { "<leader>lv", group = "Vim" },
+  { "<leader>lt", group = "Telescope" },
+  { "<leader>q",  group = "Session/Quit" },
+  { "<leader>s",  group = "Search" },
+  { "<leader>st", group = "Telescope" },
+  { "<leader>u",  group = "UI" },
 })
 
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", function() sp.lines() end, { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>*", function() sp.grep_word() end, { desc = "grep cwd for word under cursor" })
-vim.keymap.set({ "n", "x", "o"}, "s", function() require("flash").jump() end, { desc = "Flash" })
-vim.keymap.set({ "n", "x", "o"}, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
+vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
-vim.keymap.set({ "x", "o"}, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
+vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
 
 vim.keymap.set("n", "<c-b>", function() sp.buffers() end, { desc = "buffers" })
@@ -128,7 +128,12 @@ vim.keymap.set("n", "<leader>/", function() sp.grep() end, { desc = "grep" })
 vim.keymap.set("n", "<leader>,", function() sp.buffers() end, { desc = "buffers" })
 vim.keymap.set("n", "<leader>:", function() sp.command_history() end, { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
-vim.keymap.set( "n", "<leader>e", function() require("snacks").explorer() end, { desc = "file explorer" })
+vim.keymap.set("n", "<leader>e", function() require("snacks").explorer() end, { desc = "file explorer" })
+
+-- APPS
+-- TODO terminal, lazygit, outline, file explorer
+vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "Toggle Aerial" })
+vim.keymap.set('n', "<leader>ao", "<cmd>Outline<cr>", { desc = "Toggle Outline" })
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
@@ -141,11 +146,12 @@ vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer
 vim.keymap.set("n", "<leader>cd", function()
   local dir = vim.fn.expand("%:p:h")
   vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
-end,{ desc = "Pre-fill :cd with current buffer path" })
+end, { desc = "Pre-fill :cd with current buffer path" })
 
 -- FINDS
 vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
-vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end, { desc = 'find config files' })
+vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
+  { desc = 'find config files' })
 vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
 vim.keymap.set("n", "<leader>ff", function() sp.smart() end, { desc = "find files (smart)" })
 vim.keymap.set("n", "<leader>fF", function() sp.files() end, { desc = "find files" })
@@ -167,7 +173,7 @@ vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { 
 
 -- HELP
 -- FIXME open help for word under cursor
--- vim.keymap.set("n", "<leader>h*", function() 
+-- vim.keymap.set("n", "<leader>h*", function()
 --   local keys = vim.api.nvim_replace_termcodes('<C-r><C-w>', true, false, true)
 --   sp.help()
 --   vim.wait(500, function() return false end)
@@ -212,7 +218,8 @@ vim.keymap.set("n", "<leader>ltw", tb.diagnostics, { desc = "LSP diagnostics (wa
 vim.keymap.set("n", "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
 vim.keymap.set("n", "<leader>qr", function() require("persistence").load() end, { desc = "Restore Session" })
 vim.keymap.set("n", "<leader>qs", function() require("persistence").select() end, { desc = "Select Session" })
-vim.keymap.set("n", "<leader>ql", function() require("persistence").load({ last = true }) end, { desc = "Restore Last Session" })
+vim.keymap.set("n", "<leader>ql", function() require("persistence").load({ last = true }) end,
+  { desc = "Restore Last Session" })
 vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, { desc = "Don't Save Current Session" })
 
 -- SEARCH
@@ -266,21 +273,25 @@ vim.keymap.set("n", "<leader>stv", tb.vim_options, { desc = "vim options" })
 
 -- UI
 -- vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
-vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end, { desc = "ColorColumn Toggle" })
+vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
+  { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
 -- vim.keymap.set( "n", "<leader>uC", "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = "colorscheme" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
 vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
-vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
+vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
+  { desc = "relative numbers" })
 -- TODO vim.keymap.set("n", "<leader>us", function() require("snacks").scroll.disable() end, { desc = "smooth scrolling" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
+-- TODO how is this different than folke/zen-mode.nvim
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
 -- TODO diagnostics
 -- TODO indent guides
 
 -- EXECUTE
+-- FIXME not sure how really useful these are
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
 vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })

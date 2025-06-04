@@ -31,54 +31,152 @@
     ':help options' to get to the options part of the manual
 --]]
 
--- Tab / indentation
-vim.opt.tabstop = 2      -- insert 2 spaces for a tab
-vim.opt.shiftwidth = 2   -- the number of spaces inserted for each indentation
-vim.opt.softtabstop = 2
-vim.opt.expandtab = true -- convert tabs to spaces
-vim.opt.smartindent = true
--- Search
+-- General settings
+vim.opt.mouse = '' -- Disable mouse for speed
+vim.opt.clipboard = 'unnamedplus' -- Use system clipboard
+vim.opt.undofile = true -- Persistent undo
+-- vim.opt.backup = false -- No backup files
+-- vim.opt.writebackup = false -- No backup before overwriting
+-- vim.opt.swapfile = false -- No swap files
+vim.opt.updatetime = 250 -- Faster completion (4000ms default)
+vim.opt.timeoutlen = 300 -- Faster which-key popup
+vim.opt.history = 1000 -- More command history
+vim.opt.virtualedit = "block"
+
+-- Performance optimizations
+vim.opt.lazyredraw = true -- Don't redraw during macros
+-- opt.regexpengine = 1 -- Use old regex engine (faster for some patterns)
+vim.opt.ttyfast = true -- Fast terminal connection
+
+-- Search settings
 vim.opt.hlsearch = true   -- Set highlight on search
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.smartcase = true
+vim.opt.inccommand = "split"
+vim.opt.shortmess:append "c"
+
 -- Appearance
+vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this (most do)
 vim.opt.number = true        -- Make line numbers default
 vim.opt.relativenumber = true
-vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this (most do)
 vim.opt.signcolumn = 'yes'
 vim.opt.colorcolumn = ''
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = 'number'
 vim.opt.scrolloff = 5
-vim.opt.completeopt = { "menuone", "noselect", "noinsert" } -- For a better completion experience (mostly just for cmp)
-vim.opt.shortmess:append "c"
-vim.opt.breakindent = true                      -- Enable break indent
+vim.opt.sidescrolloff = 5 -- Keep 8 columns left/right of cursor
+vim.opt.pumheight = 15 -- Maximum items in popup menu
+vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winheight = 5
 vim.opt.winminheight = 5
 vim.opt.winwidth = 5
+vim.opt.laststatus = 3
 vim.opt.winminwidth = 5
 vim.opt.showtabline = 2
-vim.opt.laststatus = 3
--- Behavior
-vim.opt.undofile = true                         -- Save undo history
-vim.opt.splitbelow = true
--- vim.cmd [[set iskeyword-=_]]
-vim.opt.splitright = true
-vim.opt.hidden = true
-vim.opt.mouse = ''                              -- Disable mouse. Enable mouse mode with 'a'
-vim.opt.clipboard = 'unnamedplus'               -- Sync clipboard between OS and Neovim.
-vim.opt.textwidth = 80                          -- might want to enable this per filetype eventually not sure yet why 'gq' doesn't work well
-vim.opt.updatetime = 250                        -- Decrease update time
-vim.opt.timeoutlen = 500                        -- time to wait for a mapped sequence to complete
-vim.opt.virtualedit = "block"
-vim.opt.inccommand = "split"
-vim.opt.foldmethod = "expr" -- enable treesitter-based folding
---vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldenable = true
-vim.opt.foldlevel = 9
-vim.opt.sessionoptions:append('globals') -- part of what's needed to preserve bufferline ordering
 
+-- Indentation and formatting
+vim.opt.tabstop = 2 -- Tab width
+vim.opt.shiftwidth = 2 -- Indent width
+vim.opt.softtabstop = 2 -- Soft tab width
+vim.opt.expandtab = true -- Use spaces instead of tabs
+vim.opt.smartindent = true -- Smart autoindenting
+vim.opt.autoindent = true -- Copy indent from current line
+vim.opt.breakindent = true -- Maintain indent when wrapping
+vim.opt.wrap = false -- Don't wrap lines
+vim.opt.linebreak = true -- Break at word boundaries if wrap enabled
+vim.opt.textwidth = 80 -- Text width for formatting
+
+-- Splitting
+vim.opt.splitbelow = true -- Horizontal splits go below
+vim.opt.splitright = true -- Vertical splits go right
+
+-- Completion
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'noinsert' }
+vim.opt.pumheight = 10 -- Popup menu height
+vim.opt.wildmode = 'longest:full,full' -- Command completion mode
+vim.opt.wildignore:append { '*.o', '*.obj', '.git', 'node_modules', '*.pyc' }
+
+-- Folding (enhanced for Neovim 0.11)
+vim.opt.foldmethod = 'expr' -- Use expression folding
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()' -- TreeSitter folding
+vim.opt.foldtext = 'v:lua.vim.treesitter.foldtext()' -- TreeSitter fold text with syntax highlighting
+vim.opt.foldlevel = 99 -- Open all folds by default
+vim.opt.foldlevelstart = 99 -- Start with all folds open
+vim.opt.foldenable = true -- Enable folding
+vim.opt.foldcolumn = '0' -- No fold column (clean appearance)
+
+-- Spell checking (disabled by default, easily toggled)
+vim.opt.spell = false
+vim.opt.spelllang = { 'en_us' }
+vim.opt.spellfile = vim.fn.stdpath('config') .. '/spell/en.utf-8.add'
+
+-- Session options
+vim.opt.sessionoptions = {
+  'buffers',
+  'curdir',
+  'folds',
+  'help',
+  'tabpages',
+  'winsize',
+  'winpos',
+  'terminal',
+  'globals'
+}
+-- vim.opt.sessionoptions:append('globals') -- part of what's needed to preserve bufferline ordering
+
+-- Better diffs
+vim.opt.diffopt:append('linematch:60')
+
+-- Neovim 0.11 specific optimizations
+if vim.fn.has('nvim-0.11') == 1 then
+  -- Use new list_extend behavior
+  vim.opt.listchars = {
+    tab = '→ ',
+    trail = '·',
+    nbsp = '○',
+    extends = '▸',
+    precedes = '◂',
+  }
+
+  -- Enhanced diagnostic settings
+  vim.opt.signcolumn = 'yes:1' -- Fixed width sign column
+end
+
+-- File handling
+vim.opt.hidden = true -- Allow hidden buffers
+vim.opt.autoread = true -- Auto-read changed files
+vim.opt.autowrite = true -- Auto-write before running commands
+
+-- Disable some providers for faster startup
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python_provider = 0
+-- Keep Python3 provider for some plugins that need it
+-- vim.g.loaded_python3_provider = 0
+
+-- Configure clipboard for different environments
+if vim.fn.has('wsl') == 1 then
+  vim.g.clipboard = {
+    name = 'WslClipboard',
+    copy = {
+      ['+'] = 'clip.exe',
+      ['*'] = 'clip.exe',
+    },
+    paste = {
+      ['+'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+      ['*'] = 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+    },
+    cache_enabled = 0,
+  }
+end
+
+-- Key improvements:
+--
+-- 1. **Performance**: Disabled swap files, faster timeouts, lazy redraw
+-- 2. **Neovim 0.11 Folding**: Uses native TreeSitter folding with syntax highlighting
+-- 3. **Better Diagnostics**: Enhanced sign column and completion settings
+-- 4. **WSL Support**: Better clipboard integration for WSL users
+-- 5. **Minimal UI**: Clean appearance with essential information only
 
 
 
