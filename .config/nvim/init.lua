@@ -44,7 +44,7 @@ require("lazy").setup({
     },
     reset_packpath = true, -- reset the package path to improve startup time
     rtp = {
-      reset = true,        -- reset the runtime path to improve startup time
+      reset = true, -- reset the runtime path to improve startup time
       disabled_plugins = {
         "gzip",
         "matchit",

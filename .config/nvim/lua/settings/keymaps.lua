@@ -22,6 +22,9 @@ vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true })
 -- automatically open help in vertical split
 vim.keymap.set("c", "vh", "vert help ", { noremap = true })
 
+-- quicker change-directory
+vim.keymap.set("c", "CD", "lcd " .. vim.fn.expand("%:p:h"), { desc = "change dir command" })
+
 -- Remap for dealing with word wrap
 vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
@@ -29,6 +32,9 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })
 -- vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
 -- vim.keymap.set("n", "<leader>w", ":lua vim.wo.wrap = not vim.wo.wrap<CR>", { noremap = true, silent = true })
+
+-- move the right right in insert mode
+vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true })
 
 -- A generic function for toggling values. Seems a bit hacky FIXME
 local function vim_opt_toggle(opt, on, off, name)
@@ -55,11 +61,10 @@ local function vim_opt_toggle(opt, on, off, name)
 end
 
 -- A function and keymapping to toggle colorcolum
-vim.api.nvim_create_user_command("Togglecolorcolumn", function()
+vim.api.nvim_create_user_command("ToggleColorColumn", function()
   vim_opt_toggle("colorcolumn", "+1", "", "colorcolumn")
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
--- buffers - TODO how to ignore while in nvim-tree, telescope, etc.
 -- vim.keymap.set('n', '<c-n>', ":bnext<cr>", { silent = true })
 -- vim.keymap.set('n', '<c-p>', ":bprevious<cr>", { silent = true })
 
@@ -73,7 +78,6 @@ vim.keymap.set("v", ">", ">gv")
 -- prefer to use native vim keymapping facilities instead of which-key
 -- to allow for disabling which-key and having mappings still work
 --
--- stylua: ignore start
 
 -- first, some conveniences for use in the following mapping specs
 local tb = require("telescope.builtin")
@@ -82,7 +86,7 @@ local wk = require("which-key")
 
 vim.g.current_picker = "telescope"
 
-local function TogglePicker()
+vim.api.nvim_create_user_command("TogglePicker", function()
   if vim.g.current_picker == "telescope" then
     vim.g.current_picker = "snacks"
     vim.notify("Switched to Snacks picker")
@@ -90,7 +94,7 @@ local function TogglePicker()
     vim.g.current_picker = "telescope"
     vim.notify("Switched to Telescope picker")
   end
-end
+end, { desc = "toggle the picker backend", nargs = 0 })
 
 local function pick(telescope_fn, snacks_fn)
   return function()
@@ -102,6 +106,18 @@ local function pick(telescope_fn, snacks_fn)
   end
 end
 
+local function pick_cword(telescope_fn, snacks_fn)
+  return function()
+    if vim.g.current_picker == "telescope" then
+      require("telescope.builtin")[telescope_fn]({ default_text = vim.fn.expand("<cword>") })
+    else
+      require("snacks.picker")[snacks_fn]()
+      vim.schedule(function()
+        vim.api.nvim_feedkeys(vim.fn.expand("<cword>"), "i", false)
+      end)
+    end
+  end
+end
 
 -- WHICHKEY
 wk.add({
@@ -119,17 +135,20 @@ wk.add({
   { "<leader>u",  group = "UI" },
 })
 
+-- FIXME why is stylua ignore not working?
+
+-- stylua: ignore start
+
 -- NON-LEADER
-vim.keymap.set("n", "<c-f>", function() sp.lines() end, { desc = "find in buffer" })
-vim.keymap.set("n", "<c-g>", function() sp.grep() end, { desc = "grep" })
-vim.keymap.set("n", "<leader>*", function() sp.grep_word() end, { desc = "grep cwd for word under cursor" })
+vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
+vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
 vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
 vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
 vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
 vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
 vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
 
-vim.keymap.set("n", "<c-b>", function() sp.buffers() end, { desc = "buffers" })
+vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
 vim.keymap.set('n', "<M-2>", "<cmd>BufferLineGoToBuffer 2<cr>", { desc = "goto visible buffer 2" })
 vim.keymap.set('n', "<M-3>", "<cmd>BufferLineGoToBuffer 3<cr>", { desc = "goto visible buffer 3" })
@@ -147,42 +166,24 @@ vim.keymap.set('n', "<M-L>", "<cmd>BufferLineMoveNext<cr>", { desc = "move buffe
 vim.keymap.set('n', "<M-H>", "<cmd>BufferLineMovePrev<cr>", { desc = "move buffer tab left" })
 
 -- TOP LEVEL
-vim.keymap.set("n", "<leader>/", function() sp.grep() end, { desc = "grep" })
-vim.keymap.set("n", "<leader>,", function() sp.buffers() end, { desc = "buffers" })
-vim.keymap.set("n", "<leader>:", function() sp.command_history() end, { desc = "command history" })
+vim.keymap.set("n", "<leader>/", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "<leader>*", pick("grep_string", "grep_word"), { desc = "grep cwd for word under cursor" })
+vim.keymap.set("n", "<leader>,", pick("buffers", "buffers"), { desc = "buffers" })
+vim.keymap.set("n", "<leader>:", pick("command_history", "command_history"), { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
-vim.keymap.set("n", "<leader>e", function() require("snacks").explorer() end, { desc = "file explorer" })
 
 -- APPS
 -- TODO terminal, lazygit, outline, file explorer
 vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "Toggle Aerial" })
+vim.keymap.set("n", "<leader>ae", function() require("snacks").explorer() end, { desc = "file explorer" })
 vim.keymap.set('n', "<leader>ao", "<cmd>Outline<cr>", { desc = "Toggle Outline" })
 
 -- BUFFERS
-vim.keymap.set("n", "<leader>bb", function() sp.buffers() end, { desc = "buffer list" })
+vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
 -- delete buffer - preserve window (switch to alternate, "|" to chain, delete alternate)
 -- FIXME this could be extended with "... | wshada | ..." to preserve marks
 -- (cursor position), but can be an issue when using multiple instances
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" })
-
--- quicker change-directory
-vim.keymap.set("n", "<leader>cd", function()
-  local dir = vim.fn.expand("%:p:h")
-  vim.api.nvim_feedkeys(":" .. "lcd " .. dir, "n", false)
-end, { desc = "Pre-fill :cd with current buffer path" })
-
--- FINDS
-vim.keymap.set("n", "<leader>fb", function() sp.buffers() end, { desc = "buffers" })
-vim.keymap.set('n', '<leader>fc', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
-  { desc = 'find config files' })
-vim.keymap.set('n', '<leader>fC', function() sp.commands() end, { desc = 'find config files' })
-vim.keymap.set("n", "<leader>ff", pick("find_files", "files"), { desc = "Find files" })
-vim.keymap.set("n", "<leader>fg", pick("live_grep", "grep"), { desc = "Live grep" })
-vim.keymap.set("n", "<leader>fF", function() sp.files() end, { desc = "find files" })
---vim.keymap.set("n", "<leader>fg", function() sp.git_files() end, { desc = "live grep" })
-vim.keymap.set("n", "<leader>fh", function() sp.help() end, { desc = "help" })
-vim.keymap.set("n", "<leader>fp", function() sp.projects() end, { desc = "projects" })
-vim.keymap.set("n", "<leader>fr", function() sp.recent() end, { desc = "recent" })
 
 -- GIT - disabling these until I understand them
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
@@ -194,50 +195,39 @@ vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { 
 -- vim.keymap.set("n", "<leader>gL", function() sp.git_log_line() end, { desc = "git log lines search" })
 -- vim.keymap.set("n", "<leader>gs", function() sp.git_status() end, { desc = "git status search" })
 -- vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
+-- vim.keymap.set('n', '<leader>gb', tb.git_branches, { desc = ' git branches ' })
+-- vim.keymap.set('v', '<leader>gc', tb.git_bcommits, { desc = 'git commits (range) ' })
+-- vim.keymap.set('n', '<leader>gc', tb.git_bcommits, { desc = 'git commits (buffer) ' })
+-- vim.keymap.set('n', '<leader>gC', tb.git_commits, { desc = 'git commits (all) ' })
+-- vim.keymap.set('n', '<leader>gs', tb.git_status, { desc = 'git status ' })
+-- vim.keymap.set('n', '<leader>gS', tb.git_stash, { desc = 'git stash ' })
 
 -- HELP
--- FIXME open help for word under cursor
--- vim.keymap.set("n", "<leader>h*", function()
---   local keys = vim.api.nvim_replace_termcodes('<C-r><C-w>', true, false, true)
---   sp.help()
---   vim.wait(500, function() return false end)
---   vim.api.nvim_feedkeys(keys, 'n', false)
--- end, { desc = "help for cword" })
-vim.keymap.set("n", "<leader>hth", tb.help_tags, { desc = "help" })
-vim.keymap.set("n", "<leader>htk", tb.keymaps, { desc = "keymaps" })
-vim.keymap.set("n", "<leader>htm", tb.man_pages, { desc = "man pages" })
-vim.keymap.set("n", "<leader>hh", function() sp.help() end, { desc = "help" })
-vim.keymap.set("n", "<leader>hm", function() sp.man() end, { desc = "man pages" })
-vim.keymap.set("n", "<leader>hk", function() sp.keymaps() end, { desc = "keymaps" })
-vim.keymap.set("n", "<leader>hw", "<cmd>WhichKey<cr>", { desc = "which-key" })
+vim.keymap.set("n", "<leader>h*", pick_cword("help_tags", "help"), { desc = "help for cword" })
+vim.keymap.set("n", "<leader>hh", pick("help_tags", "help"), { desc = "help" })
+vim.keymap.set("n", "<leader>hm", pick("man_pages", "man"), { desc = "man pages" }) -- FIXME nothing happens?
+vim.keymap.set("n", "<leader>hM", pick_cword("man_pages", "man"), { desc = "man pages" })
+vim.keymap.set("n", "<leader>hk", pick("keymaps", "keymaps"), { desc = "keymaps" })
+vim.keymap.set("n", "<leader>hK", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP
 vim.keymap.set("n", "<leader>l,", function() sp.lsp_config() end, { desc = "LSP config" })
-vim.keymap.set("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "Code Action" })
+vim.keymap.set("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "LSP code actions" })
 vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
-vim.keymap.set("n", "<leader>ld", function() sp.lsp_definitions() end, { desc = "LSP definitions" })
+vim.keymap.set("n", "<leader>ld", pick("lsp_definitions", "lsp_definitions"), { desc = "LSP definitions" })
 vim.keymap.set("n", "<leader>lD", function() sp.lsp_declarations() end, { desc = "LSP declarations" })
-vim.keymap.set("n", "<leader>lf", function() require("conform").format({ async = true }) end, { desc = "Format" })
-vim.keymap.set("n", "<leader>li", function() sp.lsp_implementations() end, { desc = "LSP implementations" })
-vim.keymap.set("n", "<leader>lr", function() sp.lsp_references() end, { desc = "LSP references" })
-vim.keymap.set("n", "<leader>ls", function() sp.lsp_symbols() end, { desc = "LSP document symbols" })
-vim.keymap.set("n", "<leader>lS", function() sp.lsp_workspace_symbols() end, { desc = "LSP workspace symbols" })
-vim.keymap.set("n", "<leader>lt", function() sp.lsp_type_definitions() end, { desc = "LSP type definitions" })
-vim.keymap.set("n", "<leader>lw", function() sp.diagnostics() end, { desc = "LSP diagnostics (warnings)" })
-
-vim.keymap.set("n", "<leader>lva", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "LSP code actions" })
-vim.keymap.set('n', '<leader>lvf', "<cmd>lua vim.lsp.buf.format({async = true})<cr>", { desc = "Format" })
-
-vim.keymap.set("n", "<leader>ltc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
-vim.keymap.set("n", "<leader>ltC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
-vim.keymap.set("n", "<leader>ltd", tb.lsp_definitions, { desc = "LSP definitions" })
-vim.keymap.set("n", "<leader>lti", tb.lsp_implementations, { desc = "LSP implementations" })
-vim.keymap.set("n", "<leader>ltr", tb.lsp_references, { desc = "LSP references" })
-vim.keymap.set("n", "<leader>lts", tb.lsp_document_symbols, { desc = "LSP document symbols" })
-vim.keymap.set("n", "<leader>ltS", tb.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
-vim.keymap.set("n", "<leader>ltt", tb.lsp_type_definitions, { desc = "LSP type definitions" })
-vim.keymap.set("n", "<leader>ltw", tb.diagnostics, { desc = "LSP diagnostics (warnings)" })
+vim.keymap.set("n", "<leader>lf", function() require("conform").format({ async = true }) end,
+  { desc = "format (conform)" })
+vim.keymap.set('n', '<leader>lF', "<cmd>lua vim.lsp.buf.format({async = true})<cr>", { desc = "format (vim)" })
+vim.keymap.set("n", "<leader>li", pick("lsp_implementations", "lsp_implementations"), { desc = "LSP implementations" })
+vim.keymap.set("n", "<leader>lr", pick("lsp_references", "lsp_references"), { desc = "LSP references" })
+vim.keymap.set("n", "<leader>ls", pick("lsp_document_symbols", "lsp_symbols"), { desc = "LSP document symbols" })
+vim.keymap.set("n", "<leader>lS", pick("lsp_workspace_symbols", "lsp_workspace_symbols"),
+  { desc = "LSP workspace symbols" })
+vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definitions"), { desc = "LSP type definitions" })
+vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
+vim.keymap.set("n", '<leader>lW', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
 
 -- SESSIONS
 vim.keymap.set("n", "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
@@ -248,56 +238,38 @@ vim.keymap.set("n", "<leader>ql", function() require("persistence").load({ last 
 vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, { desc = "Don't Save Current Session" })
 
 -- SEARCH
-vim.keymap.set("n", '<leader>s/', function() sp.lines() end, { desc = "search current buffer" }) -- FIXME
-vim.keymap.set("n", '<leader>s"', function() sp.registers() end, { desc = "registers" })
-vim.keymap.set("n", '<leader>sa', function() sp.autocmds() end, { desc = "autocommands" })
-vim.keymap.set("n", '<leader>sb', function() sp.buffers() end, { desc = "buffers" })
-vim.keymap.set("n", '<leader>sc', function() sp.commands() end, { desc = "commands" })
-vim.keymap.set("n", '<leader>sC', function() sp.command_history() end, { desc = "command_history" })
-vim.keymap.set("n", "<leader>sg", function() sp.grep() end, { desc = "grep" })
-vim.keymap.set("n", "<leader>sh", function() sp.help() end, { desc = "help" })
-vim.keymap.set("n", "<leader>sH", function() sp.highlights() end, { desc = "highlights" })
-vim.keymap.set("n", "<leader>si", function() sp.icons() end, { desc = "icons" })
-vim.keymap.set("n", "<leader>sj", function() sp.jumps() end, { desc = "jump list" })
-vim.keymap.set("n", "<leader>sk", function() sp.keymaps() end, { desc = "jump list" })
-vim.keymap.set("n", "<leader>sl", function() sp.loclist() end, { desc = "location list" })
-vim.keymap.set("n", "<leader>sm", function() sp.marks() end, { desc = "marks" })
-vim.keymap.set("n", "<leader>sm", function() sp.man() end, { desc = "man pages" })
-vim.keymap.set("n", "<leader>sq", function() sp.qflist() end, { desc = "quickfix" })
-vim.keymap.set("n", '<leader>sd', function() sp.diagnostics() end, { desc = "diagnostics" })
-vim.keymap.set("n", '<leader>sD', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
-vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "search for plugin spec" })
+vim.keymap.set("n", "<leader>s/", pick("current_buffer_fuzzy_find", "lines"), { desc = "search in buffer" })
+vim.keymap.set("n", '<leader>s"', pick("registers", "registers"), { desc = "registers" })
+vim.keymap.set("n", '<leader>sa', pick("autocommands", "autocmds"), { desc = "autocommands" })
+vim.keymap.set("n", "<leader>sb", pick("buffers", "buffers"), { desc = "buffers" })
+vim.keymap.set('n', '<leader>sc', pick("commands", "commands"), { desc = 'find commands' })
+vim.keymap.set("n", '<leader>sC', pick("command_history", "command_history"), { desc = "command_history" })
+vim.keymap.set("n", "<leader>sf", pick("find_files", "files"), { desc = "Find files" })
+vim.keymap.set("n", "<leader>sF", tb.filetypes, { desc = "file types" })
+vim.keymap.set("n", "<leader>sg", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "<leader>sh", pick("help_tags", "help"), { desc = "help" })
+vim.keymap.set("n", "<leader>sH", pick("highlights", "highlights"), { desc = "highlights" })
+vim.keymap.set("n", "<leader>si", pick("symbols", "icons"), { desc = "icons" })
+vim.keymap.set("n", "<leader>sj", pick("jumplist", "jumps"), { desc = "jump list" })
+vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "jump list" })
+vim.keymap.set("n", "<leader>sl", pick("loclist", "loclist"), { desc = "location list" })
+vim.keymap.set("n", "<leader>sm", pick("marks", "marks"), { desc = "marks" })
+vim.keymap.set("n", "<leader>sm", pick("man_pages", "man"), { desc = "man pages" })
+vim.keymap.set('n', '<leader>sn', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
+  { desc = 'nvim config files' })
+vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "plugin spec" })
+vim.keymap.set("n", "<leader>sP", function() sp.projects() end, { desc = "projects" })
+vim.keymap.set("n", "<leader>sq", tb.quickfixhistory, { desc = "quickfix history" })
+vim.keymap.set("n", "<leader>sr", pick("oldfiles", "recent"), { desc = "recent files" })
 vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" })
-vim.keymap.set("n", '<leader>sS', function() sp.search_history() end, { desc = "search history" })
--- vim.keymap.set("n", '<leader>sf', function() sp.todo_comments() end, { desc = "TODO" })
--- vim.keymap.set("n", '<leader>sF', function() sp.todo_comments({ keywords = { "TODO", "FIXME", }}) end, { desc = "TODO FIXME" })
+vim.keymap.set("n", "<leader>ss", tb.spell_suggest, { desc = "spell suggest" })
+vim.keymap.set("n", '<leader>sS', pick("search_history", "search_history"), { desc = "search history" })
+vim.keymap.set("n", "<leader>st", tb.tags, { desc = "tags" })
+vim.keymap.set("n", "<leader>sT", tb.treesitter, { desc = "treesitter" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
-
-vim.keymap.set("n", '<leader>st/', tb.current_buffer_fuzzy_find, { desc = "current buffer fuzzy" })
-vim.keymap.set("n", '<leader>st"', tb.registers, { desc = "registers" })
-vim.keymap.set("n", '<leader>sta', tb.autocommands, { desc = "autocommands" })
-vim.keymap.set("n", "<leader>stb", tb.buffers, { desc = "buffers" })
-vim.keymap.set("n", "<leader>stc", tb.commands, { desc = "commands" })
-vim.keymap.set("n", "<leader>stC", tb.command_history, { desc = "command history" })
-vim.keymap.set("n", "<leader>sth", tb.help_tags, { desc = "help" })
-vim.keymap.set("n", "<leader>stH", tb.highlights, { desc = "highlights" })
-vim.keymap.set("n", "<leader>sti", tb.symbols, { desc = "icons" })
-vim.keymap.set("n", "<leader>stj", tb.jumplist, { desc = "jump list" })
-vim.keymap.set("n", "<leader>stk", tb.keymaps, { desc = "normal mode keymaps" })
-vim.keymap.set("n", "<leader>stl", tb.loclist, { desc = "location list" })
-vim.keymap.set("n", "<leader>stm", tb.marks, { desc = "marks" })
-vim.keymap.set("n", "<leader>stM", tb.man_pages, { desc = "man pages" })
-vim.keymap.set("n", "<leader>stf", tb.filetypes, { desc = "file types" })
-vim.keymap.set("n", "<leader>sto", tb.oldfiles, { desc = "oldfiles" })
-vim.keymap.set("n", "<leader>stQ", tb.quickfixhistory, { desc = "quickfix history" })
-vim.keymap.set("n", "<leader>sts", tb.spell_suggest, { desc = "spell suggest" })
-vim.keymap.set("n", "<leader>stS", tb.search_history, { desc = "search history" })
-vim.keymap.set("n", "<leader>stt", tb.treesitter, { desc = "treesitter" })
-vim.keymap.set("n", "<leader>stT", tb.tags, { desc = "tags" })
-vim.keymap.set("n", "<leader>stv", tb.vim_options, { desc = "vim options" })
+vim.keymap.set("n", "<leader>sv", tb.vim_options, { desc = "vim options" })
 
 -- UI
--- vim.keymap.set("n", "<leader>uc", "<cmd>Togglecolorcolumn<cr>", { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
   { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
@@ -306,7 +278,7 @@ vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursor
 vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
   { desc = "relative numbers" })
-vim.keymap.set("n", "<leader>up", function() TogglePicker() end, { desc = "Toggle Picker" })
+vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 -- TODO vim.keymap.set("n", "<leader>us", function() require("snacks").scroll.disable() end, { desc = "smooth scrolling" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
@@ -315,6 +287,7 @@ vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
 -- TODO diagnostics
 -- TODO indent guides
+-- TODO gitsigns
 
 -- EXECUTE
 -- FIXME not sure how really useful these are
@@ -332,66 +305,6 @@ vim.keymap.set('n', '<c-b>', tb.buffers, { desc = '󰪸  buffers ' })
 vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = '󰺯  find in current buffer ' })
 vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = '󰥩  live grep ' })
 vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = '󰥩  * for cwd ' })
-
-vim.keymap.set('n', '<leader>bb', tb.buffers, { desc = 'buffers ' })
-
-vim.keymap.set('n', '<leader>ff', tb.find_files, { desc = '󰙅  find files ' })
-vim.keymap.set('n', '<leader>fg', tb.live_grep, { desc = '󰥩  live grep ' })
-vim.keymap.set('n', '<leader>fb', tb.buffers, { desc = '󰪸  buffers ' })
-vim.keymap.set('n', '<leader>fh', tb.help_tags, { desc = ' help tags ' })
-
-vim.keymap.set('n', '<leader>gb', tb.git_branches, { desc = ' git branches ' })
-vim.keymap.set('v', '<leader>gc', tb.git_bcommits, { desc = 'git commits (range) ' })
-vim.keymap.set('n', '<leader>gc', tb.git_bcommits, { desc = 'git commits (buffer) ' })
-vim.keymap.set('n', '<leader>gC', tb.git_commits, { desc = 'git commits (all) ' })
-vim.keymap.set('n', '<leader>gs', tb.git_status, { desc = 'git status ' })
-vim.keymap.set('n', '<leader>gS', tb.git_stash, { desc = 'git stash ' })
-
-vim.keymap.set('n', '<leader>hh', tb.help_tags, { desc = ' help tags ' })
-vim.keymap.set('n', '<leader>hm', tb.man_pages, { desc = '  man pages ' })
-vim.keymap.set('n', '<leader>hw', "<cmd>WhichKey<cr>", { desc = '  which-key' })
-
-vim.keymap.set('n', '<leader>lc', tb.lsp_incoming_calls, { desc = 'LSP incoming calls ' })
-vim.keymap.set('n', '<leader>lC', tb.lsp_outgoing_calls, { desc = 'LSP outgoing calls ' })
-vim.keymap.set('n', '<leader>ld', tb.lsp_definitions, { desc = 'LSP definitions ' })
-vim.keymap.set('n', '<leader>lD', tb.diagnostics, { desc = 'LSP diagnostics ' })
-vim.keymap.set('n', '<leader>li', tb.lsp_implementations, { desc = 'LSP implementations ' })
-vim.keymap.set('n', '<leader>lr', tb.lsp_references, { desc = 'LSP references ' })
-vim.keymap.set('n', '<leader>ls', tb.lsp_document_symbols, { desc = 'LSP document symbols ' })
-vim.keymap.set('n', '<leader>lS', tb.lsp_workspace_symbols, { desc = 'LSP workspace symbols ' })
-vim.keymap.set('n', '<leader>lt', tb.lsp_type_definitions, { desc = 'LSP type definitions ' })
-
-vim.keymap.set('n', '<leader>ta', tb.autocommands, { desc = 'autocommands ' })
-vim.keymap.set('n', '<leader>tb', tb.buffers, { desc = 'buffers ' })
-vim.keymap.set('n', '<leader>tc', tb.commands, { desc = 'commands ' })
-vim.keymap.set('n', '<leader>tC', tb.command_history, { desc = 'command history ' })
-vim.keymap.set('n', '<leader>tf', tb.filetypes, { desc = 'file types ' })
-vim.keymap.set('n', '<leader>th', tb.help_tags, { desc = 'help tags ' })
-vim.keymap.set('n', '<leader>tH', tb.highlights, { desc = 'highlights ' })
-vim.keymap.set('n', '<leader>tj', tb.jumplist, { desc = 'jump list ' })
-vim.keymap.set('n', '<leader>tk', tb.keymaps, { desc = 'normal mode keymaps ' })
-vim.keymap.set('n', '<leader>tl', tb.loclist, { desc = 'location list ' })
-vim.keymap.set('n', '<leader>tm', tb.marks, { desc = 'marks ' })
-vim.keymap.set('n', '<leader>tM', tb.man_pages, { desc = 'man pages ' })
-vim.keymap.set('n', '<leader>ti', tb.symbols, { desc = 'unicode icons ' })
-vim.keymap.set('n', '<leader>to', tb.oldfiles, { desc = 'oldfiles ' })
-vim.keymap.set('n', '<leader>tq', tb.quickfix, { desc = 'quickfix ' })
-vim.keymap.set('n', '<leader>tQ', tb.quickfixhistory, { desc = 'quickfix history ' })
-vim.keymap.set('n', '<leader>tr', tb.registers, { desc = 'registers ' })
-vim.keymap.set('n', '<leader>ts', tb.spell_suggest, { desc = 'spell suggest ' })
-vim.keymap.set('n', '<leader>tS', tb.search_history, { desc = 'search history ' })
-vim.keymap.set('n', '<leader>tt', tb.treesitter, { desc = 'treesitter ' })
-vim.keymap.set('n', '<leader>tT', tb.tags, { desc = 'tags ' })
-vim.keymap.set('n', '<leader>tv', tb.vim_options, { desc = 'vim options ' })
-
-vim.keymap.set('n', '<leader>uc', "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = 'colorscheme ' })
-vim.keymap.set('n', '<leader>ut', "<cmd>TransparentToggle<cr>", { desc = 'Transparent Toggle' })
-
-vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
-vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
-vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
-
-
 
 local wk = require("which-key")
 wk.add({

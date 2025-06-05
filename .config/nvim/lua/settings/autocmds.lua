@@ -35,6 +35,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     -- Auto-format on save for supported servers
+    -- TODO understand the differences between this and conform()'s formatting which to set, etc.
     if
         not client:supports_method("textDocument/willSaveWaitUntil")
         and client:supports_method("textDocument/formatting")
