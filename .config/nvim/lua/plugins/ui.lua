@@ -7,6 +7,7 @@ return {
   -- https://github.com/folke/flash.nvim
   {
     "folke/flash.nvim",
+    enabled = false,
     event = "VeryLazy",
     specs = { -- not sure if this part should go in the snacks picker config
       {
@@ -107,7 +108,6 @@ return {
   -- https://github.com/nvim-telescope/telescope.nvim
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.5",
     dependencies = {
       "nvim-lua/plenary.nvim", -- required
       -- useful site for unicode: https://symbl.cc/en/unicode/blocks/box-drawing/

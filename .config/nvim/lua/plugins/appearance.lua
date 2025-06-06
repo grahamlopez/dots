@@ -90,6 +90,7 @@ return {
   -- https://github.com/hedyhli/outline.nvim
   {
     "hedyhli/outline.nvim",
+    enabled = false,
     cmd = { "Outline", "OutlineOpen" },
     opts = {
       outline_window = {
@@ -156,6 +157,7 @@ return {
   -- https://github.com/stevearc/aerial.nvim
   {
     "stevearc/aerial.nvim",
+    enabled = false,
     opts = {
       manage_folds = true,
       link_folds_to_tree = true,

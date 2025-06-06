@@ -7,7 +7,8 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
     -- FIXME adapt to dark/light theme
     vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 235, bg = "#121212" })
     vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
-    vim.api.nvim_set_hl(0, "NormalFloat", { ctermbg = "NONE", bg = "NONE" })
+    -- this causes glitching with which-key popus
+    -- vim.api.nvim_set_hl(0, "NormalFloat", { ctermbg = "NONE", bg = "NONE" })
   end,
 })
 
