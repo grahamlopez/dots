@@ -269,6 +269,12 @@ vim.keymap.set("n", "<leader>sT", tb.treesitter, { desc = "treesitter" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
 vim.keymap.set("n", "<leader>sv", tb.vim_options, { desc = "vim options" })
 
+-- TO-DO
+vim.keymap.set("n", "<leader>tt", "<cmd>Telescope grep_string search=TODO<cr>", { desc = "Find TODO comments" })
+vim.keymap.set("n", "<leader>tf", "<cmd>Telescope grep_string search=FIXME<cr>", { desc = "Find FIXME comments" })
+vim.keymap.set("n", "<leader>ta", "<cmd>Telescope live_grep default_text=TODO|FIXME<cr>",
+  { desc = "Find TODO and FIXME comments" })
+
 -- UI
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
   { desc = "ColorColumn Toggle" })
