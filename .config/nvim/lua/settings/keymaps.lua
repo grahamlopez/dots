@@ -281,6 +281,7 @@ vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1',
 vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
 -- vim.keymap.set( "n", "<leader>uC", "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = "colorscheme" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
+-- FIXME: this should remove numbers even if relativenumber is active
 vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
   { desc = "relative numbers" })
