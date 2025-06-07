@@ -3,6 +3,7 @@ return {
   --
   --      Theming
   --
+  --      https://vimcolorschemes.com/i/top
 
   -- https://github.com/xiyaowong/transparent.nvim
   {
@@ -25,6 +26,64 @@ return {
     -- but looks like there is a merged PR: https://github.com/tmux/tmux/pull/4353
     { "f-person/auto-dark-mode.nvim", opts = {} }, -- https://github.com/f-person/auto-dark-mode.nvim
     -- FIXME whichkey and completion popups are broken after live switch until nvim restarts
+  },
+
+  -- https://github.com/catppuccin/nvim
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    transparent = false,
+    background = { -- :h background
+      light = "latte",
+      dark = "mocha",
+    },
+  },
+
+  -- https://github.com/EdenEast/nightfox.nvim
+  {
+    "EdenEast/nightfox.nvim",
+  },
+
+  -- https://github.com/nordtheme/vim
+  {
+    "nordtheme/vim",
+  },
+
+  -- https://github.com/folke/tokyonight.nvim
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      light_style = "day",
+      day_brightness = 0.3, -- 0 (dull) to 1 (virbrant)
+      transparent = false,
+    },
+  },
+
+  -- https://github.com/Mofiqul/dracula.nvim
+  {
+    "Mofiqul/dracula.nvim",
+  },
+
+  -- https://github.com/shaunsingh/solarized.nvim
+  {
+    "shaunsingh/solarized.nvim",
+  },
+
+  -- https://github.com/rebelot/kanagawa.nvim
+  {
+    "rebelot/kanagawa.nvim",
+    opts = {
+      transparent = false,
+      background = { -- map the value of 'background' option to a theme
+        dark = "wave", -- try "dragon" !
+        light = "lotus",
+      },
+      -- remove the background of LineNr, {Sign,Fold}Column and friends
+      colors = { theme = { all = { ui = { bg_gutter = "none" } } } },
+    },
   },
 
   --

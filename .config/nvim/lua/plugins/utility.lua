@@ -1,3 +1,13 @@
+-- helper function for blink.cmp emacs style completion
+local has_words_before = function()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+  if col == 0 then
+    return false
+  end
+  local line = vim.api.nvim_get_current_line()
+  return line:sub(col, col):match("%s") == nil
+end
+
 return {
 
   --
@@ -71,7 +81,15 @@ return {
       require("telescope").setup({
         defaults = {
           -- TODO unify with snacks: vertical if >160 columnss available
-          layout_strategy = "vertical",
+          layout_strategy = "flex",
+          layout_config = {
+            flip_columns = 160, -- Use horizontal layout if columns >= 160
+            -- Optional: customize settings for each mode
+            horizontal = { preview_cutoff = 120 },
+            vertical = { preview_cutoff = 40 },
+            prompt_position = "top", -- Places prompt above the results
+          },
+          sorting_strategy = "ascending", -- This makes results list top-down when prompt is on top
           mappings = { -- https://github.com/nvim-telescope/telescope.nvim#default-mappings
 
             -- use '<C-/>' and '?' in insert and normal mode, respectively, to
@@ -152,6 +170,40 @@ return {
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
+      -- emacs style:
+      keymap = {
+        preset = "none",
+
+        -- If completion hasn't been triggered yet, insert the first suggestion; if it has, cycle to the next suggestion.
+        ["<Tab>"] = {
+          function(cmp)
+            if has_words_before() then
+              return cmp.insert_next()
+            end
+          end,
+          "fallback",
+        },
+        -- Navigate to the previous suggestion or cancel completion if currently on the first one.
+        ["<S-Tab>"] = { "insert_prev" },
+
+        ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+        ["<C-e>"] = { "hide" },
+        ["<C-p>"] = { "select_prev", "fallback_to_mappings" },
+        ["<C-n>"] = { "select_next", "fallback_to_mappings" },
+
+        ["<C-b>"] = { "scroll_documentation_up", "fallback" },
+        ["<C-f>"] = { "scroll_documentation_down", "fallback" },
+
+        ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
+      },
+      completion = {
+        menu = { auto_show = false, enabled = true },
+        list = { selection = { preselect = false }, cycle = { from_top = false } },
+      },
+
+      --]]
+
+      --[[ default configuration
       -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
       -- 'super-tab' for mappings similar to vscode (tab to accept)
       -- 'enter' for enter to accept
@@ -164,7 +216,7 @@ return {
       -- C-k: Toggle signature help (if signature.enabled = true)
       --
       -- See :h blink-cmp-config-keymap for defining your own keymap
-      keymap = { preset = "default" },
+      keymap = { preset = "super-tab" },
 
       appearance = {
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -174,7 +226,10 @@ return {
 
       -- (Default) Only show the documentation popup when manually triggered
       completion = {
-        -- menu = { border = "single" },
+        menu = {
+          auto_show = false,
+          enabled = true,
+        },
         documentation = { auto_show = false },
       },
 
@@ -195,6 +250,7 @@ return {
       --
       -- See the fuzzy documentation for more information
       fuzzy = { implementation = "prefer_rust_with_warning" },
+      --]]
     },
     opts_extend = { "sources.default" },
   },

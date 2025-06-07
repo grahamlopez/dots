@@ -140,11 +140,11 @@ wk.add({
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
-vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
-vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
-vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
-vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
-vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
+-- vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
+-- vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
+-- vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
+-- vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
+-- vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
 
 vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
@@ -169,6 +169,7 @@ vim.keymap.set("n", "<leader>*", pick("grep_string", "grep_word"), { desc = "gre
 vim.keymap.set("n", "<leader>,", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set("n", "<leader>:", pick("command_history", "command_history"), { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
+vim.keymap.set("n", "<leader><c-o>", pick("find_files", "files"), { desc = "open files" })
 
 -- APPS and AI
 -- TODO terminal, lazygit, outline, file explorer
@@ -176,7 +177,7 @@ vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { d
 vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "toggle aerial" })
 vim.keymap.set("n", "<leader>aD", "cmd>PrtChatDelete<cr>", { desc = "delete chat file" })
 vim.keymap.set("n", "<leader>ae", function() require("snacks").explorer() end, { desc = "file explorer" })
-vim.keymap.set("n", "<leader>af", "cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
+vim.keymap.set("n", "<leader>af", "<cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
 vim.keymap.set('n', "<leader>am", "<cmd>PrtModel<cr>", { desc = "select ai model" })
 vim.keymap.set('n', "<leader>an", "<cmd>PrtChatNew<cr>", { desc = "new parrot chat" })
 vim.keymap.set('n', "<leader>ao", "<cmd>Outline<cr>", { desc = "toggle outline" })
@@ -237,6 +238,12 @@ vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definit
 vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
 vim.keymap.set("n", '<leader>lW', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
 
+-- OPEN (idea)
+-- oo find_files
+-- oc open config
+-- oO fine files in home
+-- on notes
+
 -- SESSIONS
 vim.keymap.set("n", "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
 vim.keymap.set("n", "<leader>qr", function() require("persistence").load() end, { desc = "Restore Session" })
@@ -249,7 +256,7 @@ vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, 
 vim.keymap.set("n", "<leader>s/", pick("current_buffer_fuzzy_find", "lines"), { desc = "search in buffer" })
 vim.keymap.set("n", '<leader>s"', pick("registers", "registers"), { desc = "registers" })
 vim.keymap.set("n", '<leader>sa', pick("autocommands", "autocmds"), { desc = "autocommands" })
-vim.keymap.set("n", '<leader>sA', "cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
+vim.keymap.set("n", '<leader>sA', "<cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
 vim.keymap.set("n", "<leader>sb", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', '<leader>sc', pick("commands", "commands"), { desc = 'find commands' })
 vim.keymap.set("n", '<leader>sC', pick("command_history", "command_history"), { desc = "command_history" })
