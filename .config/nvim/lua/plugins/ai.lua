@@ -20,23 +20,16 @@ return {
             command = { temperature = 1.1, top_p = 1 },
           },
           topic = {
-            model = "sonar-medium-chat",
+            model = "r1-1776",
             params = { max_completion_tokens = 64 },
           },
-          models = {
+          models = { -- https://docs.perplexity.ai/models/model-cards
             "sonar-pro", -- Advanced search, flagship model
             "sonar", -- Lightweight search model
             "sonar-reasoning-pro", -- Premier reasoning model with Chain of Thought
             "sonar-reasoning", -- Fast real-time reasoning model
             "sonar-deep-research", -- Expert-level research model
             "r1-1776", -- Offline chat model (no web search)
-            "sonar-small-online", -- Online model, fast, web-enabled
-            "sonar-medium-online", -- Online model, balanced, web-enabled
-            "sonar-small-chat", -- Offline chat model, fast
-            "sonar-medium-chat", -- Offline chat model, balanced
-            "mistral-7b", -- Open-source, balanced for various tasks
-            "codellama-34b", -- Specialized for code-related tasks
-            "llama-2-70b", -- Large model, broad knowledge
           },
         },
       },
@@ -65,5 +58,9 @@ return {
     enabled = false,
     lazy = true,
     event = "VeryLazy",
+  },
+
+  {
+    -- https://github.com/azorng/goose.nvim
   },
 }

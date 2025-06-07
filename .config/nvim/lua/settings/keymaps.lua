@@ -122,17 +122,15 @@ end
 -- WHICHKEY
 wk.add({
   mode = { "n", "v" },
-  { "<leader>b",  group = "Buffer" },
-  { "<leader>f",  group = "Find" },
-  { "<leader>g",  group = "Git" },
-  { "<leader>h",  group = "Help" },
-  { "<leader>l",  group = "LSP" },
-  { "<leader>lv", group = "Vim" },
-  { "<leader>lt", group = "Telescope" },
-  { "<leader>q",  group = "Session/Quit" },
-  { "<leader>s",  group = "Search" },
-  { "<leader>st", group = "Telescope" },
-  { "<leader>u",  group = "UI" },
+  { "<leader>a", group = "AI/Apps" },
+  { "<leader>b", group = "Buffer" },
+  { "<leader>f", group = "Find" },
+  { "<leader>g", group = "Git" },
+  { "<leader>h", group = "Help" },
+  { "<leader>l", group = "LSP" },
+  { "<leader>q", group = "Session/Quit" },
+  { "<leader>s", group = "Search" },
+  { "<leader>u", group = "UI" },
 })
 
 -- FIXME why is stylua ignore not working?
@@ -172,11 +170,21 @@ vim.keymap.set("n", "<leader>,", pick("buffers", "buffers"), { desc = "buffers" 
 vim.keymap.set("n", "<leader>:", pick("command_history", "command_history"), { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
 
--- APPS
+-- APPS and AI
 -- TODO terminal, lazygit, outline, file explorer
-vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "Toggle Aerial" })
+-- c-z trigger ai completion
+vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "toggle aerial" })
+vim.keymap.set("n", "<leader>aD", "cmd>PrtChatDelete<cr>", { desc = "delete chat file" })
 vim.keymap.set("n", "<leader>ae", function() require("snacks").explorer() end, { desc = "file explorer" })
-vim.keymap.set('n', "<leader>ao", "<cmd>Outline<cr>", { desc = "Toggle Outline" })
+vim.keymap.set("n", "<leader>af", "cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
+vim.keymap.set('n', "<leader>am", "<cmd>PrtModel<cr>", { desc = "select ai model" })
+vim.keymap.set('n', "<leader>an", "<cmd>PrtChatNew<cr>", { desc = "new parrot chat" })
+vim.keymap.set('n', "<leader>ao", "<cmd>Outline<cr>", { desc = "toggle outline" })
+vim.keymap.set({ 'n', 'v' }, "<leader>ap", "<cmd>PrtChatPaste<cr>", { desc = "paste into parrot chat" })
+vim.keymap.set('n', "<leader>aP", "<cmd>PrtProvider<cr>", { desc = "select ai provider" })
+vim.keymap.set('n', "<leader>as", "<cmd>PrtStop<cr>", { desc = "stop ai response" })
+vim.keymap.set('n', "<leader>at", "<cmd>PrtChatToggle<cr>", { desc = "toggle parrot chat" })
+vim.keymap.set('n', "<leader>aT", "<cmd>PrtChatRespond<cr>", { desc = "trigger ai chat response" })
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
@@ -241,6 +249,7 @@ vim.keymap.set("n", "<leader>qd", function() require("persistence").stop() end, 
 vim.keymap.set("n", "<leader>s/", pick("current_buffer_fuzzy_find", "lines"), { desc = "search in buffer" })
 vim.keymap.set("n", '<leader>s"', pick("registers", "registers"), { desc = "registers" })
 vim.keymap.set("n", '<leader>sa', pick("autocommands", "autocmds"), { desc = "autocommands" })
+vim.keymap.set("n", '<leader>sA', "cmd>PrtChatFinder<cr>", { desc = "parrot chat finder" })
 vim.keymap.set("n", "<leader>sb", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', '<leader>sc', pick("commands", "commands"), { desc = 'find commands' })
 vim.keymap.set("n", '<leader>sC', pick("command_history", "command_history"), { desc = "command_history" })

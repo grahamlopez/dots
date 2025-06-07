@@ -32,24 +32,24 @@
 --]]
 
 -- General settings
-vim.opt.mouse = ""                -- Disable mouse for speed
-vim.opt.clipboard = "unnamedplus" -- Use system clipboard
-vim.opt.undofile = true           -- Persistent undo
+vim.opt.mouse = "nv" -- Disable mouse for speed
+vim.opt.clipboard = "unnamed,unnamedplus" -- Enable '*' and '+'; need wl-clipboard
+vim.opt.undofile = true -- Persistent undo
 -- vim.opt.backup = false -- No backup files
 -- vim.opt.writebackup = false -- No backup before overwriting
 -- vim.opt.swapfile = false -- No swap files
 vim.opt.updatetime = 250 -- Faster completion (4000ms default)
 vim.opt.timeoutlen = 300 -- Faster which-key popup
-vim.opt.history = 1000   -- More command history
+vim.opt.history = 1000 -- More command history
 vim.opt.virtualedit = "block"
 
 -- Performance optimizations
 vim.opt.lazyredraw = true -- Don't redraw during macros
 -- opt.regexpengine = 1 -- Use old regex engine (faster for some patterns)
-vim.opt.ttyfast = true    -- Fast terminal connection
+vim.opt.ttyfast = true -- Fast terminal connection
 
 -- Search settings
-vim.opt.hlsearch = true   -- Set highlight on search
+vim.opt.hlsearch = true -- Set highlight on search
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.smartcase = true
 vim.opt.inccommand = "split"
@@ -57,7 +57,7 @@ vim.opt.shortmess:append("c")
 
 -- Appearance
 vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this (most do)
-vim.opt.number = true        -- Make line numbers default
+vim.opt.number = true -- Make line numbers default
 vim.opt.relativenumber = true
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = ""
@@ -65,8 +65,8 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 5 -- Keep 8 columns left/right of cursor
-vim.opt.pumheight = 15    -- Maximum items in popup menu
-vim.opt.pumblend = 10     -- Popup menu transparency
+vim.opt.pumheight = 15 -- Maximum items in popup menu
+vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winheight = 5
 vim.opt.winminheight = 5
 vim.opt.winwidth = 5
@@ -76,16 +76,16 @@ vim.opt.showtabline = 2
 
 -- Indentation and formatting
 -- FIXME 'gq' doesn't work in markdown or lua comments
-vim.opt.tabstop = 2        -- Tab width
-vim.opt.shiftwidth = 2     -- Indent width
-vim.opt.softtabstop = 2    -- Soft tab width
-vim.opt.expandtab = true   -- Use spaces instead of tabs
+vim.opt.tabstop = 2 -- Tab width
+vim.opt.shiftwidth = 2 -- Indent width
+vim.opt.softtabstop = 2 -- Soft tab width
+vim.opt.expandtab = true -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart autoindenting
-vim.opt.autoindent = true  -- Copy indent from current line
+vim.opt.autoindent = true -- Copy indent from current line
 vim.opt.breakindent = true -- Maintain indent when wrapping
-vim.opt.wrap = false       -- Don't wrap lines
-vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
-vim.opt.textwidth = 80     -- Text width for formatting
+vim.opt.wrap = false -- Don't wrap lines
+vim.opt.linebreak = true -- Break at word boundaries if wrap enabled
+vim.opt.textwidth = 80 -- Text width for formatting
 
 -- Splitting
 vim.opt.splitbelow = true -- Horizontal splits go below
@@ -93,18 +93,18 @@ vim.opt.splitright = true -- Vertical splits go right
 
 -- Completion
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
-vim.opt.pumheight = 10                 -- Popup menu height
+vim.opt.pumheight = 10 -- Popup menu height
 vim.opt.wildmode = "longest:full,full" -- Command completion mode
 vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 
 -- Folding (enhanced for Neovim 0.11)
-vim.opt.foldmethod = "expr"                          -- Use expression folding
+vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
 vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
-vim.opt.foldlevel = 99                               -- Open all folds by default
-vim.opt.foldlevelstart = 99                          -- Start with all folds open
-vim.opt.foldenable = true                            -- Enable folding
-vim.opt.foldcolumn = "0"                             -- No fold column (clean appearance)
+vim.opt.foldlevel = 99 -- Open all folds by default
+vim.opt.foldlevelstart = 99 -- Start with all folds open
+vim.opt.foldenable = true -- Enable folding
+vim.opt.foldcolumn = "0" -- No fold column (clean appearance)
 
 -- Spell checking (disabled by default, easily toggled)
 vim.opt.spell = false
@@ -144,8 +144,8 @@ if vim.fn.has("nvim-0.11") == 1 then
 end
 
 -- File handling
-vim.opt.hidden = true    -- Allow hidden buffers
-vim.opt.autoread = true  -- Auto-read changed files
+vim.opt.hidden = true -- Allow hidden buffers
+vim.opt.autoread = true -- Auto-read changed files
 vim.opt.autowrite = true -- Auto-write before running commands
 
 -- Disable some providers for faster startup
