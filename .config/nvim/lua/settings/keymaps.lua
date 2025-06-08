@@ -23,11 +23,26 @@ vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true })
 vim.keymap.set("c", "vh", "vert help ", { noremap = true })
 
 -- quicker change-directory
-vim.keymap.set("c", "CD", "lcd " .. vim.fn.expand("%:p:h"), { desc = "change dir command" })
+vim.keymap.set(
+  "c",
+  "CD",
+  "lcd " .. vim.fn.expand("%:p:h"),
+  { desc = "change dir command" }
+)
 
 -- Remap for dealing with word wrap
-vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set(
+  "n",
+  "k",
+  "v:count == 0 ? 'gk' : 'k'",
+  { expr = true, silent = true }
+)
+vim.keymap.set(
+  "n",
+  "j",
+  "v:count == 0 ? 'gj' : 'j'",
+  { expr = true, silent = true }
+)
 -- or another way
 -- vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })
 -- vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
@@ -130,8 +145,6 @@ wk.add({
   { "<leader>t", group = "Todos" },
   { "<leader>u", group = "UI" },
 })
-
--- FIXME why is stylua ignore not working?
 
 -- stylua: ignore start
 
