@@ -95,14 +95,14 @@ return {
             i = {
               ["<C-d>"] = actions.results_scrolling_down,
               ["<C-u>"] = actions.results_scrolling_up,
-              ["<C-f>"] = actions.preview_scrolling_down,
-              ["<C-b>"] = actions.preview_scrolling_up,
+              ["<C-e>"] = actions.preview_scrolling_down,
+              ["<C-y>"] = actions.preview_scrolling_up,
             },
             n = {
               ["<C-d>"] = actions.results_scrolling_down,
               ["<C-u>"] = actions.results_scrolling_up,
-              ["<C-f>"] = actions.preview_scrolling_down,
-              ["<C-b>"] = actions.preview_scrolling_up,
+              ["<C-e>"] = actions.preview_scrolling_down,
+              ["<C-y>"] = actions.preview_scrolling_up,
             },
           },
           pickers = { -- https://github.com/nvim-telescope/telescope.nvim#pickers
@@ -195,7 +195,10 @@ return {
       },
       completion = {
         menu = { auto_show = false, enabled = true },
-        list = { selection = { preselect = false }, cycle = { from_top = false } },
+        list = {
+          selection = { preselect = false },
+          cycle = { from_top = false },
+        },
       },
 
       --]]
@@ -350,7 +353,8 @@ return {
               Operator = "󰆕",
               TypeParameter = "󰅲",
             }
-            vim_item.kind = string.format("%s %s", icons[vim_item.kind], vim_item.kind)
+            vim_item.kind =
+              string.format("%s %s", icons[vim_item.kind], vim_item.kind)
             vim_item.menu = ({
               nvim_lsp = "[LSP]",
               luasnip = "[Snippet]",
@@ -484,7 +488,11 @@ return {
 
   --
   --      Tab pages, zoom window
-  --
+  --      - for "zooming" windows (:tab split)
+  --      - for isolating cwd
+  --      - how to minimize cognitive load
+  --        - visual cues (lualine config)
+  --        - keybindings
 
   --
   --      Clipboards and Registers
@@ -492,6 +500,7 @@ return {
 
   --
   --      Spelling
+  --      - read through and understand spell checking settings, files, workflows
   --
 
   --
@@ -525,7 +534,8 @@ return {
                     mode = "search",
                     exclude = {
                       function(win)
-                        return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "snacks_picker_list"
+                        return vim.bo[vim.api.nvim_win_get_buf(win)].filetype
+                          ~= "snacks_picker_list"
                       end,
                     },
                   },

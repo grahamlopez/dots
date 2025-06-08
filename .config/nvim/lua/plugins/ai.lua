@@ -12,7 +12,7 @@ return {
       -- Providers must be explicitly set up to make them available.
       providers = {
         pplx = {
-          name = "pplx", -- ISSUE: remove this footgun - must be the same as the parent table name
+          name = "pplx", -- UPSTREAM: remove this footgun - must be the same as the parent table name
           api_key = os.getenv("PERPLEXITY_API_KEY"),
           endpoint = "https://api.perplexity.ai/chat/completions",
           params = {

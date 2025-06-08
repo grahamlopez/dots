@@ -12,46 +12,8 @@
     use 'c-v [key sequence]' to input a literal keypress involving
     the control key
 --]]
-vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true })
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
--- jumbo scrolling
-vim.keymap.set("n", "<c-e>", "5<c-e>", { silent = true })
-vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true })
-
--- automatically open help in vertical split
-vim.keymap.set("c", "vh", "vert help ", { noremap = true })
-
--- quicker change-directory
-vim.keymap.set(
-  "c",
-  "CD",
-  "lcd " .. vim.fn.expand("%:p:h"),
-  { desc = "change dir command" }
-)
-
--- Remap for dealing with word wrap
-vim.keymap.set(
-  "n",
-  "k",
-  "v:count == 0 ? 'gk' : 'k'",
-  { expr = true, silent = true }
-)
-vim.keymap.set(
-  "n",
-  "j",
-  "v:count == 0 ? 'gj' : 'j'",
-  { expr = true, silent = true }
-)
--- or another way
--- vim.keymap.set({ "n", "x" }, "j", "gj", { noremap = true, silent = true })
--- vim.keymap.set({ "n", "x" }, "k", "gk", { noremap = true, silent = true })
--- vim.keymap.set("n", "<leader>w", ":lua vim.wo.wrap = not vim.wo.wrap<CR>", { noremap = true, silent = true })
-
--- move the right right in insert mode
-vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true })
-
--- HACK: A generic function for toggling values
+-- HACK: A more generic function for toggling values
 local function vim_opt_toggle(opt, on, off, name)
   local val = vim.opt[opt]:get()
   local is_off = false
@@ -79,25 +41,6 @@ end
 vim.api.nvim_create_user_command("ToggleColorColumn", function()
   vim_opt_toggle("colorcolumn", "+1", "", "colorcolumn")
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
-
--- vim.keymap.set('n', '<c-n>', ":bnext<cr>", { silent = true })
--- vim.keymap.set('n', '<c-p>', ":bprevious<cr>", { silent = true })
-
--- Stay in indent mode
-vim.keymap.set("v", "<", "<gv")
-vim.keymap.set("v", ">", ">gv")
-
-------------------------------------------------------------------------
----
--- Set up the majority of command shortcut keybindings
--- prefer to use native vim keymapping facilities instead of which-key
--- to allow for disabling which-key and having mappings still work
---
-
--- first, some conveniences for use in the following mapping specs
-local tb = require("telescope.builtin")
-local sp = require("snacks").picker
-local wk = require("which-key")
 
 vim.g.current_picker = "telescope"
 
@@ -132,6 +75,10 @@ local function pick_fns(telescope_fn, snacks_fn)
 end
 
 -- WHICHKEY
+local tb = require("telescope.builtin")
+local sp = require("snacks").picker
+local wk = require("which-key")
+
 wk.add({
   mode = { "n", "v" },
   { "<leader>a", group = "AI/Apps" },
@@ -147,15 +94,23 @@ wk.add({
 })
 
 -- stylua: ignore start
+--
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true }) -- disable space in n,v
+vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true }) -- cancel highlighting
+vim.keymap.set("n", "<c-e>", "5<c-e>", { silent = true }) -- jumbo scrolling
+vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true }) -- jumbo scrolling
+vim.keymap.set( "n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
+vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
+vim.keymap.set("c", "vh", "vert help ", { noremap = true }) -- help in vertical split
+vim.keymap.set( "c", "CD", "lcd " .. vim.fn.expand("%:p:h"), { desc = "change dir command" })
+vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true }) -- move to the right right in insert mode
+vim.keymap.set("v", "<", "<gv") -- Stay in indent mode
+vim.keymap.set("v", ">", ">gv") -- Stay in indent mode
+
 
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
--- vim.keymap.set({ "n", "x", "o" }, "s", function() require("flash").jump() end, { desc = "Flash" })
--- vim.keymap.set({ "n", "x", "o" }, "S", function() require("flash").treesitter() end, { desc = "Flash Treesitter" })
--- vim.keymap.set("o", "r", function() require("flash").remote() end, { desc = "Remote Flash" })
--- vim.keymap.set({ "x", "o" }, "R", function() require("flash").treesitter_search() end, { desc = "Treesitter Search" })
--- vim.keymap.set("c", "<c-s>", function() require("flash").toggle() end, { desc = "Toggle Flash Search" })
 
 vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
@@ -183,8 +138,7 @@ vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { d
 vim.keymap.set("n", "<leader><c-o>", pick("find_files", "files"), { desc = "open files" })
 
 -- APPS and AI
--- IDEA: terminal, lazygit, outline, file explorer
--- <c-z> trigger ai completion
+-- IDEA: terminal, lazygit, outline, file explorer, <c-z> trigger ai completion
 vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "toggle aerial" })
 vim.keymap.set("n", "<leader>aD", "cmd>PrtChatDelete<cr>", { desc = "delete chat file" })
 vim.keymap.set("n", "<leader>ae", function() require("snacks").explorer() end, { desc = "file explorer" })
@@ -203,21 +157,8 @@ vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer l
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
 -- GIT - disabling these until I understand them
+-- TODO: get git keymaps from snacks.picker(), telescope(), and gitsigns
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
--- vim.keymap.set("n", "<leader>gb", function() sp.git_branches() end, { desc = "git branches search" })
--- vim.keymap.set({ "n", "v" }, "<leader>gB", function() require("snacks").gitbrowse() end, { desc = "open github" })
--- vim.keymap.set("n", "<leader>gd", function() sp.git_diff() end, { desc = "git diff search" })
--- vim.keymap.set("n", "<leader>gf", function() sp.git_log_file() end, { desc = "git logfile search" })
--- vim.keymap.set("v", "<leader>gl", function() sp.git_log() end, { desc = "git log search" })
--- vim.keymap.set("n", "<leader>gL", function() sp.git_log_line() end, { desc = "git log lines search" })
--- vim.keymap.set("n", "<leader>gs", function() sp.git_status() end, { desc = "git status search" })
--- vim.keymap.set("n", "<leader>gS", function() sp.git_stash() end, { desc = "git stash search" })
--- vim.keymap.set('n', '<leader>gb', tb.git_branches, { desc = ' git branches ' })
--- vim.keymap.set('v', '<leader>gc', tb.git_bcommits, { desc = 'git commits (range) ' })
--- vim.keymap.set('n', '<leader>gc', tb.git_bcommits, { desc = 'git commits (buffer) ' })
--- vim.keymap.set('n', '<leader>gC', tb.git_commits, { desc = 'git commits (all) ' })
--- vim.keymap.set('n', '<leader>gs', tb.git_status, { desc = 'git status ' })
--- vim.keymap.set('n', '<leader>gS', tb.git_stash, { desc = 'git stash ' })
 
 -- HELP
 vim.keymap.set("n", "<leader>h*", pick_fns(
@@ -256,7 +197,7 @@ vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definit
 vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
 vim.keymap.set("n", '<leader>lW', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
 
--- OPEN (idea)
+-- IDEA: OPEN
 -- oo find_files
 -- oc open config
 -- oO fine files in home
@@ -298,7 +239,9 @@ vim.keymap.set("n", "<leader>sr", pick("oldfiles", "recent"), { desc = "recent f
 vim.keymap.set("n", '<leader>sR', function() sp.resume() end, { desc = "resume" })
 vim.keymap.set("n", "<leader>ss", tb.spell_suggest, { desc = "spell suggest" })
 vim.keymap.set("n", '<leader>sS', pick("search_history", "search_history"), { desc = "search history" })
-vim.keymap.set("n", "<leader>st", tb.tags, { desc = "tags" })
+vim.keymap.set("n", "<leader>st", pick_fns(
+  function() vim.cmd("TodoTelescope") end,
+  function() require("snacks").picker.todo_comments() end), { desc = "search todos" })
 vim.keymap.set("n", "<leader>sT", tb.treesitter, { desc = "treesitter" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
 vim.keymap.set("n", "<leader>sv", tb.vim_options, { desc = "vim options" })
@@ -311,11 +254,21 @@ vim.keymap.set("n", "<leader>tt", pick_fns(
 -- UI
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
   { desc = "ColorColumn Toggle" })
-vim.keymap.set("n", '<leader>uC', function() sp.colorschemes() end, { desc = "colorscheme" })
--- vim.keymap.set( "n", "<leader>uC", "<cmd>lua require'telescope.builtin'.colorscheme( { enable_preview = true } )<cr>", { desc = "colorscheme" })
+vim.keymap.set("n", '<leader>uC', pick_fns(
+  function() require'telescope.builtin'.colorscheme( { enable_preview = true } ) end,
+  function() sp.colorschemes() end), { desc = "colorscheme" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
--- FIXME: this should remove numbers even if relativenumber is active
-vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end, { desc = "line numbers" })
+vim.g.saved_rnu = vim.o.relativenumber
+vim.keymap.set("n", "<leader>un", function()
+  if vim.o.number then
+    vim.g.saved_rnu = vim.o.relativenumber
+    vim.o.relativenumber = false
+    vim.o.number = false
+  else
+    vim.o.number = true
+    vim.o.relativenumber = vim.g.saved_rnu
+  end
+  end, { desc = "line numbers" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
   { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
@@ -328,36 +281,15 @@ vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, {
 -- TODO: gitsigns
 -- TODO: autoformat on save - https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#command-to-toggle-format-on-save
 
-
 -- EXECUTE
 -- NOTE: not sure how really useful these are
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
 vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
-
+--
 -- stylua: ignore end
 
 ------------------------------------------------------------------------
----
---- Iconirific version (not synced / up-to-date)
---[[
-vim.keymap.set('n', '<c-b>', tb.buffers, { desc = '󰪸  buffers ' })
-vim.keymap.set('n', '<c-f>', tb.current_buffer_fuzzy_find, { desc = '󰺯  find in current buffer ' })
-vim.keymap.set('n', '<c-g>', tb.live_grep, { desc = '󰥩  live grep ' })
-vim.keymap.set('n', '<leader>*', tb.grep_string, { desc = '󰥩  * for cwd ' })
-
-local wk = require("which-key")
-wk.add({
-  mode = { "n", "v", },
-  { "<leader>b", group = " 󰱿 Buffer" },
-  { "<leader>f", group = "  Find" },
-  { "<leader>g", group = "  Git" },
-  { "<leader>h", group = "  Help" },
-  { "<leader>l", group = "   LSP" },
-  { "<leader>t", group = "  Telescope" },
-  { "<leader>u", group = "   UI" },
-})
---]]
 
 -- some ideas from https://www.youtube.com/watch?v=KGJV0n70Mxs
 

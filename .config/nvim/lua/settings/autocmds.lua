@@ -3,6 +3,7 @@
 
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   callback = function()
+    -- stylua: ignore start
     if vim.o.background == "dark" then
       vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 233, bg = "#121212" })
       vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
@@ -10,6 +11,7 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
       vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 255, bg = "#EEEEEE" })
       vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
     end
+    -- stylua: ignore end
   end,
 })
 
@@ -20,6 +22,30 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
     if vim.fn.getcwd() == home .. "/.config/nvim" then
       vim.env.GIT_DIR = home .. "/.dots-git/"
       vim.env.GIT_WORK_TREE = home
+    end
+  end,
+})
+
+-- open help windows in vertical split depending on window size
+local function move_help_window()
+  if vim.api.nvim_win_get_width(0) > 160 then
+    vim.cmd.wincmd("L")
+  else
+    -- vim.cmd.wincmd("J")
+    vim.cmd("resize " .. math.floor(vim.o.lines * 0.65))
+  end
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "help",
+  callback = move_help_window,
+})
+
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = "*",
+  callback = function()
+    if vim.bo.filetype == "help" then
+      move_help_window()
     end
   end,
 })
