@@ -19,10 +19,11 @@ return {
             chat = { temperature = 1.1, top_p = 1 },
             command = { temperature = 1.1, top_p = 1 },
           },
-          topic = {
-            model = "r1-1776",
-            params = { max_completion_tokens = 64 },
-          },
+          -- used for summarizing chats. save some moneys
+          -- topic = {
+          --   model = "r1-1776",
+          --   params = { max_completion_tokens = 64 },
+          -- },
           models = { -- https://docs.perplexity.ai/models/model-cards
             "sonar-pro", -- Advanced search, flagship model
             "sonar", -- Lightweight search model

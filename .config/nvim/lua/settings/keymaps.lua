@@ -36,7 +36,7 @@ vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- move the right right in insert mode
 vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true })
 
--- A generic function for toggling values. Seems a bit hacky FIXME
+-- HACK: A generic function for toggling values
 local function vim_opt_toggle(opt, on, off, name)
   local val = vim.opt[opt]:get()
   local is_off = false
@@ -106,15 +106,12 @@ local function pick(telescope_fn, snacks_fn)
   end
 end
 
-local function pick_cword(telescope_fn, snacks_fn)
+local function pick_fns(telescope_fn, snacks_fn)
   return function()
     if vim.g.current_picker == "telescope" then
-      require("telescope.builtin")[telescope_fn]({ default_text = vim.fn.expand("<cword>") })
+      telescope_fn()
     else
-      require("snacks.picker")[snacks_fn]()
-      vim.schedule(function()
-        vim.api.nvim_feedkeys(vim.fn.expand("<cword>"), "i", false)
-      end)
+      snacks_fn()
     end
   end
 end
@@ -130,6 +127,7 @@ wk.add({
   { "<leader>l", group = "LSP" },
   { "<leader>q", group = "Session/Quit" },
   { "<leader>s", group = "Search" },
+  { "<leader>t", group = "Todos" },
   { "<leader>u", group = "UI" },
 })
 
@@ -172,8 +170,8 @@ vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { d
 vim.keymap.set("n", "<leader><c-o>", pick("find_files", "files"), { desc = "open files" })
 
 -- APPS and AI
--- TODO terminal, lazygit, outline, file explorer
--- c-z trigger ai completion
+-- IDEA: terminal, lazygit, outline, file explorer
+-- <c-z> trigger ai completion
 vim.keymap.set('n', "<leader>aa", "<cmd>AerialToggle<cr>", { desc = "toggle aerial" })
 vim.keymap.set("n", "<leader>aD", "cmd>PrtChatDelete<cr>", { desc = "delete chat file" })
 vim.keymap.set("n", "<leader>ae", function() require("snacks").explorer() end, { desc = "file explorer" })
@@ -212,10 +210,20 @@ vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { 
 -- vim.keymap.set('n', '<leader>gS', tb.git_stash, { desc = 'git stash ' })
 
 -- HELP
-vim.keymap.set("n", "<leader>h*", pick_cword("help_tags", "help"), { desc = "help for cword" })
+vim.keymap.set("n", "<leader>h*", pick_fns(
+  function() require("telescope.builtin").help_tags({ default_text = vim.fn.expand("<cword>") }) end,
+  function()
+      require("snacks.picker").help()
+      vim.schedule(function() vim.api.nvim_feedkeys(vim.fn.expand("<cword>"), "i", false) end)
+  end), { desc = "help for cword" })
 vim.keymap.set("n", "<leader>hh", pick("help_tags", "help"), { desc = "help" })
 vim.keymap.set("n", "<leader>hm", pick("man_pages", "man"), { desc = "man pages" }) -- FIXME nothing happens?
-vim.keymap.set("n", "<leader>hM", pick_cword("man_pages", "man"), { desc = "man pages" })
+vim.keymap.set("n", "<leader>hM", pick_fns(
+  function() require("telescope.builtin").man_pages({ default_text = vim.fn.expand("<cword>") }) end,
+  function()
+      require("snacks.picker").man()
+      vim.schedule(function() vim.api.nvim_feedkeys(vim.fn.expand("<cword>"), "i", false) end)
+  end), { desc = "man page for cword" })
 vim.keymap.set("n", "<leader>hk", pick("keymaps", "keymaps"), { desc = "keymaps" })
 vim.keymap.set("n", "<leader>hK", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
@@ -286,10 +294,9 @@ vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo histo
 vim.keymap.set("n", "<leader>sv", tb.vim_options, { desc = "vim options" })
 
 -- TO-DO
-vim.keymap.set("n", "<leader>tt", "<cmd>Telescope grep_string search=TODO<cr>", { desc = "Find TODO comments" })
-vim.keymap.set("n", "<leader>tf", "<cmd>Telescope grep_string search=FIXME<cr>", { desc = "Find FIXME comments" })
-vim.keymap.set("n", "<leader>ta", "<cmd>Telescope live_grep default_text=TODO|FIXME<cr>",
-  { desc = "Find TODO and FIXME comments" })
+vim.keymap.set("n", "<leader>tt", pick_fns(
+  function() vim.cmd("TodoTelescope") end,
+  function() require("snacks").picker.todo_comments() end), { desc = "search todos" })
 
 -- UI
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
@@ -302,15 +309,15 @@ vim.keymap.set("n", "<leader>un", function() vim.o.number = not vim.o.number end
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
   { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
--- TODO vim.keymap.set("n", "<leader>us", function() require("snacks").scroll.disable() end, { desc = "smooth scrolling" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
--- TODO how is this different than folke/zen-mode.nvim
+-- QUESTION: how is this different than folke/zen-mode.nvim
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
--- TODO diagnostics
--- TODO indent guides
--- TODO gitsigns
+-- TODO: diagnostics
+-- TODO: gitsigns
+-- TODO: autoformat on save - https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#command-to-toggle-format-on-save
+
 
 -- EXECUTE
 -- FIXME not sure how really useful these are

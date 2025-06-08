@@ -27,6 +27,11 @@
     'vim.opt' will set both _global and _local versions, or whichever one is
     available if it isn't a global-local variable.
 
+    Note that for checking option values (e.g. if vim.o[pt].background == "dark")
+    that vim.o.* returns the option value as a Lua primitive, while vim.opt.*
+    treats each option as a special object (metatable) with methods for list
+    manipulation and advanced operations, such as vim.opt.background:get().
+
     ':set all' to see all possible settings and their current values
     ':help options' to get to the options part of the manual
 --]]
@@ -56,7 +61,7 @@ vim.opt.inccommand = "split"
 vim.opt.shortmess:append("c")
 
 -- Appearance
-vim.opt.termguicolors = true -- NOTE: You should make sure your terminal supports this (most do)
+vim.opt.termguicolors = true -- make sure your terminal supports this (most do)
 vim.opt.number = true -- Make line numbers default
 vim.opt.relativenumber = true
 vim.opt.signcolumn = "yes"
@@ -76,6 +81,8 @@ vim.opt.showtabline = 2
 
 -- Indentation and formatting
 -- FIXME 'gq' doesn't work in markdown or lua comments
+-- see also conform.nvim settings
+-- vim.opt.formatoptions -= t -- disable wrap as you type
 vim.opt.tabstop = 2 -- Tab width
 vim.opt.shiftwidth = 2 -- Indent width
 vim.opt.softtabstop = 2 -- Soft tab width

@@ -3,12 +3,13 @@
 
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   callback = function()
-    -- set this to match line numbering?
-    -- FIXME adapt to dark/light theme
-    vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 235, bg = "#121212" })
-    vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
-    -- this causes glitching with which-key popus
-    -- vim.api.nvim_set_hl(0, "NormalFloat", { ctermbg = "NONE", bg = "NONE" })
+    if vim.o.background == "dark" then
+      vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 233, bg = "#121212" })
+      vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
+    else
+      vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 255, bg = "#EEEEEE" })
+      vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
+    end
   end,
 })
 

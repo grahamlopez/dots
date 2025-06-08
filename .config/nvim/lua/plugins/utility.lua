@@ -80,11 +80,9 @@ return {
       local actions = require("telescope.actions")
       require("telescope").setup({
         defaults = {
-          -- TODO unify with snacks: vertical if >160 columnss available
           layout_strategy = "flex",
           layout_config = {
             flip_columns = 160, -- Use horizontal layout if columns >= 160
-            -- Optional: customize settings for each mode
             horizontal = { preview_cutoff = 120 },
             vertical = { preview_cutoff = 40 },
             prompt_position = "top", -- Places prompt above the results
@@ -94,7 +92,6 @@ return {
 
             -- use '<C-/>' and '?' in insert and normal mode, respectively, to
             -- show the actions mapped to your picker
-
             i = {
               ["<C-d>"] = actions.results_scrolling_down,
               ["<C-u>"] = actions.results_scrolling_up,
@@ -406,7 +403,7 @@ return {
         -- https://github.com/nvim-treesitter/nvim-treesitter-context
         "nvim-treesitter/nvim-treesitter-context",
 
-        -- TODO lazyvim's context is way better than mine
+        -- RFE: lazyvim's context is way better than mine
         -- and also consider https://github.com/SmiteshP/nvim-navic
       },
     },
@@ -470,6 +467,7 @@ return {
       branch = false,
       need = 2,
     },
+    -- RFE: quit without overwriting the previous session
     config = function() -- part of what's needed to preserve bufferline ordering
       require("persistence").setup({
         options = { "globals" }, -- include other options as needed

@@ -7,6 +7,7 @@ return {
   -- https://github.com/stevearc/conform.nvim
   {
     "stevearc/conform.nvim",
+    enabled = true,
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
     -- This will provide type hinting with LuaLS
@@ -14,20 +15,26 @@ return {
     ---@type conform.setupOpts
     opts = {
       formatters_by_ft = {
-        lua = { "stylua" },
+        bash = { "shfmt" },
         c = { "clang_format" },
         cpp = { "clang_format" },
-        bash = { "shfmt" },
-        sh = { "shfmt" },
-        markdown = { "prettier", "markdownlint" },
-        tex = { "latexindent" },
-        latex = { "latexindent" },
-        python = { "isort", "black" },
         javascript = { "prettier" },
-        typescript = { "prettier" },
         json = { "prettier" },
+        latex = { "latexindent" },
+        lua = { "stylua" },
+        markdown = { "prettier", "markdownlint" },
+        python = { "isort", "black" },
+        sh = { "shfmt" },
+        tex = { "latexindent" },
+        typescript = { "prettier" },
         yaml = { "prettier" },
       },
+      -- here is a pretty long comment line that is not getting formatted when it goes too long
+      -- formatters = {
+      --   prettier = {
+      --     args = { "--print-width=80 --prose-wrap=always" },
+      --   },
+      -- },
       default_format_opts = {
         lsp_format = "fallback",
       },
@@ -38,7 +45,7 @@ return {
     },
     init = function()
       -- If you want the formatexpr, here is the place to set it
-      -- NOTE: this breaks 'gq' formatting
+      -- BUG: this breaks 'gq' linewrapping
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
     end,
   },
@@ -95,7 +102,31 @@ return {
     enabled = true,
     event = "VeryLazy",
     dependencies = { "nvim-lua/plenary.nvim" },
-    opts = {},
+    opts = {
+      -- Demos
+      -- FIXME: demo
+      -- TODO: demo
+      -- HACK: demo
+      -- WARN: demo
+      -- PERF: demo
+      -- NOTE: demo
+      -- TEST: demo
+      -- IDEA: demo
+      -- UPSTREAM: demo
+      -- QUESTION: demo
+      keywords = {
+        IDEA = { icon = "󰛨 ", color = "hint", alt = { "RFE" } },
+        UPSTREAM = { icon = " ", color = "info" },
+        QUESTION = { icon = " ", color = "warning" },
+      },
+      merge_keywords = true,
+      highlight = {
+        comments_only = false,
+        keyword = "wide_bg", -- wide_bg or fg
+        pattern = [[.*<(KEYWORDS):]], -- customize this pattern as needed
+      },
+      pattern = [[\b(KEYWORDS):]], -- ripgrep regex
+    },
   },
 
   --
@@ -112,20 +143,36 @@ return {
       use_diagnostic_signs = true,
     },
     keys = {
-      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+      {
+        "<leader>xx",
+        "<cmd>Trouble diagnostics toggle<cr>",
+        desc = "Diagnostics (Trouble)",
+      },
       {
         "<leader>xX",
         "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
         desc = "Buffer Diagnostics (Trouble)",
       },
-      { "<leader>cs", "<cmd>Trouble symbols toggle focus=false<cr>", desc = "Symbols (Trouble)" },
+      {
+        "<leader>cs",
+        "<cmd>Trouble symbols toggle focus=false<cr>",
+        desc = "Symbols (Trouble)",
+      },
       {
         "<leader>cl",
         "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
         desc = "LSP Definitions / references / ... (Trouble)",
       },
-      { "<leader>xL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
-      { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+      {
+        "<leader>xL",
+        "<cmd>Trouble loclist toggle<cr>",
+        desc = "Location List (Trouble)",
+      },
+      {
+        "<leader>xQ",
+        "<cmd>Trouble qflist toggle<cr>",
+        desc = "Quickfix List (Trouble)",
+      },
     },
   },
 
@@ -143,7 +190,9 @@ return {
     },
     config = function()
       require("Comment").setup({
-        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+        pre_hook = require(
+          "ts_context_commentstring.integrations.comment_nvim"
+        ).create_pre_hook(),
       })
     end,
   },
@@ -334,7 +383,13 @@ return {
       vim.lsp.config.texlab = {
         cmd = { "texlab" },
         filetypes = { "tex", "plaintex", "bib" },
-        root_markers = { ".latexmkrc", ".texlabroot", "texlabroot", "Tectonic.toml", ".git" },
+        root_markers = {
+          ".latexmkrc",
+          ".texlabroot",
+          "texlabroot",
+          "Tectonic.toml",
+          ".git",
+        },
         settings = {
           texlab = {
             auxDirectory = ".",
