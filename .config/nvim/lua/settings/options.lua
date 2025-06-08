@@ -80,7 +80,6 @@ vim.opt.winminwidth = 5
 vim.opt.showtabline = 2
 
 -- Indentation and formatting
--- FIXME 'gq' doesn't work in markdown or lua comments
 -- see also conform.nvim settings
 -- vim.opt.formatoptions -= t -- disable wrap as you type
 vim.opt.tabstop = 2 -- Tab width

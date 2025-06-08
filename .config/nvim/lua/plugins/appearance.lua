@@ -25,7 +25,6 @@ return {
     -- applications running inside of it
     -- but looks like there is a merged PR: https://github.com/tmux/tmux/pull/4353
     { "f-person/auto-dark-mode.nvim", opts = {} }, -- https://github.com/f-person/auto-dark-mode.nvim
-    -- FIXME whichkey and completion popups are broken after live switch until nvim restarts
   },
 
   -- https://github.com/catppuccin/nvim

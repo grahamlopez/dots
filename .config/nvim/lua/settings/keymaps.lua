@@ -200,10 +200,7 @@ vim.keymap.set('n', "<leader>aT", "<cmd>PrtChatRespond<cr>", { desc = "trigger a
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
--- delete buffer - preserve window (switch to alternate, "|" to chain, delete alternate)
--- FIXME this could be extended with "... | wshada | ..." to preserve marks
--- (cursor position), but can be an issue when using multiple instances
-vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
 -- GIT - disabling these until I understand them
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
@@ -230,7 +227,7 @@ vim.keymap.set("n", "<leader>h*", pick_fns(
       vim.schedule(function() vim.api.nvim_feedkeys(vim.fn.expand("<cword>"), "i", false) end)
   end), { desc = "help for cword" })
 vim.keymap.set("n", "<leader>hh", pick("help_tags", "help"), { desc = "help" })
-vim.keymap.set("n", "<leader>hm", pick("man_pages", "man"), { desc = "man pages" }) -- FIXME nothing happens?
+vim.keymap.set("n", "<leader>hm", pick("man_pages", "man"), { desc = "man pages" }) -- FIXME: nothing happens?
 vim.keymap.set("n", "<leader>hM", pick_fns(
   function() require("telescope.builtin").man_pages({ default_text = vim.fn.expand("<cword>") }) end,
   function()
@@ -333,7 +330,7 @@ vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, {
 
 
 -- EXECUTE
--- FIXME not sure how really useful these are
+-- NOTE: not sure how really useful these are
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
 vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
