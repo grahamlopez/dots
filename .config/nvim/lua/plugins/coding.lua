@@ -46,6 +46,10 @@ return {
     init = function()
       -- If you want the formatexpr, here is the place to set it
       -- BUG: this breaks 'gq' linewrapping
+      -- alternate idea:
+      --  - remove conform AND lsp formatexpr()s
+      --  - set up UI toggle for auto format on save - https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#command-to-toggle-format-on-save
+      --  - set up n,v keymap for on-demand conform format
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
     end,
   },
