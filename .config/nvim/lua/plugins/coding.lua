@@ -35,19 +35,23 @@ return {
       default_format_opts = {
         lsp_format = "fallback",
       },
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
-      },
+      format_on_save = function(bufnr)
+        -- Disable with a global or buffer-local variable
+        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+          return
+        end
+        return { timeout_ms = 500, lsp_format = "fallback" }
+      end,
     },
     init = function()
       -- If you want the formatexpr, here is the place to set it
-      -- BUG: this breaks 'gq' linewrapping
-      -- alternate idea:
-      --  - remove conform AND lsp formatexpr()s
-      --  - set up UI toggle for auto format on save - https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#command-to-toggle-format-on-save
-      --  - set up n,v keymap for on-demand conform format
-      vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+      -- this breaks 'gq' linewrapping
+      -- Here is the current state:
+      --    - 'gq'  runs formatexpr=v:lua.vim.lsp.formatexpr()
+      --    - 'gw'  ignores formatexpr and formatprg
+      --    - '_lf' runs conform.format()
+      --    - autoformat on save runs conform.format()
+      -- vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
     end,
   },
 
@@ -97,9 +101,15 @@ return {
         QUESTION = { icon = " ", color = "warning" },
       },
       merge_keywords = true,
+      -- to get just underlining the keyword need: gui_style, highlight.keyword, highlight.after
+      -- gui_style = {
+      --   fg = "underline",
+      --   bg = "none",
+      -- },
       highlight = {
         comments_only = false,
-        keyword = "wide_bg", -- wide_bg or fg
+        -- keyword = "fg", -- wide_bg or fg
+        -- after = "",
         pattern = [[.*<(KEYWORDS):]], -- customize this pattern as needed
       },
       pattern = [[\b(KEYWORDS):]], -- ripgrep regex

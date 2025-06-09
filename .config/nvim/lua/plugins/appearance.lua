@@ -33,7 +33,7 @@ return {
         end,
         set_light_mode = function()
           vim.api.nvim_set_option_value("background", "light", {})
-          vim.cmd.colorscheme("tokyonight-day")
+          vim.cmd.colorscheme("dayfox")
         end,
         update_interval = 3000,
         fallback = "dark",
@@ -129,7 +129,7 @@ return {
       ---@diagnostic disable-next-line: undefined-field
       require("lualine").setup({
         options = {
-          theme = "nord",
+          theme = "auto",
           globalstatus = true,
         },
         sections = {

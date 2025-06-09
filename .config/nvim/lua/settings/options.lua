@@ -105,7 +105,7 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 
 -- Folding (enhanced for Neovim 0.11)
 -- TODO: Folding: closed fold display, easier display of collapsed + 1
--- better navigation, h/l to open/close
+-- better navigation, h/l to open/close, lua block comments
 vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
 vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting

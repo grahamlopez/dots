@@ -406,7 +406,7 @@ return {
     dependencies = {
       {
         -- https://github.com/nvim-treesitter/nvim-treesitter-context
-        "nvim-treesitter/nvim-treesitter-context",
+        "nvim-treesitter/nvim-treesitter-context", -- FIXME: not working
 
         -- RFE: lazyvim's context is way better than mine
         -- and also consider https://github.com/SmiteshP/nvim-navic
@@ -472,7 +472,6 @@ return {
       branch = false,
       need = 2,
     },
-    -- RFE: quit without overwriting the previous session
     config = function() -- part of what's needed to preserve bufferline ordering
       require("persistence").setup({
         options = { "globals" }, -- include other options as needed

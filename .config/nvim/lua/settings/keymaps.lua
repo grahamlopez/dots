@@ -37,12 +37,19 @@ local function vim_opt_toggle(opt, on, off, name)
   end
 end
 
+-- A function to quit without saving the session (but save files)
+vim.api.nvim_create_user_command("WQ", function()
+  require("persistence").stop()
+  vim.cmd('xa') -- alias for ":wqa"
+end, { desc = "save and quit without saving session", nargs = 0 })
+
 -- A function and keymapping to toggle colorcolum
 vim.api.nvim_create_user_command("ToggleColorColumn", function()
   vim_opt_toggle("colorcolumn", "+1", "", "colorcolumn")
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
 vim.g.current_picker = "telescope"
+vim.g.disable_autoformat = true
 
 vim.api.nvim_create_user_command("TogglePicker", function()
   if vim.g.current_picker == "telescope" then
@@ -186,14 +193,13 @@ vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming 
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
 vim.keymap.set("n", "<leader>ld", pick("lsp_definitions", "lsp_definitions"), { desc = "LSP definitions" })
 vim.keymap.set("n", "<leader>lD", function() sp.lsp_declarations() end, { desc = "LSP declarations" })
-vim.keymap.set("n", "<leader>lf", function() require("conform").format({ async = true }) end,
-  { desc = "format (conform)" })
+-- FIXME: cannot format a visual selection except with explicit ":lua ..." command
+vim.keymap.set({ "n", "v" }, "<leader>lf", function() require("conform").format( { async = true } ) end, { desc = "format (conform)" })
 vim.keymap.set('n', '<leader>lF', "<cmd>lua vim.lsp.buf.format({async = true})<cr>", { desc = "format (vim)" })
 vim.keymap.set("n", "<leader>li", pick("lsp_implementations", "lsp_implementations"), { desc = "LSP implementations" })
 vim.keymap.set("n", "<leader>lr", pick("lsp_references", "lsp_references"), { desc = "LSP references" })
 vim.keymap.set("n", "<leader>ls", pick("lsp_document_symbols", "lsp_symbols"), { desc = "LSP document symbols" })
-vim.keymap.set("n", "<leader>lS", pick("lsp_workspace_symbols", "lsp_workspace_symbols"),
-  { desc = "LSP workspace symbols" })
+vim.keymap.set("n", "<leader>lS", pick("lsp_workspace_symbols", "lsp_workspace_symbols"), { desc = "LSP workspace symbols" })
 vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definitions"), { desc = "LSP type definitions" })
 vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
 vim.keymap.set("n", '<leader>lWb', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
@@ -202,7 +208,7 @@ vim.keymap.set("n", '<leader>lWf', function() vim.diagnostic.open_float() end, {
 -- IDEA: OPEN
 -- oo find_files
 -- oc open config
--- oO fine files in home
+-- oO find files in home
 -- on notes
 
 -- SESSIONS
@@ -271,8 +277,8 @@ vim.keymap.set("n", "<leader>un", function()
     vim.o.relativenumber = vim.g.saved_rnu
   end
   end, { desc = "line numbers" })
-vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end,
-  { desc = "relative numbers" })
+vim.keymap.set("n", "<leader>ua", function() vim.g.disable_autoformat = not vim.g.disable_autoformat end, { desc = "autoformat" })
+vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
@@ -281,7 +287,6 @@ vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
 -- TODO: diagnostics
 -- TODO: gitsigns
--- TODO: autoformat on save - https://github.com/stevearc/conform.nvim/blob/master/doc/recipes.md#command-to-toggle-format-on-save
 
 -- EXECUTE
 -- NOTE: not sure how really useful these are
