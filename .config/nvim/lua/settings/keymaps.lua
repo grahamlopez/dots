@@ -9,8 +9,8 @@
     To see mappings:
     - :help [keys] for built-in keymappings
     - :map [keys] for user-defined keymappings
-    use 'c-v [key sequence]' to input a literal keypress involving
-    the control key
+    use 'c-v [key sequence]' to input a literal keypress involving the control key
+    RFE: I would still like a unified way to see all keymappings for any given situation/mode
 --]]
 
 -- HACK: A more generic function for toggling values
@@ -180,6 +180,7 @@ vim.keymap.set("n", "<leader>hK", "<cmd>WhichKey<cr>", { desc = "which-key" })
 
 -- LSP
 vim.keymap.set("n", "<leader>l,", function() sp.lsp_config() end, { desc = "LSP config" })
+-- QUESTION: are there other actions that can be enabled besides disabling the diagnostics
 vim.keymap.set("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", { desc = "LSP code actions" })
 vim.keymap.set("n", "<leader>lc", tb.lsp_incoming_calls, { desc = "LSP incoming calls" })
 vim.keymap.set("n", "<leader>lC", tb.lsp_outgoing_calls, { desc = "LSP outgoing calls" })
@@ -195,7 +196,8 @@ vim.keymap.set("n", "<leader>lS", pick("lsp_workspace_symbols", "lsp_workspace_s
   { desc = "LSP workspace symbols" })
 vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definitions"), { desc = "LSP type definitions" })
 vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
-vim.keymap.set("n", '<leader>lW', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
+vim.keymap.set("n", '<leader>lWb', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
+vim.keymap.set("n", '<leader>lWf', function() vim.diagnostic.open_float() end, { desc = "open diagnostics float" })
 
 -- IDEA: OPEN
 -- oo find_files

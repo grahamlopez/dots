@@ -10,9 +10,6 @@ return {
     enabled = true,
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
-    -- This will provide type hinting with LuaLS
-    ---@module "conform"
-    ---@type conform.setupOpts
     opts = {
       formatters_by_ft = {
         bash = { "shfmt" },
@@ -64,7 +61,7 @@ return {
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",
     opts = {
-      signs = {
+      signs = { -- TODO: make these slightly more visible
         add = { text = "▎" },
         change = { text = "▎" },
         delete = { text = "|" },
@@ -407,5 +404,14 @@ return {
       -- Enable all configured language servers
       vim.lsp.enable({ "lua_ls", "clangd", "bashls", "texlab", "marksman" })
     end,
+  },
+
+  -- https://github.com/folke/lazydev.nvim
+  -- this is to help the language server be aware of stuff that it should be aware of
+  {
+    "folke/lazydev.nvim",
+    enabled = false,
+    ft = "lua",
+    opts = {},
   },
 }

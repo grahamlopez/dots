@@ -152,6 +152,7 @@ return {
   --
 
   -- https://github.com/Saghen/blink.cmp
+  -- TODO: I would like to have signature insertion with placeholders
   {
     "saghen/blink.cmp",
     -- optional: provides snippets for the snippet source
@@ -167,7 +168,7 @@ return {
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {
-      -- emacs style:
+      --[[ emacs style:
       keymap = {
         preset = "none",
 
@@ -203,7 +204,7 @@ return {
 
       --]]
 
-      --[[ default configuration
+      -- default configuration
       -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
       -- 'super-tab' for mappings similar to vscode (tab to accept)
       -- 'enter' for enter to accept

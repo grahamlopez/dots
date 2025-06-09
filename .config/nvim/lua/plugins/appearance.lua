@@ -11,7 +11,7 @@ return {
     lazy = false,
     priority = 900,
     config = function()
-      vim.cmd.colorscheme("default")
+      -- vim.cmd.colorscheme("nightfox")
     end,
   },
 
@@ -24,7 +24,21 @@ return {
     -- this works, but TMUX doesn't propogate the DEC 2031 escape sequence to
     -- applications running inside of it
     -- but looks like there is a merged PR: https://github.com/tmux/tmux/pull/4353
-    { "f-person/auto-dark-mode.nvim", opts = {} }, -- https://github.com/f-person/auto-dark-mode.nvim
+    {
+      "f-person/auto-dark-mode.nvim",
+      opts = {
+        set_dark_mode = function()
+          vim.api.nvim_set_option_value("background", "dark", {})
+          vim.cmd.colorscheme("tokyonight-moon")
+        end,
+        set_light_mode = function()
+          vim.api.nvim_set_option_value("background", "light", {})
+          vim.cmd.colorscheme("tokyonight-day")
+        end,
+        update_interval = 3000,
+        fallback = "dark",
+      },
+    },
   },
 
   -- https://github.com/catppuccin/nvim
@@ -42,11 +56,16 @@ return {
   -- https://github.com/EdenEast/nightfox.nvim
   {
     "EdenEast/nightfox.nvim",
+    lazy = false,
+    priority = 1000,
   },
 
   -- https://github.com/nordtheme/vim
+  -- TODO: maybe find a better nord theme implementation
   {
     "nordtheme/vim",
+    lazy = false,
+    priority = 1000,
   },
 
   -- https://github.com/folke/tokyonight.nvim
@@ -64,16 +83,23 @@ return {
   -- https://github.com/Mofiqul/dracula.nvim
   {
     "Mofiqul/dracula.nvim",
+    lazy = false,
+    priority = 1000,
   },
 
   -- https://github.com/shaunsingh/solarized.nvim
+  -- FIXME: something might be wrong with this one
   {
     "shaunsingh/solarized.nvim",
+    lazy = false,
+    priority = 1000,
   },
 
   -- https://github.com/rebelot/kanagawa.nvim
   {
     "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
     opts = {
       transparent = false,
       background = { -- map the value of 'background' option to a theme
@@ -100,6 +126,7 @@ return {
     },
 
     config = function()
+      ---@diagnostic disable-next-line: undefined-field
       require("lualine").setup({
         options = {
           theme = "nord",
@@ -134,7 +161,7 @@ return {
       vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete" }, {
         callback = function()
           vim.schedule(function()
-            pcall(nvim_bufferline)
+            pcall(require("bufferline").nvim_bufferline)
           end)
         end,
       })
