@@ -256,6 +256,7 @@ return {
         },
       })
 
+      -- IDEA: it would be nice to remove tools/dependencies on npm
       -- Install language servers and tools
       local servers = {
         -- Language servers
