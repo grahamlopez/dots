@@ -337,6 +337,8 @@ export GIT_PS1_SHOWUPSTREAM="auto"
 export GIT_PS1_SHOWCOLORHINTS=true
 
 PROMPT='$GREEN%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
+# PROMPT='$RED%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR' # root
+
 RPROMPT='$RED%(?..[%?]) $CYAN|$WHITE%*$NOCOLOR'
 
 export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
@@ -353,3 +355,8 @@ export MANPAGER='less -s -M +Gg'
 #################################################################
 # }}}
 #################################################################
+# useful in root shells
+# function boot {
+#     efibootmgr -n $1
+#     reboot
+# }
