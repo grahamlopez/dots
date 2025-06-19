@@ -40,7 +40,7 @@ end
 -- A function to quit without saving the session (but save files)
 vim.api.nvim_create_user_command("WQ", function()
   require("persistence").stop()
-  vim.cmd('xa') -- alias for ":wqa"
+  vim.cmd("xa") -- alias for ":wqa"
 end, { desc = "save and quit without saving session", nargs = 0 })
 
 -- A function and keymapping to toggle colorcolum
@@ -49,7 +49,7 @@ vim.api.nvim_create_user_command("ToggleColorColumn", function()
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
 vim.g.current_picker = "telescope"
-vim.g.disable_autoformat = true
+vim.g.disable_autoformat = true -- RFE: make autoformat buffer-specific
 
 vim.api.nvim_create_user_command("TogglePicker", function()
   if vim.g.current_picker == "telescope" then
@@ -109,7 +109,9 @@ vim.keymap.set("n", "<c-y>", "5<c-y>", { silent = true }) -- jumbo scrolling
 vim.keymap.set( "n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
 vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
 vim.keymap.set("c", "vh", "vert help ", { noremap = true }) -- help in vertical split
-vim.keymap.set( "c", "CD", "lcd " .. vim.fn.expand("%:p:h"), { desc = "change dir command" })
+-- must be a function to evaluate each time the keybinding is used instead of
+-- only at startup
+vim.keymap.set( "c", "CD", function() return "lcd " .. vim.fn.expand("%:p:h") end, { expr = true, desc = "change dir command" })
 vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true }) -- move to the right right in insert mode
 vim.keymap.set("v", "<", "<gv") -- Stay in indent mode
 vim.keymap.set("v", ">", ">gv") -- Stay in indent mode

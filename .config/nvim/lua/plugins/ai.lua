@@ -65,3 +65,6 @@ return {
     -- https://github.com/azorng/goose.nvim
   },
 }
+-- some other neovim+llm notes
+-- <https://neovim.discourse.group/t/what-is-the-current-and-future-state-of-ai-integration-in-neovim/5303>
+-- <https://www.reddit.com/r/neovim/comments/1krv35v/announcing_sllmnvim_chat_with_llms_directly_in/>
