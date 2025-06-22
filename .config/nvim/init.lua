@@ -67,6 +67,9 @@ require("lazy").setup({
 require("settings.options")
 require("settings.autocmds")
 require("settings.keymaps")
+-- RFE: would like to have a portable and easy encryption workflow
+-- toggle command to convert the current file to encrypted/decrypted by default
+-- automatically decrypt file on opening; encrypt on closing
 
 -- Enable native diagnostic improvements
 vim.diagnostic.config({
