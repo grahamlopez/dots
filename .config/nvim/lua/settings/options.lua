@@ -114,6 +114,8 @@ vim.opt.foldlevel = 99 -- Open all folds by default
 vim.opt.foldlevelstart = 99 -- Start with all folds open
 vim.opt.foldenable = true -- Enable folding
 vim.opt.foldcolumn = "0" -- No fold column (clean appearance)
+vim.opt.foldtext = ""
+vim.opt.fillchars="fold: "
 
 -- Spell checking (disabled by default, easily toggled)
 vim.opt.spell = false
@@ -179,6 +181,14 @@ if vim.fn.has("wsl") == 1 then
     cache_enabled = 0,
   }
 end
+
+-- Point to host-specific stuff for local development environments
+if vim.uv.os_gethostname() == 'fi-kermit' then
+  if vim.fn.isdirectory(vim.fn.expand('~/local/deps/neovim-venv')) ~= 0 then
+    vim.g.python3_host_prog = vim.fn.expand('~/local/deps/neovim-venv/bin/python')
+  end
+end
+
 
 -- Key improvements:
 --

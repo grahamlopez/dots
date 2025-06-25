@@ -73,6 +73,7 @@ if [[ -f "$moduleinit" ]]; then
 fi
 if [[ "$(hostname)" = "fi-kermit" ]] ; then
   module use /opt/nvidia/hpc_sdk/modulefiles/nvhpc
+  export PATH="/home/glopez/local/bin:${PATH}"
 fi
 
 if [[ "$(hostname)" = "NV-7STSW14" ]] ; then

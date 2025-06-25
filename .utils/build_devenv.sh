@@ -63,7 +63,7 @@ build_path=/dev/shm
 
 par_build=24
 
-use_local_modules=true
+use_local_modules=false
 
 system=unknown
 if [[ $(hostname) =~ "rhea*" ]] ; then
@@ -84,7 +84,7 @@ bear_version=${date_version}
 autotools_version=${date_version}
 tmux_version=3.1b
 git_version=${date_version}
-neovim_version=0.9.5
+neovim_version=0.11.2
 neovim_version_nightly=${date_version}
 python3_version=3.8.4
 zsh_version=5.8
@@ -110,7 +110,7 @@ BUILD_AUTOTOOLS=false
 BUILD_TMUX=false
 BUILD_GIT=false
 BUILD_PYTHON3=false
-BUILD_NEOVIM=false
+BUILD_NEOVIM=true
 BUILD_NEOVIM_NIGHTLY=false
 BUILD_VIM=false
 BUILD_ZSH=false
@@ -121,8 +121,8 @@ BUILD_RELEASE_LLVM=false
 BUILD_HEAD_LLVM=false
 BUILD_OPENBLAS=false
 BUILD_OPENMPI_3=false
-BUILD_OPENMPI_4=true
-BUILD_OPENMPI_5=true
+BUILD_OPENMPI_4=false
+BUILD_OPENMPI_5=false
 
 # deprecated
 make_version=4.2.1

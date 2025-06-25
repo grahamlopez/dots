@@ -437,6 +437,7 @@ return {
           "markdown_inline",
           "python",
           "query",
+          "regex",
           "rust",
           "vim",
           "vimdoc",
