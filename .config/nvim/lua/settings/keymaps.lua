@@ -240,6 +240,7 @@ vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "jump lis
 vim.keymap.set("n", "<leader>sl", pick("loclist", "loclist"), { desc = "location list" })
 vim.keymap.set("n", "<leader>sm", pick("marks", "marks"), { desc = "marks" })
 vim.keymap.set("n", "<leader>sm", pick("man_pages", "man"), { desc = "man pages" })
+-- RFE: would like an equivalent fuzzy grep of nvim config from anywhere
 vim.keymap.set('n', '<leader>sn', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
   { desc = 'nvim config files' })
 vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "plugin spec" })

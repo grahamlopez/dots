@@ -14,7 +14,13 @@ vim.opt.textwidth = 80     -- Text width for formatting
 --[[ TODO: markdown
     - linking workflow
       - fast entry
+        - paste from clipboard (with or without prompt for link title)
+        - shortcut to title the url under the cursor
+        - autocompletion creates local file links
       - fast navigation
+        - follow local file links with shortcut
+        - use pickers
+        - show all in quick/loc list
       - conceal display
     - filetype changes
       - textwidth (e.g. 100, 120?)
@@ -23,7 +29,7 @@ vim.opt.textwidth = 80     -- Text width for formatting
     - (markdown is lingua-franca; no need yet to swim upstream on this one)
     - in-nvim rendering, synced preview
     - outline, folding, navigation
-    - images
+    - image support
     - todo workflow
       - automatic and hidden timestamps
     - A couple of videos to start ideas:
