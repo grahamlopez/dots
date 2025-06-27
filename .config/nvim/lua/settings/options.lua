@@ -106,7 +106,10 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 -- Folding (enhanced for Neovim 0.11)
 -- TODO: Folding: closed fold display, easier display of collapsed + 1
 -- better navigation, h/l to open/close, lua block comments, what can be done
--- about fold debugging e.g. showing fold locations, etc.?
+-- about fold debugging e.g. showing fold locations, etc.? remove need to
+-- close+re-open file when folds get messed up from just normal editing e.g.
+-- subheadings get messed up when removing list items from top-level heading
+-- in markdown files
 vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
 vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting

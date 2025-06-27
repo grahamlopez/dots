@@ -12,12 +12,21 @@ vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
 vim.opt.textwidth = 80     -- Text width for formatting
 
 --[[ TODO: markdown
-  - linking workflow
-    - fast entry
-    - fast navigation
-    - conceal display
-  - filetype changes
-    - textwidth (e.g. 100, 120?)
-      - can this be set within specific files, e.g. for prose vs. notes differences?
-  - visuals like linkarzu
+    - linking workflow
+      - fast entry
+      - fast navigation
+      - conceal display
+    - filetype changes
+      - textwidth (e.g. 100, 120?)
+        - can this be set within specific files, e.g. for prose vs. notes differences?
+    - visuals like linkarzu
+    - (markdown is lingua-franca; no need yet to swim upstream on this one)
+    - in-nvim rendering, synced preview
+    - outline, folding, navigation
+    - images
+    - todo workflow
+      - automatic and hidden timestamps
+    - A couple of videos to start ideas:
+      - <https://www.youtube.com/watch?v=DgKI4hZ4EEI>
+      - <https://linkarzu.com/posts/neovim/markdown-setup-2025/>
 --]]
