@@ -90,12 +90,12 @@ return {
     opts = {
       keywords = {
         -- FIXME, FIXME, BUG, FIXIT, ISSUE
-        -- TODO
         -- HACK
         -- WARN, WARNING, XXX
         -- PERF, OPTIM, PERFORMANCE, OPTIMIZE
         -- NOTE, INFO
         -- TEST, TESTING, PASSED, FAILED
+        TODO = { icon = " ", color = "info", alt = { "NEXT"} },
         IDEA = { icon = "󰛨 ", color = "hint", alt = { "RFE" } },
         UPSTREAM = { icon = " ", color = "info" },
         QUESTION = { icon = " ", color = "warning" },
