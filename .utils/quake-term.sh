@@ -9,6 +9,7 @@ current_ws=$(hyprctl activeworkspace -j | jq '.id')
 if [ -z "$drop_workspace" ]; then
 
 	echo "start"
+  # FIXME: would be nice if this automatically handled differently-sized screens
 	hyprctl dispatch -- exec "[float; size 1200 800; move 526 50]" kitty --class dropdown
 
 elif [ "$drop_workspace" == "special:dropdown" ]; then
