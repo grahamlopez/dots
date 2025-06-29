@@ -26,6 +26,7 @@ vim.opt.textwidth = 80     -- Text width for formatting
       - textwidth (e.g. 100, 120?)
         - can this be set within specific files, e.g. for prose vs. notes differences?
     - visuals like linkarzu
+    - table input and manipulation
     - (markdown is lingua-franca; no need yet to swim upstream on this one)
     - in-nvim rendering, synced preview
     - outline, folding, navigation
