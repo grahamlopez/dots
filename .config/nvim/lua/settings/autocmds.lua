@@ -32,12 +32,12 @@ local function move_help_window()
   if vim.api.nvim_win_get_width(0) > 160 then
     vim.cmd.wincmd("L")
   else
-    -- vim.cmd.wincmd("J")
+    vim.cmd.wincmd("J")
     vim.cmd("resize " .. math.floor(vim.o.lines * 0.65))
   end
 end
 
--- BUG: having both of these autocmds causes a large bottom blank space under
+-- BUG: having both of these autocmds causes a .35 bottom blank space under
 -- the status line on WSL; the resize command gets called after the vertical
 -- split happens
 

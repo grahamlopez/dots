@@ -57,7 +57,6 @@ Other plugins to be aware of
 -- file browsers: nvim-tree, oil, telescope-file-browser (stay away from neotree)
 -- dressing.nvim
 -- <https://github.com/onsails/lspkind.nvim> for vscode-like pictograms for lsp
---
 
 -- <https://dotfyle.com/neovim/plugins/trending>
 -- <https://neovimcraft.com/>
@@ -88,7 +87,28 @@ PKM / logseq reproduction
 -- how much of logseq to bring forward?
 -- more mouse support
 
-Previously discovered plugins that were in git - mostly only partially configured/explored
+# Folding plugin idea:
+What I want is to use manual open/close commands as normal. Then, if a fold
+needs to open automatically because the cursor moves into the region, that fold
+should close when the cursor leaves, but only if it was opened automatically as
+a result of the movement. Manually opened folds should remain open.
+
+What Would Be Required
+
+To achieve your desired behavior, you would need:
+    A mechanism to track which folds were auto-opened (e.g., by search or cursor movement).
+    Logic to close only those folds when the cursor leaves, leaving manually opened folds untouched.
+
+This would require a custom Lua plugin that:
+    Hooks into cursor movement and search events.
+    Maintains a data structure tracking which folds were opened automatically.
+    Closes only those folds when the cursor leaves their range.
+
+can this be faked with :mkview?
+
+# Previously discovered plugins that were in git
+
+mostly only partially configured/explored
 See hash 2c5f0eb in dotfiles repo for latest state before removal
 -- alpha, autopairs, breadcrumbs, comment, harpoon, icons,
 -- illuminate, indentline, launch, navic, neogit, neotest, none-ls,
