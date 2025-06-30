@@ -307,6 +307,7 @@ vim.keymap.set('n', 'K', function()
         vim.lsp.buf.hover()
     end
 end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
+vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 
 --
 -- stylua: ignore end
