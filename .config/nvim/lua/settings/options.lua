@@ -103,22 +103,40 @@ vim.opt.pumheight = 10 -- Popup menu height
 vim.opt.wildmode = "longest:full,full" -- Command completion mode
 vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 
--- Folding (enhanced for Neovim 0.11)
--- TODO: Folding: closed fold display, easier display of collapsed + 1
--- better navigation, h/l to open/close, lua block comments, what can be done
--- about fold debugging e.g. showing fold locations, etc.? remove need to
--- close+re-open file when folds get messed up from just normal editing e.g.
--- subheadings get messed up when removing list items from top-level heading
--- in markdown files
+-- Folding (enhanced for Neovim 0.11) - see also plugin nvim-ufo
+-- TODO: Folding:
+--    better navigation (zk, zj, [z, ]z)
+--    lua block comments
+--    "focused folded" mode where I navigate to a location (via ufo preview, from
+--    a picker grep, etc.) and that location is unfolded, but everything else
+--    remains folded
+--
+--    (this might all be fixed by nvim-ufo)
+--    what can be done about fold debugging e.g. showing fold locations, etc.?
+--    remove need to close+re-open file when folds get messed up from just normal editing
+--    e.g. subheadings get messed up when removing list items from top-level heading in markdown files
 vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
 vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
 vim.opt.foldlevel = 99 -- Open all folds by default
 vim.opt.foldlevelstart = 99 -- Start with all folds open
 vim.opt.foldenable = true -- Enable folding
-vim.opt.foldcolumn = "0" -- No fold column (clean appearance)
-vim.opt.foldtext = ""
-vim.opt.fillchars="fold: "
+vim.opt.foldcolumn = "1" -- enable minimal foldcolumn for mouse interaction
+vim.opt.fillchars:append({ fold = " " })
+
+-- this works for native folding, but not with nvim-ufo
+-- vim.opt.foldtext = "v:lua.custom_foldtext()" -- TreeSitter fold text with syntax highlighting
+-- _G.custom_foldtext = function()
+--   local fs = vim.v.foldstart
+--   local fe = vim.v.foldend
+--   local level = vim.v.foldlevel
+--   local dashes = ("+"):rep(level) .. "-- "
+--   local line_count = fe - fs + 1
+--   local first_line = vim.fn.getline(fs)
+--   -- Clean up the line (remove leading whitespace, markers, etc.)
+--   local clean_line = first_line:gsub("^%s*", ""):gsub("^[/*]+%s*", "")
+--   return string.format("%s%d lines: %s ", dashes, line_count, clean_line)
+-- end
 
 -- Spell checking (disabled by default, easily toggled)
 vim.opt.spell = false
@@ -186,12 +204,12 @@ if vim.fn.has("wsl") == 1 then
 end
 
 -- Point to host-specific stuff for local development environments
-if vim.uv.os_gethostname() == 'fi-kermit' then
-  if vim.fn.isdirectory(vim.fn.expand('~/local/deps/neovim-venv')) ~= 0 then
-    vim.g.python3_host_prog = vim.fn.expand('~/local/deps/neovim-venv/bin/python')
+if vim.uv.os_gethostname() == "fi-kermit" then
+  if vim.fn.isdirectory(vim.fn.expand("~/local/deps/neovim-venv")) ~= 0 then
+    vim.g.python3_host_prog =
+      vim.fn.expand("~/local/deps/neovim-venv/bin/python")
   end
 end
-
 
 -- Key improvements:
 --

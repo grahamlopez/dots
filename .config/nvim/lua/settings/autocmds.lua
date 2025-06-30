@@ -4,6 +4,7 @@
 vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
   callback = function()
     -- stylua: ignore start
+    vim.cmd('highlight Folded guibg=NONE')
     if vim.o.background == "dark" then
       vim.api.nvim_set_hl(0, "ColorColumn", { ctermbg = 233, bg = "#121212" })
       vim.api.nvim_set_hl(0, "MatchParen", { ctermbg = "yellow", bg = "yellow" })
