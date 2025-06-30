@@ -175,6 +175,7 @@ return {
   -- https://github.com/kevinhwang91/nvim-ufo
   {
     "kevinhwang91/nvim-ufo",
+    enabled = false,
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -225,14 +226,38 @@ return {
   },
 
   -- https://github.com/chrisgrieser/nvim-origami
+  -- FIXME: why do I have to press 'zx' to first get the folds?
   {
     "chrisgrieser/nvim-origami",
-    enabled = false,
     event = "VeryLazy",
     opts = {},
     init = function()
       vim.opt.foldlevel = 99
       vim.opt.foldlevelstart = 99
+    end,
+    config = function()
+      require("origami").setup({
+        useLspFoldsWithTreesitterFallback = true, -- required for `autoFold`
+        pauseFoldsOnSearch = true,
+        foldtext = {
+          enabled = true,
+          padding = 3,
+          lineCount = {
+            template = "  ____  󰁂 %d  ____", -- `%d` is the number of folded lines
+            hlgroup = "Comment",
+          },
+          diagnosticsCount = true, -- uses hlgroups and icons from `vim.diagnostic.config().signs`
+          gitsignsCount = true, -- requires `gitsigns.nvim`
+        },
+        autoFold = {
+          enabled = true,
+          kinds = { "comment", "imports" }, ---@type lsp.FoldingRangeKind[]
+        },
+        foldKeymaps = {
+          setup = true, -- modifies `h` and `l`
+          hOnlyOpensOnFirstColumn = false,
+        },
+      })
     end,
   },
 
