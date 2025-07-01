@@ -298,18 +298,7 @@ vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the sel
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
 
 -- Folding
--- vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" })
--- vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" })
--- vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds)
--- vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
--- RFE: can we get peek with nvim-origami?
--- vim.keymap.set('n', 'K', function()
---     local winid = require('ufo').peekFoldedLinesUnderCursor()
---     if not winid then
---         -- vim.fn.CocActionAsync('definitionHover') -- coc.nvim
---         vim.lsp.buf.hover()
---     end
--- end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
+-- see nvim-ufo spec
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 
 --

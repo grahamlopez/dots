@@ -83,7 +83,7 @@ For writing mode
 -- I started a config at .config/nvim.writing - see hash 2c5f0eb for latest
 
 PKM / logseq reproduction
--- linking, backlinking, tagging
+-- linking, backlinking, tagging (check out markdown-oxide lsp)
 -- how much of logseq to bring forward?
 -- more mouse support
 

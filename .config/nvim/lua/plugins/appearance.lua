@@ -171,11 +171,54 @@ return {
   --
   --      Folding
   --
+  --      ufo vs. origami
+  --      + ufo     robust against editing/adding markdown sections
+  --      + ufo     fold peeking
+  --      + origami 'zm/zr' work easily
+  --      + origami folded text displays warnings and gitsigns
+  --      + origami 'h/l' open/close folds
+  --
+  --      picking ufo for now because the folds get messed up when editing
+  --      markdown files when using nvim-origami or anything that uses
+  --      treesitter foldexpr() for markdown.
+  --      Check with `:set foldmethod? foldexpr?`
+  --
+  --      I haven't been able to find a markdown lsp with fold information,
+  --      which would be used by nvim-origami if available (treesitter is
+  --      fallback)
+  --
+  --      BUG: create the following minimal markdown file
+  --
+  --      ```
+  --      # first H1
+  --      
+  --      to demonstrate the issue:
+  --      
+  --      1. collapse all folds with 'zM'. notice that only 'first H1' and 'second H1'
+  --         are visible
+  --      2. now add a `## second sub H2` between `## first sub H2` and `# second H1` with
+  --         any content inside of it. Upon returning to normal mode, 'second H1' can no
+  --         longer be closed and `# third H1` is also in the wrong location. This
+  --         persists until exiting and reopening neovim
+  --      
+  --      ## first sub H2
+  --      
+  --      lorem ipsum
+  --      
+  --      # second H1
+  --      
+  --      lorem ipsum
+  --      
+  --      # thrid H1
+  --      
+  --      lorem ipsum
+  --      ```
+  --
 
   -- https://github.com/kevinhwang91/nvim-ufo
   {
     "kevinhwang91/nvim-ufo",
-    enabled = false,
+    enabled = true,
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -221,14 +264,25 @@ return {
             close = "<esc>",
           },
         },
+        vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" }),
+        vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" }),
+        vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds),
+        vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
+        vim.keymap.set('n', 'K', function()
+            local winid = require('ufo').peekFoldedLinesUnderCursor()
+            if not winid then
+                -- vim.fn.CocActionAsync('definitionHover') -- coc.nvim
+                vim.lsp.buf.hover()
+            end
+        end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" }),
       })
     end,
   },
 
   -- https://github.com/chrisgrieser/nvim-origami
-  -- FIXME: why do I have to press 'zx' to first get the folds?
   {
     "chrisgrieser/nvim-origami",
+    enabled = false,
     event = "VeryLazy",
     opts = {},
     init = function()
@@ -243,7 +297,7 @@ return {
           enabled = true,
           padding = 3,
           lineCount = {
-            template = "  ____  󰁂 %d  ____", -- `%d` is the number of folded lines
+            template = "____  󰁂 %d  ____", -- `%d` is the number of folded lines
             hlgroup = "Comment",
           },
           diagnosticsCount = true, -- uses hlgroups and icons from `vim.diagnostic.config().signs`
@@ -258,6 +312,14 @@ return {
           hOnlyOpensOnFirstColumn = false,
         },
       })
+      -- this still has the problem of folds being messed up when e.g. adding a
+      -- new markdown sub heading with content. Trying to fix it
+      -- vim.api.nvim_create_autocmd("FileType", {
+      --   pattern = "markdown",
+      --   callback = function()
+      --     vim.opt_local.foldmethod = "syntax"
+      --   end,
+      -- })
     end,
   },
 
