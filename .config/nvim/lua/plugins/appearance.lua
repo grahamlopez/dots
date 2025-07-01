@@ -176,7 +176,7 @@ return {
   --      + ufo     fold peeking
   --      + origami 'zm/zr' work easily
   --      + origami folded text displays warnings and gitsigns
-  --      + origami 'h/l' open/close folds
+  --      + origami 'h/l' open/close folds (re-implemented this myself)
   --
   --      picking ufo for now because the folds get messed up when editing
   --      markdown files when using nvim-origami or anything that uses
@@ -187,7 +187,8 @@ return {
   --      which would be used by nvim-origami if available (treesitter is
   --      fallback)
   --
-  --      BUG: create the following minimal markdown file
+  --      BUG: create the following minimal markdown file (upstream this?)
+  --      this reproduces when foldmethod=expr and foldexpr=v:lua.nvim.treesitter.foldexpr()
   --
   --      ```
   --      # first H1
