@@ -298,33 +298,45 @@ vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the sel
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })
 
 -- Folding
--- see nvim-ufo spec
+-- see nvim-ufo spec until it stabilizes
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
-vim.keymap.set("n", "h", function() -- h/l: these are pulled from nvim-origami
-  local function normal(cmdStr) vim.cmd.normal { cmdStr, bang = true } end
-	local count = vim.v.count1 -- saved as `normal` affects it
-	for _ = 1, count, 1 do
-		local col = vim.api.nvim_win_get_cursor(0)[2]
-		local textBeforeCursor = vim.api.nvim_get_current_line():sub(1, col)
-		local onIndentOrFirstNonBlank = textBeforeCursor:match("^%s*$")
-		if onIndentOrFirstNonBlank then
-			local wasFolded = pcall(normal, "zc")
-			if not wasFolded then normal("h") end
-		else
-			normal("h")
-		end
-	end
+vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" })
+vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" })
+vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
+vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
+vim.keymap.set("n", "K", function()
+  local winid = require("ufo").peekFoldedLinesUnderCursor()
+  if not winid then
+    -- vim.fn.CocActionAsync('definitionHover') -- coc.nvim
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
+vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
+  local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end
+  local count = vim.v.count1 -- saved as `normal` affects it
+  for _ = 1, count, 1 do
+    local col = vim.api.nvim_win_get_cursor(0)[2]
+    local textBeforeCursor = vim.api.nvim_get_current_line():sub(1, col)
+    local onIndentOrFirstNonBlank = textBeforeCursor:match("^%s*$")
+    if onIndentOrFirstNonBlank then -- alternatively: if col == 0 then
+      local wasFolded = pcall(normal, "zc")
+      if not wasFolded then
+        normal("h")
+      end
+    else
+      normal("h")
+    end
+  end
 end)
 vim.keymap.set("n", "l", function()
-  local function normal(cmdStr) vim.cmd.normal { cmdStr, bang = true } end
-	local count = vim.v.count1 -- count needs to be saved due to `normal` affecting it
-	for _ = 1, count, 1 do
-		local isOnFold = vim.fn.foldclosed(".") > -1 ---@diagnostic disable-line: param-type-mismatch
-		local action = isOnFold and "zo" or "l"
-		pcall(normal, action)
-	end
+  local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end
+  local count = vim.v.count1 -- count needs to be saved due to `normal` affecting it
+  for _ = 1, count, 1 do
+    local isOnFold = vim.fn.foldclosed(".") > -1 ---@diagnostic disable-line: param-type-mismatch
+    local action = isOnFold and "zo" or "l"
+    pcall(normal, action)
+  end
 end)
-
 
 --
 -- stylua: ignore end

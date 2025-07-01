@@ -192,26 +192,26 @@ return {
   --
   --      ```
   --      # first H1
-  --      
+  --
   --      to demonstrate the issue:
-  --      
+  --
   --      1. collapse all folds with 'zM'. notice that only 'first H1' and 'second H1'
   --         are visible
   --      2. now add a `## second sub H2` between `## first sub H2` and `# second H1` with
   --         any content inside of it. Upon returning to normal mode, 'second H1' can no
   --         longer be closed and `# third H1` is also in the wrong location. This
   --         persists until exiting and reopening neovim
-  --      
+  --
   --      ## first sub H2
-  --      
+  --
   --      lorem ipsum
-  --      
+  --
   --      # second H1
-  --      
+  --
   --      lorem ipsum
-  --      
+  --
   --      # thrid H1
-  --      
+  --
   --      lorem ipsum
   --      ```
   --
@@ -260,22 +260,11 @@ return {
           mappings = {
             scrollU = "<C-u>",
             scrollD = "<C-d>",
-            jumpTop = "[",
-            jumpBot = "]",
+            jumpTop = "gg",
+            jumpBot = "G",
             close = "<esc>",
           },
         },
-        vim.keymap.set("n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" }),
-        vim.keymap.set("n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" }),
-        vim.keymap.set('n', 'zr', require('ufo').openFoldsExceptKinds),
-        vim.keymap.set('n', 'zm', require('ufo').closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
-        vim.keymap.set('n', 'K', function()
-            local winid = require('ufo').peekFoldedLinesUnderCursor()
-            if not winid then
-                -- vim.fn.CocActionAsync('definitionHover') -- coc.nvim
-                vim.lsp.buf.hover()
-            end
-        end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" }),
       })
     end,
   },
