@@ -144,9 +144,11 @@ For writing mode
 PKM / logseq reproduction
 -- markdown is lingua-franca; no need yet to swim upstream on this one
 -- linking, backlinking, tagging (check out markdown-oxide lsp)
+   - autocompletion creates local file links
 -- how much of logseq to bring forward?
 -- comprehensive mouse support
 -- todo workflow with automatic and hidden timestamps
+   - linkarzu's workflow: https://youtu.be/59hvZl077hM
 -- fast link navigation
 
 - follow local file links with shortcut

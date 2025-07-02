@@ -187,6 +187,9 @@ return {
   --      automatically closed without requesting it, albeit they are in the
   --      right places
   --
+  --      This is improved by only having a single H1 per document as per
+  --      https://google.github.io/styleguide/docguide/style.html#document-layout
+  --
   --      I haven't been able to find a markdown lsp with fold information,
   --      which would be used by nvim-origami if available (treesitter is
   --      fallback)
@@ -241,6 +244,12 @@ return {
             close = "<esc>",
           },
         },
+        -- stylua: ignore start
+        vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" }),
+        vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" }),
+        vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds),
+        vim.keymap.set("n", "zm", require("ufo").closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
+        -- stylua: ignore end
       })
     end,
   },
@@ -290,10 +299,27 @@ return {
   },
 
   --
+  --      Markdown
+  --
+
+  -- https://github.com/MeanderingProgrammer/render-markdown.nvim
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    enabled = true,
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+
+  --
   --      Outline
   --
 
   -- https://github.com/hedyhli/outline.nvim
+  -- see linkarzu's vid: https://youtu.be/UqLEKe7o2zg
   {
     "hedyhli/outline.nvim",
     enabled = false,

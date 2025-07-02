@@ -105,18 +105,18 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 
 -- Folding (enhanced for Neovim 0.11) - see also plugin nvim-ufo
 -- IDEA: Big folding list:
+--    toggle with <cr>
 --    better navigation (zk, zj, [z, ]z)
---    incrementally close folds under cursor
---    incrementally open folds even if they weren't incrementally folded
---      preserve (via different keybinding/command) default behavior or
---      remembering the child fold states - this is useful
+--    - relative fold labeling for jumping with e.g. '<num>zj'
+--      (this is already kinda there with foldcolumn=1 enabled
 --    preserve folds across sessions
 --    "focused folded" mode where I navigate to a location (via 'n/N' scrolling through
 --      search results, pufo preview, from a picker grep, etc.) and that location is
 --      unfolded, but everything else remains folded or is refolded as needed
 --    lua block comments
 --
---    (this might all be fixed by nvim-ufo)
+--    Folding video: https://youtu.be/f_f08KnAJOQ
+--
 --    what can be done about fold debugging e.g. showing fold locations, etc.?
 --    remove need to close+re-open file when folds get messed up from just normal editing
 --    e.g. subheadings get messed up when removing list items from top-level heading in markdown files

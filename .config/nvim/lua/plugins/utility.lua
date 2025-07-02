@@ -150,6 +150,11 @@ return {
   --
   --      Completion
   --
+  --      <tab> (triggers display if not autoshown and) accepts first hit
+  --          if this isn't possible, then select first hit ready for acceptance
+  --      <c-n/p> to select from list
+  --      <tab> to accept the selection
+  --
 
   -- https://github.com/Saghen/blink.cmp
   -- TODO: I would like to have signature insertion with placeholders

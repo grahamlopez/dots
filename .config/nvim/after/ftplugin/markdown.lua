@@ -13,14 +13,20 @@ vim.opt.textwidth = 80     -- Text width for formatting
 
 --[[ IDEA: big markdown ideas list
     - visuals like linkarzu
-    - in-nvim rendering, synced preview
+      - https://github.com/MeanderingProgrammer/render-markdown.nvim
+    - previewing:
+      - in-nvim rendering
+      - synced external preview
     - outline, folding, navigation
+    - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
     - url linking improvements
       - fast entry
-        - paste from clipboard (with or without prompt for link title)
+        - paste from clipboard with prompt for link title
+          - or else a snippet
+        - paste from clipboard in visual mode
         - shortcut to title the url under the cursor
-        - autocompletion creates local file links
       - conceal display
+      - use TOC to jump/navigate
     - filetype changes
       - textwidth (e.g. 100, 120?)
         - can this be set within specific files, e.g. for prose vs. notes differences?
@@ -29,4 +35,7 @@ vim.opt.textwidth = 80     -- Text width for formatting
     - A couple of videos to start ideas:
       - <https://www.youtube.com/watch?v=DgKI4hZ4EEI>
       - <https://linkarzu.com/posts/neovim/markdown-setup-2025/>
+    - other ideas:
+      - easier bolding etc. with mini.surround and/or keymaps
+      - better bullet lists: https://github.com/bullets-vim/bullets.vim
 --]]

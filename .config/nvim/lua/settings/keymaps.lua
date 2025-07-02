@@ -8,7 +8,12 @@
 
     To see mappings:
     - :help [keys] for built-in keymappings
-    - :map [keys] for user-defined keymappings
+    - :map [keys] for user-defined keymappings (with file:line location of defn)
+    - :Telescope keymaps shows a searchable list of user-defined maps
+      - would love to select the element and be taken to its definition
+      - I can trigger this in any mode, but:
+        1. it should only show me mappings for that mode
+        2. it should show all mappings for that mode
     use 'c-v [key sequence]' to input a literal keypress involving the control key
     RFE: I would still like a unified way to see all keymappings for any given situation/mode
 --]]
@@ -128,6 +133,7 @@ vim.keymap.set("n", "K", function()
     vim.lsp.buf.hover()
   end
 end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
+vim.keymap.set({"n", "i", "v", "c", "o"}, "<M-k>", pick("keymaps", "keymaps"), { desc = "keymaps" })
 
 vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
@@ -153,6 +159,7 @@ vim.keymap.set("n", "<leader>,", pick("buffers", "buffers"), { desc = "buffers" 
 vim.keymap.set("n", "<leader>:", pick("command_history", "command_history"), { desc = "command history" })
 vim.keymap.set({ "n", "v" }, "<leader>n", function() sp.notifications() end, { desc = "notification history" })
 vim.keymap.set("n", "<leader><c-o>", pick("find_files", "files"), { desc = "open files" })
+vim.keymap.set("n", "<leader><c-w>", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
 -- APPS and AI
 -- IDEA: terminal, lazygit, outline, file explorer, <c-z> trigger ai completion
@@ -243,7 +250,7 @@ vim.keymap.set("n", "<leader>sh", pick("help_tags", "help"), { desc = "help" })
 vim.keymap.set("n", "<leader>sH", pick("highlights", "highlights"), { desc = "highlights" })
 vim.keymap.set("n", "<leader>si", pick("symbols", "icons"), { desc = "icons" })
 vim.keymap.set("n", "<leader>sj", pick("jumplist", "jumps"), { desc = "jump list" })
-vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "jump list" })
+vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "keymaps" })
 vim.keymap.set("n", "<leader>sl", pick("loclist", "loclist"), { desc = "location list" })
 vim.keymap.set("n", "<leader>sm", pick("man_pages", "man"), { desc = "man pages" })
 vim.keymap.set("n", "<leader>sM", pick("marks", "marks"), { desc = "marks" })
@@ -320,10 +327,6 @@ vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute 
 -- Folding
 -- see nvim-ufo spec until it stabilizes
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
-vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" })
-vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" })
-vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
-vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
 vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
   local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end
   local count = vim.v.count1 -- saved as `normal` affects it

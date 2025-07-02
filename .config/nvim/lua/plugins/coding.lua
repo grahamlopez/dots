@@ -19,7 +19,7 @@ return {
         json = { "prettier" },
         latex = { "latexindent" },
         lua = { "stylua" },
-        markdown = { "prettier", "markdownlint" },
+        markdown = { "prettier", "markdownlint" }, -- TODO: LazyVim uses markdownlint-cli2
         python = { "isort", "black" },
         sh = { "shfmt" },
         tex = { "latexindent" },
