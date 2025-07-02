@@ -301,17 +301,30 @@ return {
   --
   --      Markdown
   --
+  --  IDEA: wishlish
+  --  - folded ``` code blocks should still show the fold marker with line count
+  --    - workaround is to use ```label which will be visible, but the fold
+  --      marker + line count is still not shown
+  --    - another workaround is to disable for codeblocks
 
   -- https://github.com/MeanderingProgrammer/render-markdown.nvim
   {
-    'MeanderingProgrammer/render-markdown.nvim',
+    "MeanderingProgrammer/render-markdown.nvim",
     enabled = true,
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
     -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    }, -- if you prefer nvim-web-devicons
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    opts = {},
+    opts = {
+      -- TODO: These will need to be toggle-able
+      render_modes = true,
+      anti_conceal = { enabled = true },
+      code = { style = 'none' },
+    },
   },
 
   --
