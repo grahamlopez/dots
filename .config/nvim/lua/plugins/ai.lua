@@ -3,7 +3,7 @@ return {
   {
     -- https://github.com/frankroeder/parrot.nvim
     "frankroeder/parrot.nvim",
-    enabled = true,
+    enabled = false,
     lazy = true,
     event = "VeryLazy",
     dependencies = { "ibhagwan/fzf-lua", "nvim-lua/plenary.nvim" },
