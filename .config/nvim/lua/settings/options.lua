@@ -104,7 +104,7 @@ vim.opt.wildmode = "longest:full,full" -- Command completion mode
 vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 
 -- Folding (enhanced for Neovim 0.11) - see also plugin nvim-ufo
--- TODO: Folding:
+-- IDEA: Big folding list:
 --    better navigation (zk, zj, [z, ]z)
 --    incrementally close folds under cursor
 --    incrementally open folds even if they weren't incrementally folded

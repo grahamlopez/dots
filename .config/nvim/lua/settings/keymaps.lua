@@ -13,7 +13,7 @@
     RFE: I would still like a unified way to see all keymappings for any given situation/mode
 --]]
 
--- HACK: A more generic function for toggling values
+-- A more type-generic function for toggling values
 local function vim_opt_toggle(opt, on, off, name)
   local val = vim.opt[opt]:get()
   local is_off = false
@@ -160,6 +160,8 @@ vim.keymap.set('n', "<leader>aP", "<cmd>PrtProvider<cr>", { desc = "select ai pr
 vim.keymap.set('n', "<leader>as", "<cmd>PrtStop<cr>", { desc = "stop ai response" })
 vim.keymap.set('n', "<leader>at", "<cmd>PrtChatToggle<cr>", { desc = "toggle parrot chat" })
 vim.keymap.set('n', "<leader>aT", "<cmd>PrtChatRespond<cr>", { desc = "trigger ai chat response" })
+-- TODO: snacks explorer: https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#explorer
+--                      : https://github.com/folke/snacks.nvim/blob/main/docs/explorer.md
 
 -- BUFFERS
 vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
@@ -167,6 +169,9 @@ vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer
 
 -- GIT - disabling these until I understand them
 -- TODO: get git keymaps from snacks.picker(), telescope(), and gitsigns
+-- https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#git-pickers
+-- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#general
+-- https://github.com/lewis6991/gitsigns.nvim?tab=readme-ov-file#-keymaps
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
 
 -- HELP
@@ -206,12 +211,6 @@ vim.keymap.set("n", "<leader>lt", pick("lsp_type_definitions", "lsp_type_definit
 vim.keymap.set("n", "<leader>lw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
 vim.keymap.set("n", '<leader>lWb', function() sp.diagnostics_buffer() end, { desc = "buffer diagnostics" })
 vim.keymap.set("n", '<leader>lWf', function() vim.diagnostic.open_float() end, { desc = "open diagnostics float" })
-
--- IDEA: OPEN
--- oo find_files
--- oc open config
--- oO find files in home
--- on notes
 
 -- SESSIONS
 vim.keymap.set("n", "<c-s>", function() require("persistence").select() end, { desc = "Select Session" })
@@ -285,14 +284,10 @@ vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.re
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
--- QUESTION: how is this different than folke/zen-mode.nvim
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
--- TODO: diagnostics
--- TODO: gitsigns
 
 -- EXECUTE
--- NOTE: not sure how really useful these are
 vim.keymap.set("n", "<leader>x", "<cmd>.lua<CR>", { desc = "Execute the current line" })
 vim.keymap.set("v", "<leader>x", "<cmd>'<,'>.lua<CR>", { desc = "Execute the selection" })
 vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute the current file" })

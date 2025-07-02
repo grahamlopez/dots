@@ -88,7 +88,7 @@ return {
   },
 
   -- https://github.com/shaunsingh/solarized.nvim
-  -- FIXME: something might be wrong with this one
+  -- FIXME: something might be wrong with this solarized theme
   {
     "shaunsingh/solarized.nvim",
     lazy = false,
@@ -183,37 +183,13 @@ return {
   --      treesitter foldexpr() for markdown.
   --      Check with `:set foldmethod? foldexpr?`
   --
+  --      Even UFO eventually gets confused; the symptom is that folds will be
+  --      automatically closed without requesting it, albeit they are in the
+  --      right places
+  --
   --      I haven't been able to find a markdown lsp with fold information,
   --      which would be used by nvim-origami if available (treesitter is
   --      fallback)
-  --
-  --      BUG: create the following minimal markdown file (upstream this?)
-  --      this reproduces when foldmethod=expr and foldexpr=v:lua.nvim.treesitter.foldexpr()
-  --
-  --      ```
-  --      # first H1
-  --
-  --      to demonstrate the issue:
-  --
-  --      1. collapse all folds with 'zM'. notice that only 'first H1' and 'second H1'
-  --         are visible
-  --      2. now add a `## second sub H2` between `## first sub H2` and `# second H1` with
-  --         any content inside of it. Upon returning to normal mode, 'second H1' can no
-  --         longer be closed and `# third H1` is also in the wrong location. This
-  --         persists until exiting and reopening neovim
-  --
-  --      ## first sub H2
-  --
-  --      lorem ipsum
-  --
-  --      # second H1
-  --
-  --      lorem ipsum
-  --
-  --      # thrid H1
-  --
-  --      lorem ipsum
-  --      ```
   --
 
   -- https://github.com/kevinhwang91/nvim-ufo
@@ -403,15 +379,15 @@ return {
   --
   --      Zen/focus
   --
+  --      using snacks.zen() for now until I have more experience and an
+  --      identified need for anything different
+  --
 
   -- https://github.com/folke/zen-mode.nvim
   {
     "folke/zen-mode.nvim",
     enabled = false,
     cmd = "ZenMode",
-    keys = {
-      { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" },
-    },
     opts = {
       window = {
         backdrop = 0.95,

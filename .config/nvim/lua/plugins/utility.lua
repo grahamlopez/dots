@@ -153,6 +153,7 @@ return {
 
   -- https://github.com/Saghen/blink.cmp
   -- TODO: I would like to have signature insertion with placeholders
+  -- TODO: I would like to have any completion (even buffer-local string match) at all
   {
     "saghen/blink.cmp",
     -- optional: provides snippets for the snippet source
@@ -399,19 +400,15 @@ return {
 
     The textobjects and refactor modules seem kinda cool, but have been really
     buggy for me, so they are disabled for now
+
+    https://github.com/nvim-treesitter/nvim-treesitter-context
+    "nvim-treesitter/nvim-treesitter-context",
+    lazyvim's context is way better than mine
+    and also consider https://github.com/SmiteshP/nvim-navic
     --]]
     "nvim-treesitter/nvim-treesitter",
     event = { "BufReadPost", "BufNewFile" },
     build = ":TSUpdate",
-    dependencies = {
-      {
-        -- https://github.com/nvim-treesitter/nvim-treesitter-context
-        "nvim-treesitter/nvim-treesitter-context", -- FIXME: not working
-
-        -- RFE: lazyvim's context is way better than mine
-        -- and also consider https://github.com/SmiteshP/nvim-navic
-      },
-    },
     --  {
     --    -- https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     --    "nvim-treesitter/nvim-treesitter-textobjects",
