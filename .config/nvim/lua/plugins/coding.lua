@@ -36,8 +36,8 @@ return {
         lsp_format = "fallback",
       },
       format_on_save = function(bufnr)
-        -- Disable with a global or buffer-local variable
-        if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+        -- Enable with a global or buffer-local variable
+        if not vim.g.enable_autoformat and not vim.b[bufnr].enable_autoformat then
           return
         end
         return { timeout_ms = 500, lsp_format = "fallback" }
@@ -65,14 +65,15 @@ return {
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",
     opts = {
-      signs = { -- TODO: make these slightly more visible
-        add = { text = "▎" },
-        change = { text = "▎" },
-        delete = { text = "|" },
+      signs = {
+        add = { text = "+" },
+        change = { text = "\\" },
+        delete = { text = "" },
         topdelete = { text = "" },
-        changedelete = { text = "▎" },
+        changedelete = { text = "⍀" },
         untracked = { text = "▎" },
       },
+      numhl = true,
     },
   },
 
@@ -95,7 +96,7 @@ return {
         -- PERF, OPTIM, PERFORMANCE, OPTIMIZE
         -- NOTE, INFO
         -- TEST, TESTING, PASSED, FAILED
-        TODO = { icon = " ", color = "info", alt = { "NEXT"} },
+        TODO = { icon = " ", color = "info", alt = { "NEXT" } },
         IDEA = { icon = "󰛨 ", color = "hint", alt = { "RFE" } },
         UPSTREAM = { icon = " ", color = "info" },
         QUESTION = { icon = " ", color = "warning" },

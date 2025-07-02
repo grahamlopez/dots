@@ -49,7 +49,9 @@ vim.api.nvim_create_user_command("ToggleColorColumn", function()
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
 vim.g.current_picker = "telescope"
-vim.g.disable_autoformat = true -- RFE: make autoformat buffer-specific
+vim.b.enable_autoformat = false
+vim.g.enable_autoformat = false
+vim.b.enable_only_firstcol_fold = false
 
 vim.api.nvim_create_user_command("TogglePicker", function()
   if vim.g.current_picker == "telescope" then
@@ -116,10 +118,16 @@ vim.keymap.set("i", "<c-l>", "<c-o>l", { silent = true }) -- move to the right r
 vim.keymap.set("v", "<", "<gv") -- Stay in indent mode
 vim.keymap.set("v", ">", ">gv") -- Stay in indent mode
 
-
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "K", function()
+  local winid = require("ufo").peekFoldedLinesUnderCursor()
+  if not winid then
+    -- RFE: would be cool to add popup git hunk diffs to 'K' as well
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
 
 vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })
@@ -237,11 +245,16 @@ vim.keymap.set("n", "<leader>si", pick("symbols", "icons"), { desc = "icons" })
 vim.keymap.set("n", "<leader>sj", pick("jumplist", "jumps"), { desc = "jump list" })
 vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "jump list" })
 vim.keymap.set("n", "<leader>sl", pick("loclist", "loclist"), { desc = "location list" })
-vim.keymap.set("n", "<leader>sm", pick("marks", "marks"), { desc = "marks" })
 vim.keymap.set("n", "<leader>sm", pick("man_pages", "man"), { desc = "man pages" })
--- RFE: would like an equivalent fuzzy grep of nvim config from anywhere
-vim.keymap.set('n', '<leader>sn', function() sp.files({ cwd = vim.fn.stdpath("config") }) end,
+vim.keymap.set("n", "<leader>sM", pick("marks", "marks"), { desc = "marks" })
+vim.keymap.set('n', '<leader>sn', pick_fns(
+  function() tb.find_files({ cwd = vim.fn.stdpath("config") }) end,
+  function() sp.files({ cwd = vim.fn.stdpath("config") }) end),
   { desc = 'nvim config files' })
+vim.keymap.set('n', '<leader>sN', pick_fns(
+  function() tb.live_grep({ cwd = vim.fn.stdpath("config") }) end,
+  function() sp.grep({ dirs = { vim.fn.stdpath("config") }}) end),
+  { desc = 'nvim config grep' })
 vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "plugin spec" })
 vim.keymap.set("n", "<leader>sP", function() sp.projects() end, { desc = "projects" })
 vim.keymap.set("n", "<leader>sq", tb.quickfixhistory, { desc = "quickfix history" })
@@ -251,10 +264,12 @@ vim.keymap.set("n", "<leader>ss", tb.spell_suggest, { desc = "spell suggest" })
 vim.keymap.set("n", '<leader>sS', pick("search_history", "search_history"), { desc = "search history" })
 vim.keymap.set("n", "<leader>st", pick_fns(
   function() vim.cmd("TodoTelescope") end,
-  function() require("snacks").picker.todo_comments() end), { desc = "search todos" })
+  function() require("snacks").picker.todo_comments() end),
+  { desc = "search todos" })
 vim.keymap.set("n", "<leader>sT", tb.treesitter, { desc = "treesitter" })
 vim.keymap.set("n", '<leader>su', function() sp.undo() end, { desc = "undo history" })
 vim.keymap.set("n", "<leader>sv", tb.vim_options, { desc = "vim options" })
+vim.keymap.set("n", "<leader>sw", pick("diagnostics", "diagnostics"), { desc = "LSP diagnostics (warnings)" })
 
 -- TO-DO
 vim.keymap.set("n", "<leader>tt", pick_fns(
@@ -266,7 +281,8 @@ vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1',
   { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", '<leader>uC', pick_fns(
   function() require'telescope.builtin'.colorscheme( { enable_preview = true } ) end,
-  function() sp.colorschemes() end), { desc = "colorscheme" })
+  function() sp.colorschemes() end),
+  { desc = "colorscheme" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
 vim.g.saved_rnu = vim.o.relativenumber
 vim.keymap.set("n", "<leader>un", function()
@@ -279,7 +295,16 @@ vim.keymap.set("n", "<leader>un", function()
     vim.o.relativenumber = vim.g.saved_rnu
   end
   end, { desc = "line numbers" })
-vim.keymap.set("n", "<leader>ua", function() vim.g.disable_autoformat = not vim.g.disable_autoformat end, { desc = "autoformat" })
+vim.keymap.set("n", "<leader>ua", function() vim.b.enable_autoformat = not vim.b.enable_autoformat end, { desc = "autoformat (buffer)" })
+vim.keymap.set("n", "<leader>uA", function() vim.g.enable_autoformat = not vim.g.enable_autoformat end, { desc = "autoformat (global)" })
+vim.keymap.set('n', '<leader>ud', function()
+                vim.diagnostic.enable(not vim.diagnostic.is_enabled(), { bufnr = 0 }) end,
+                { desc = "Toggle diagnostics (current buffer)" })
+vim.keymap.set('n', '<leader>uD', function()
+                vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
+                { desc = "Toggle diagnostics (global)" })
+vim.keymap.set("n", "<leader>uf", function() vim.b.enable_only_firstcol_fold = not vim.b.enable_only_firstcol_fold end,
+                { desc = "toggle firscol fold" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
@@ -299,13 +324,6 @@ vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds
 vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" })
 vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
 vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
-vim.keymap.set("n", "K", function()
-  local winid = require("ufo").peekFoldedLinesUnderCursor()
-  if not winid then
-    -- vim.fn.CocActionAsync('definitionHover') -- coc.nvim
-    vim.lsp.buf.hover()
-  end
-end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
 vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
   local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end
   local count = vim.v.count1 -- saved as `normal` affects it
@@ -313,11 +331,11 @@ vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
     local col = vim.api.nvim_win_get_cursor(0)[2]
     local textBeforeCursor = vim.api.nvim_get_current_line():sub(1, col)
     local onIndentOrFirstNonBlank = textBeforeCursor:match("^%s*$")
-    if onIndentOrFirstNonBlank then -- alternatively: if col == 0 then
+      and not vim.b.enable_only_firstcol_fold
+    local firstChar = col == 0 and vim.b.enable_only_firstcol_fold
+    if onIndentOrFirstNonBlank or firstChar then
       local wasFolded = pcall(normal, "zc")
-      if not wasFolded then
-        normal("h")
-      end
+      if not wasFolded then normal("h") end
     else
       normal("h")
     end

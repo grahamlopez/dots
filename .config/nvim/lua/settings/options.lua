@@ -63,7 +63,7 @@ vim.opt.shortmess:append("c")
 -- Appearance
 vim.opt.termguicolors = true -- make sure your terminal supports this (most do)
 vim.opt.number = true -- Make line numbers default
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = ""
 vim.opt.cursorline = true
