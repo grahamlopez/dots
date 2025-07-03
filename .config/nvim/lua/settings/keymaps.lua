@@ -53,6 +53,7 @@ vim.api.nvim_create_user_command("ToggleColorColumn", function()
   vim_opt_toggle("colorcolumn", "+1", "", "colorcolumn")
 end, { desc = "toggle the colorcolumn at textwidth", nargs = 0 })
 
+vim.g.saved_rnu = vim.o.relativenumber
 vim.g.current_picker = "telescope"
 vim.b.enable_autoformat = false
 vim.g.enable_autoformat = false
@@ -284,14 +285,25 @@ vim.keymap.set("n", "<leader>tt", pick_fns(
   function() require("snacks").picker.todo_comments() end), { desc = "search todos" })
 
 -- UI
+vim.keymap.set("n", "<leader>ua", function() vim.b.enable_autoformat = not vim.b.enable_autoformat end, { desc = "autoformat (buffer)" })
+vim.keymap.set("n", "<leader>uA", function() vim.g.enable_autoformat = not vim.g.enable_autoformat end, { desc = "autoformat (global)" })
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
   { desc = "ColorColumn Toggle" })
 vim.keymap.set("n", '<leader>uC', pick_fns(
   function() require'telescope.builtin'.colorscheme( { enable_preview = true } ) end,
   function() sp.colorschemes() end),
   { desc = "colorscheme" })
+vim.keymap.set('n', '<leader>ud', function()
+                vim.diagnostic.enable(not vim.diagnostic.is_enabled(), { bufnr = 0 }) end,
+                { desc = "Toggle diagnostics (current buffer)" })
+vim.keymap.set('n', '<leader>uD', function()
+                vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
+                { desc = "Toggle diagnostics (global)" })
+vim.keymap.set("n", "<leader>uf", function() vim.b.enable_only_firstcol_fold = not vim.b.enable_only_firstcol_fold end,
+                { desc = "toggle firscol fold" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
-vim.g.saved_rnu = vim.o.relativenumber
+vim.keymap.set("n", "<leader>um", "<cmd>RenderMarkdown buf_toggle<cr>", { desc = "markdown render (buffer)" })
+vim.keymap.set("n", "<leader>uM", "<cmd>RenderMarkdown toggle<cr>", { desc = "markdown render (global)" })
 vim.keymap.set("n", "<leader>un", function()
   if vim.o.number then
     vim.g.saved_rnu = vim.o.relativenumber
@@ -302,16 +314,6 @@ vim.keymap.set("n", "<leader>un", function()
     vim.o.relativenumber = vim.g.saved_rnu
   end
   end, { desc = "line numbers" })
-vim.keymap.set("n", "<leader>ua", function() vim.b.enable_autoformat = not vim.b.enable_autoformat end, { desc = "autoformat (buffer)" })
-vim.keymap.set("n", "<leader>uA", function() vim.g.enable_autoformat = not vim.g.enable_autoformat end, { desc = "autoformat (global)" })
-vim.keymap.set('n', '<leader>ud', function()
-                vim.diagnostic.enable(not vim.diagnostic.is_enabled(), { bufnr = 0 }) end,
-                { desc = "Toggle diagnostics (current buffer)" })
-vim.keymap.set('n', '<leader>uD', function()
-                vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end,
-                { desc = "Toggle diagnostics (global)" })
-vim.keymap.set("n", "<leader>uf", function() vim.b.enable_only_firstcol_fold = not vim.b.enable_only_firstcol_fold end,
-                { desc = "toggle firscol fold" })
 vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.relativenumber end, { desc = "relative numbers" })
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })

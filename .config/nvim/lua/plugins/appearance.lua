@@ -194,6 +194,9 @@ return {
   --      which would be used by nvim-origami if available (treesitter is
   --      fallback)
   --
+  --      NOTE: linkarzu does a lot of manual work to make folding work for him
+  --      https://github.com/linkarzu/dotfiles-latest/blob/9932144dcf0674cbe41c764bfac8eb69ebe9127b/neovim/neobean/lua/config/keymaps.lua#L2970
+  --
 
   -- https://github.com/kevinhwang91/nvim-ufo
   {
@@ -247,8 +250,8 @@ return {
         -- stylua: ignore start
         vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" }),
         vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" }),
-        vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds),
-        vim.keymap.set("n", "zm", require("ufo").closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
+        --vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds),
+        --vim.keymap.set("n", "zm", require("ufo").closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
         -- stylua: ignore end
       })
     end,
@@ -302,10 +305,12 @@ return {
   --      Markdown
   --
   --  IDEA: wishlish
-  --  - folded ``` code blocks should still show the fold marker with line count
-  --    - workaround is to use ```label which will be visible, but the fold
-  --      marker + line count is still not shown
-  --    - another workaround is to disable for codeblocks
+  --  - folded ``` code blocks should not disappear still show the foldtext
+  --    Workarounds:
+  --    - always use ```label with code = { style = "language" } setting
+  --      - partial WAR: shows the language label, but not the foldtext
+  --    - disable for codeblocks with code = { style = "none" }
+  --  - closed folds with conceal still show my foldtext UPSTREAM: request
 
   -- https://github.com/MeanderingProgrammer/render-markdown.nvim
   {
@@ -320,10 +325,21 @@ return {
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {
-      -- TODO: These will need to be toggle-able
+      -- RFE: would like finer-grained toggles e.g. render_modes, anti_conceal
       render_modes = true,
-      anti_conceal = { enabled = true },
-      code = { style = 'none' },
+      anti_conceal = {
+        enabled = true,
+      },
+      code = {
+        style = "none", -- or "language", "normal", "full"
+        sign = false,
+        width = "block",
+      },
+      heading = {
+        width = "block",
+        sign = false,
+      },
+      completions = { blink = { enabled = true } }, -- for callouts completions
     },
   },
 
