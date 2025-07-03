@@ -28,33 +28,35 @@ vim.api.nvim_create_autocmd({ "DirChanged", "VimEnter" }, {
 })
 
 -- open help windows in vertical split depending on window size
-local function move_help_window()
-  if vim.api.nvim_win_get_width(0) > 160 then
-    vim.cmd.wincmd("L")
-  else
-    vim.cmd.wincmd("J")
-    vim.cmd("resize " .. math.floor(vim.o.lines * 0.65))
-  end
-end
-
--- BUG: having both of these autocmds causes a .35 bottom blank space under
--- the status line on WSL; the resize command gets called after the vertical
--- split happens
-
--- this one is needed to catch the first time a certain help page is opened
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "help",
-  callback = move_help_window,
-})
-
 vim.api.nvim_create_autocmd("BufEnter", {
   pattern = "*",
   callback = function()
     if vim.bo.filetype == "help" then
-      move_help_window()
+      if vim.api.nvim_win_get_width(0) > 160 then
+        vim.cmd.wincmd("L")
+      else
+        vim.cmd.wincmd("J")
+        vim.cmd("resize " .. math.floor(vim.o.lines * 0.65))
+      end
     end
   end,
 })
+
+-- this one used to beneeded to catch the first time a certain help page is opened
+-- local function move_help_window()
+--   if vim.api.nvim_win_get_width(0) > 160 then
+--     vim.cmd.wincmd("L")
+--   else
+--     vim.cmd.wincmd("J")
+--     vim.cmd("resize " .. math.floor(vim.o.lines * 0.65))
+--   end
+-- end
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = "help",
+--   callback = function()
+--     move_help_window()
+--   end,
+-- })
 
 -- Neovim 0.11 built-in LSP enhancements
 -- Enable native completion when LSP attaches
