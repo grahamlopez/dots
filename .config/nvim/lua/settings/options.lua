@@ -114,9 +114,6 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 --      search results, pufo preview, from a picker grep, etc.) and that location is
 --      unfolded, but everything else remains folded or is refolded as needed
 --    lua block comments
---
---    Folding video: https://youtu.be/f_f08KnAJOQ
---
 --    what can be done about fold debugging e.g. showing fold locations, etc.?
 --    remove need to close+re-open file when folds get messed up from just normal editing
 --    e.g. subheadings get messed up when removing list items from top-level heading in markdown files

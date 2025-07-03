@@ -19,8 +19,8 @@ return {
         json = { "prettier" },
         latex = { "latexindent" },
         lua = { "stylua" },
-        markdown = { "prettier", "markdownlint" }, -- TODO: LazyVim uses markdownlint-cli2
-        python = { "isort", "black" },
+        markdown = { "prettier", "markdownlint" },
+        python = { "isort", "black"},
         sh = { "shfmt" },
         tex = { "latexindent" },
         typescript = { "prettier" },
@@ -84,7 +84,6 @@ return {
   --      TODO/FIXME
   --
 
-  -- Highlight and search for TODO, FIXME, etc. comments
   -- https://github.com/folke/todo-comments.nvim
   {
     "folke/todo-comments.nvim",
@@ -93,6 +92,7 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       keywords = {
+        -- RFE: make a blink completion source render-markdown callouts
         -- FIXME, FIXME, BUG, FIXIT, ISSUE
         -- HACK
         -- WARN, WARNING, XXX
@@ -267,8 +267,8 @@ return {
         "lua_ls",
         "clangd",
         "bashls",
-        "texlab", -- LaTeX
-        "marksman", -- Markdown
+        "texlab",
+        "marksman",
       }
       local tools = {
         -- Formatters

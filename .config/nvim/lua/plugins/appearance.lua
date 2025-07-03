@@ -237,6 +237,7 @@ return {
         provider_selector = function(bufnr, filetype, buftype)
           return { "treesitter", "indent" }
         end,
+        close_fold_kinds = { "comment" }, -- FIXME: doesn't work in lua, maybe due to treesitter
         fold_virt_text_handler = handler,
         preview = {
           mappings = {

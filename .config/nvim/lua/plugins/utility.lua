@@ -116,17 +116,9 @@ return {
   --      Keybindings
   --
 
-  --[[
-        to query a current mapping use `:map <leader>h` and its mode variants
-        `:map` by itself will show all user-defined mappings
-        to ask about a key that starts with control, type `C-v` first, then the key sequence
-
-        see a default mapping, use `:help` followed by the keysequence, or e.g. CTRL-P
-
-        for modes, see `:help map-modes`
-    --]]
+  -- https://github.com/folke/which-key.nvim
   {
-    "folke/which-key.nvim", -- https://github.com/folke/which-key.nvim
+    "folke/which-key.nvim",
     config = function()
       require("which-key").setup({
         win = {
@@ -145,6 +137,12 @@ return {
         },
       })
     end,
+  },
+
+  -- https://github.com/nvimtools/hydra.nvim
+  {
+    "nvimtools/hydra.nvim",
+    enabled = false,
   },
 
   --

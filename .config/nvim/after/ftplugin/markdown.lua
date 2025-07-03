@@ -1,4 +1,4 @@
--- HACK: seems like a bit of a hammer instead of figuring out why/where these
+-- seems like a bit of a hammer instead of figuring out why/where these
 -- are being changed
 vim.opt.tabstop = 2        -- Tab width
 vim.opt.shiftwidth = 2     -- Indent width
@@ -12,12 +12,8 @@ vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
 vim.opt.textwidth = 80     -- Text width for formatting
 
 --[[ IDEA: big markdown ideas list
-    - visuals like linkarzu
-      - https://github.com/MeanderingProgrammer/render-markdown.nvim
     - previewing:
-      - in-nvim rendering
       - synced external preview
-    - outline, folding, navigation
     - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
     - url linking improvements
       - fast entry
@@ -25,7 +21,6 @@ vim.opt.textwidth = 80     -- Text width for formatting
           - or else a snippet
         - paste from clipboard in visual mode
         - shortcut to title the url under the cursor
-      - conceal display
       - use TOC to jump/navigate
     - filetype changes
       - textwidth (e.g. 100, 120?)
