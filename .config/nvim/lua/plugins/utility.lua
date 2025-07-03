@@ -130,7 +130,7 @@ return {
           padding = { 1, 3 },
           title = true,
           title_pos = "center",
-          -- wo = { winblend = 15 }, -- BUG: this is fully transparent on WSL
+          wo = { winblend = 15 }, -- fully transparent on WSL unless using alacritty
         },
         icons = {
           mappings = false,

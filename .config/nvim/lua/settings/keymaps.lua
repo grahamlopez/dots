@@ -183,12 +183,9 @@ vim.keymap.set('n', "<leader>aT", "<cmd>PrtChatRespond<cr>", { desc = "trigger a
 vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
--- GIT - disabling these until I understand them
+-- GIT
 local gitsigns = require('gitsigns')
--- TODO: get git keymaps from snacks.picker(), telescope(), and gitsigns
--- https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#git-pickers
--- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#general
--- https://github.com/lewis6991/gitsigns.nvim?tab=readme-ov-file#-keymaps
+-- https://github.com/nvimtools/hydra.nvim/wiki/Git
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
 -- Navigation
 vim.keymap.set('n', '<leader>gn', function()

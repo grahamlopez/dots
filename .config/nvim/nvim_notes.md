@@ -44,7 +44,7 @@ The Rad Lectures "How to setup Neovim from Scratch" YT vid: <https://www.youtube
     works in nvim+tmux. needed to remove all other overrides in .tmux.conf. Interestingly,
     konsole doesn't seem to care that TERM=alacritty. but TODO let's clean up dotfiles for this
 - repeatable window sizing (hydra.nvim)
-- repeatable motions - can '.' be used after e.g. 'f/F'
+- repeatable motions - see this vid: https://youtu.be/CEMPq_r8UYQ?si=Uzaua9aVFDcQPLnR&t=961
 
 ## Folding plugin idea
 
