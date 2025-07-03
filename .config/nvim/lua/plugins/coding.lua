@@ -58,9 +58,12 @@ return {
   --
   --      Git
   --
+  --      see also: https://github.com/NeogitOrg/neogit
+  --
 
   -- https://github.com/lewis6991/gitsigns.nvim
   -- TODO: stage hunks and commit, see in-buffer diffs
+  -- https://github.com/nvimtools/hydra.nvim/wiki/Git
   {
     "lewis6991/gitsigns.nvim",
     event = "VeryLazy",

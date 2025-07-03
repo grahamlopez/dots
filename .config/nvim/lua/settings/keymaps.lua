@@ -285,6 +285,9 @@ vim.keymap.set("n", "<leader>tt", pick_fns(
   function() require("snacks").picker.todo_comments() end), { desc = "search todos" })
 
 -- UI
+-- IDEA: something like a hydra might be more useful here:
+-- https://github.com/nvimtools/hydra.nvim/wiki/Vim-Options
+-- i.e. it can show the current value of the options
 vim.keymap.set("n", "<leader>ua", function() vim.b.enable_autoformat = not vim.b.enable_autoformat end, { desc = "autoformat (buffer)" })
 vim.keymap.set("n", "<leader>uA", function() vim.g.enable_autoformat = not vim.g.enable_autoformat end, { desc = "autoformat (global)" })
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
