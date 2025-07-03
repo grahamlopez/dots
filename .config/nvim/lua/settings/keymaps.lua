@@ -184,11 +184,46 @@ vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer l
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
 -- GIT - disabling these until I understand them
+local gitsigns = require('gitsigns')
 -- TODO: get git keymaps from snacks.picker(), telescope(), and gitsigns
 -- https://github.com/nvim-telescope/telescope.nvim?tab=readme-ov-file#git-pickers
 -- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#general
 -- https://github.com/lewis6991/gitsigns.nvim?tab=readme-ov-file#-keymaps
 vim.keymap.set("n", "<leader>gg", function() require("snacks").lazygit() end, { desc = "lazygit" })
+-- Navigation
+vim.keymap.set('n', '<leader>gn', function()
+  if vim.wo.diff then
+    vim.cmd.normal({']c', bang = true})
+  else
+    gitsigns.nav_hunk('next')
+  end
+end, { desc = "next hunk" })
+
+vim.keymap.set('n', '<leader>gp', function()
+  if vim.wo.diff then
+    vim.cmd.normal({'[c', bang = true})
+  else
+    gitsigns.nav_hunk('prev')
+  end
+end, { desc = "previous hunk" })
+wk.add({ mode = { "n", "v" }, { "<leader>gh", group = "hunk actions" }, })
+vim.keymap.set('n', '<leader>ghs', gitsigns.stage_hunk, { desc = "stage" })
+vim.keymap.set('n', '<leader>ghr', gitsigns.reset_hunk, { desc = "reset" })
+vim.keymap.set('v', '<leader>ghs', function() gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = "stage" })
+vim.keymap.set('v', '<leader>ghr', function() gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end, { desc = "reset" })
+vim.keymap.set('n', '<leader>ghS', gitsigns.stage_buffer, { desc = "stage buffer" })
+vim.keymap.set('n', '<leader>ghR', gitsigns.reset_buffer, { desc = "reset buffer" })
+vim.keymap.set('n', '<leader>ghp', gitsigns.preview_hunk, { desc = "preview (popup)" })
+vim.keymap.set('n', '<leader>ghi', gitsigns.preview_hunk_inline, { desc = "preview (inline)" })
+vim.keymap.set('n', '<leader>ghb', function() gitsigns.blame_line({ full = true }) end, { desc = "blame line" })
+vim.keymap.set('n', '<leader>ghd', gitsigns.diffthis, { desc = "diff (index)" })
+vim.keymap.set('n', '<leader>ghq', gitsigns.setqflist, { desc = "set quickfix (buffer)" })
+vim.keymap.set('n', '<leader>ghQ', function() gitsigns.setqflist('all') end, { desc = "set quickfix (all)" })
+-- vim.keymap.set('n', '<leader>gsh', sp.git_diff, { desc = "snacks git picker hunks" })
+-- vim.keymap.set('n', '<leader>gsh', tb.git_status, { desc = "telescope git picker hunks" })
+vim.keymap.set('n', '<leader>gtb', gitsigns.toggle_current_line_blame, { desc = "toggle line blame" })
+vim.keymap.set('n', '<leader>gtw', gitsigns.toggle_word_diff, { desc = "toggle word diff" })
+vim.keymap.set({'o', 'x'}, 'ih', gitsigns.select_hunk) -- Text object
 
 -- HELP
 vim.keymap.set("n", "<leader>h*", pick_fns(
@@ -247,6 +282,7 @@ vim.keymap.set("n", '<leader>sC', pick("command_history", "command_history"), { 
 vim.keymap.set("n", "<leader>sf", pick("find_files", "files"), { desc = "Find files" })
 vim.keymap.set("n", "<leader>sF", tb.filetypes, { desc = "file types" })
 vim.keymap.set("n", "<leader>sg", pick("live_grep", "grep"), { desc = "grep" })
+ -- QUESTION: there seems to be a big difference between the telescope 'help_tags' and snacks 'help' sources
 vim.keymap.set("n", "<leader>sh", pick("help_tags", "help"), { desc = "help" })
 vim.keymap.set("n", "<leader>sH", pick("highlights", "highlights"), { desc = "highlights" })
 vim.keymap.set("n", "<leader>si", pick("symbols", "icons"), { desc = "icons" })
@@ -287,7 +323,7 @@ vim.keymap.set("n", "<leader>tt", pick_fns(
 -- UI
 -- IDEA: something like a hydra might be more useful here:
 -- https://github.com/nvimtools/hydra.nvim/wiki/Vim-Options
--- i.e. it can show the current value of the options
+-- e.g. it can show the current value of the options
 vim.keymap.set("n", "<leader>ua", function() vim.b.enable_autoformat = not vim.b.enable_autoformat end, { desc = "autoformat (buffer)" })
 vim.keymap.set("n", "<leader>uA", function() vim.g.enable_autoformat = not vim.g.enable_autoformat end, { desc = "autoformat (global)" })
 vim.keymap.set("n", "<leader>uc", function() vim_opt_toggle('colorcolumn', '+1', '', 'colorcolumn') end,
