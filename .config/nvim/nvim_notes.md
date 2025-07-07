@@ -1,5 +1,10 @@
 a neat book to double-check some understanding: <https://lazyvim-ambitious-devs.phillips.codes/course/chapter-1/>
 
+# Minimal setup
+
+[why I got rid of all my neovim plugins](https://yobibyte.github.io/vim.html)
+[vanilla neovim setup, no plugins, telescope-like functionality](https://www.youtube.com/watch?v=mQ9gmHHe-nI)
+
 # Configuration
 
 Configuration examples:
