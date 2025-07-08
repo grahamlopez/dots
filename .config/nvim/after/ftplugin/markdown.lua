@@ -1,8 +1,11 @@
 -- seems like a bit of a hammer instead of figuring out why/where these
 -- are being changed
--- It might have happend when opening multiple files at once. This also happens
--- for other filetypes as well. Workaround: use `:e another_file`, `:argadd *`,
--- or a session restore like persistence.nvim
+-- It might only happen when opening multiple files at once; this also happens
+-- for other filetypes as well. Workarounds:
+--  - put options into these kinds of after/ftplugin files
+--  - put options in a global FileType autocommand with pattern = *
+--  - use `:e another_file`, `:argadd *` to avoid opening multiple files on cli
+--  - a session restore like persistence.nvim to avoid opening multiple files
 vim.opt.tabstop = 2        -- Tab width
 vim.opt.shiftwidth = 2     -- Indent width
 vim.opt.softtabstop = 2    -- Soft tab width

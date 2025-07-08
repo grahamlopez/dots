@@ -201,7 +201,8 @@ return {
   -- https://github.com/kevinhwang91/nvim-ufo
   {
     "kevinhwang91/nvim-ufo",
-    enabled = true,
+    enabled = false, -- FIXME: now I'm having problems with all folds being
+                     -- closed when returning to normal mode after an edit
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -311,7 +312,8 @@ return {
   --    - always use ```label with code = { style = "language" } setting
   --      - partial WAR: shows the language label, but not the foldtext
   --    - disable for codeblocks with code = { style = "none" }
-  --  - closed folds with conceal still show my foldtext UPSTREAM: request
+  --    - can we use "patterns" from the plugin config?
+  --  - closed folds (i.e. headings) with conceal still show my foldtext UPSTREAM: request
 
   -- https://github.com/MeanderingProgrammer/render-markdown.nvim
   {
@@ -337,7 +339,7 @@ return {
         width = "block",
       },
       heading = {
-        width = "block",
+        width = "full",
         sign = false,
       },
       completions = { blink = { enabled = true } }, -- for callouts completions

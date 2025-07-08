@@ -119,7 +119,7 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 --    e.g. subheadings get messed up when removing list items from top-level heading in markdown files
 vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
-vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
+--vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
 vim.opt.foldlevel = 99 -- Open all folds by default
 vim.opt.foldlevelstart = 99 -- Start with all folds open
 vim.opt.foldenable = true -- Enable folding
