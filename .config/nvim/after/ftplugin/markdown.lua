@@ -1,5 +1,8 @@
 -- seems like a bit of a hammer instead of figuring out why/where these
 -- are being changed
+-- It might have happend when opening multiple files at once. This also happens
+-- for other filetypes as well. Workaround: use `:e another_file`, `:argadd *`,
+-- or a session restore like persistence.nvim
 vim.opt.tabstop = 2        -- Tab width
 vim.opt.shiftwidth = 2     -- Indent width
 vim.opt.softtabstop = 2    -- Soft tab width
