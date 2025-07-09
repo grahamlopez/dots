@@ -364,6 +364,7 @@ vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute 
 
 -- Folding
 -- see nvim-ufo spec until it stabilizes
+-- TODO: reset broken folds by closing the buffer and reopening, bonus for restoring window layout state
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
   local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end
