@@ -127,14 +127,9 @@ vim.keymap.set("v", ">", ">gv") -- Stay in indent mode
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
 vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
-vim.keymap.set("n", "K", function()
-  local winid = require("ufo").peekFoldedLinesUnderCursor()
-  if not winid then
-    -- RFE: would be cool to add popup git hunk diffs to 'K' as well
-    vim.lsp.buf.hover()
-  end
-end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
 vim.keymap.set({"n", "i", "v", "c", "o"}, "<M-k>", pick("keymaps", "keymaps"), { desc = "keymaps" })
+-- RFE: would be cool to add popup git hunk diffs to 'K' as well
+vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
 
 vim.keymap.set("n", "<c-b>", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set('n', "<M-1>", "<cmd>BufferLineGoToBuffer 1<cr>", { desc = "goto visible buffer 1" })

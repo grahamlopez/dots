@@ -202,7 +202,7 @@ return {
   {
     "kevinhwang91/nvim-ufo",
     enabled = false, -- FIXME: now I'm having problems with all folds being
-                     -- closed when returning to normal mode after an edit
+    -- closed when returning to normal mode after an edit
     dependencies = {
       "kevinhwang91/promise-async",
     },
@@ -252,6 +252,13 @@ return {
         -- stylua: ignore start
         vim.keymap.set( "n", "zR", require("ufo").openAllFolds, { desc = "Open all folds (UFO)" }),
         vim.keymap.set( "n", "zM", require("ufo").closeAllFolds, { desc = "Close all folds (UFO)" }),
+        vim.keymap.set("n", "K", function()
+          local winid = require("ufo").peekFoldedLinesUnderCursor()
+          if not winid then
+            -- RFE: would be cool to add popup git hunk diffs to 'K' as well
+            vim.lsp.buf.hover()
+          end
+        end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" }),
         --vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds),
         --vim.keymap.set("n", "zm", require("ufo").closeFoldsWith), -- closeAllFolds == closeFoldsWith(0)
         -- stylua: ignore end
