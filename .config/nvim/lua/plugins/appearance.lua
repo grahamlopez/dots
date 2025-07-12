@@ -24,6 +24,10 @@ return {
     -- this works, but TMUX doesn't propogate the DEC 2031 escape sequence to
     -- applications running inside of it
     -- but looks like there is a merged PR: https://github.com/tmux/tmux/pull/4353
+    --
+    -- FIXME: this doesn't work inside of tmux anymore. Consider moving to
+    -- something built-in like an autocommand that reads the theme setting from a file, or
+    -- something similar
     {
       "f-person/auto-dark-mode.nvim",
       opts = {
