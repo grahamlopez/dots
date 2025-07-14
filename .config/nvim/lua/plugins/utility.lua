@@ -221,6 +221,7 @@ return {
       -- C-k: Toggle signature help (if signature.enabled = true)
       --
       -- See :h blink-cmp-config-keymap for defining your own keymap
+      -- FIXME: c-space doesn't trigger completion on WSL
       keymap = { preset = "super-tab" },
 
       appearance = {
