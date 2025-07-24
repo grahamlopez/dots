@@ -283,7 +283,7 @@ vim.keymap.set("n", "<leader>sk", pick("keymaps", "keymaps"), { desc = "keymaps"
 vim.keymap.set("n", "<leader>sl", pick("loclist", "loclist"), { desc = "location list" })
 vim.keymap.set("n", "<leader>sm", pick("man_pages", "man"), { desc = "man pages" })
 vim.keymap.set("n", "<leader>sM", pick("marks", "marks"), { desc = "marks" })
-vim.keymap.set('n', '<leader>sn', pick_fns(
+vim.keymap.set('n', "<leader>sn", pick_fns(
   function() tb.find_files({ cwd = vim.fn.stdpath("config") }) end,
   function() sp.files({ cwd = vim.fn.stdpath("config") }) end),
   { desc = 'nvim config files' })
@@ -291,7 +291,7 @@ vim.keymap.set('n', '<leader>sN', pick_fns(
   function() tb.live_grep({ cwd = vim.fn.stdpath("config") }) end,
   function() sp.grep({ dirs = { vim.fn.stdpath("config") }}) end),
   { desc = 'nvim config grep' })
-vim.keymap.set("n", '<leader>sp', function() sp.lazy() end, { desc = "plugin spec" })
+vim.keymap.set("n", "<leader>sp", function() sp.lazy({ pattern = "" }) end, { desc = "plugin spec" })
 vim.keymap.set("n", "<leader>sP", function() sp.projects() end, { desc = "projects" })
 vim.keymap.set("n", "<leader>sq", tb.quickfixhistory, { desc = "quickfix history" })
 vim.keymap.set("n", "<leader>sr", pick("oldfiles", "recent"), { desc = "recent files" })
