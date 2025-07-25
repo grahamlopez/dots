@@ -126,7 +126,7 @@ vim.keymap.set("v", ">", ">gv") -- Stay in indent mode
 
 -- NON-LEADER
 vim.keymap.set("n", "<c-f>", pick("current_buffer_fuzzy_find", "lines"), { desc = "find in buffer" })
-vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "<c-g>", pick("live_grep", "grep"), { desc = "grep current dir" })
 vim.keymap.set({"n", "i", "v", "c", "o"}, "<M-k>", pick("keymaps", "keymaps"), { desc = "keymaps" })
 -- RFE: would be cool to add popup git hunk diffs to 'K' as well
 vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { desc = "Peek (UFO Fold, lsp.buf.hover(), etc.)" })
@@ -149,7 +149,7 @@ vim.keymap.set('n', "<M-L>", "<cmd>BufferLineMoveNext<cr>", { desc = "move buffe
 vim.keymap.set('n', "<M-H>", "<cmd>BufferLineMovePrev<cr>", { desc = "move buffer tab left" })
 
 -- TOP LEVEL
-vim.keymap.set("n", "<leader>/", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "<leader>/", pick("live_grep", "grep"), { desc = "grep current dir" })
 vim.keymap.set("n", "<leader>*", pick("grep_string", "grep_word"), { desc = "grep cwd for word under cursor" })
 vim.keymap.set("n", "<leader>,", pick("buffers", "buffers"), { desc = "buffers" })
 vim.keymap.set("n", "<leader>:", pick("command_history", "command_history"), { desc = "command history" })
@@ -273,7 +273,7 @@ vim.keymap.set('n', '<leader>sc', pick("commands", "commands"), { desc = 'find c
 vim.keymap.set("n", '<leader>sC', pick("command_history", "command_history"), { desc = "command_history" })
 vim.keymap.set("n", "<leader>sf", pick("find_files", "files"), { desc = "Find files" })
 vim.keymap.set("n", "<leader>sF", tb.filetypes, { desc = "file types" })
-vim.keymap.set("n", "<leader>sg", pick("live_grep", "grep"), { desc = "grep" })
+vim.keymap.set("n", "<leader>sg", pick("live_grep", "grep"), { desc = "grep current dir" })
  -- QUESTION: there seems to be a big difference between the telescope 'help_tags' and snacks 'help' sources
 vim.keymap.set("n", "<leader>sh", pick("help_tags", "help"), { desc = "help" })
 vim.keymap.set("n", "<leader>sH", pick("highlights", "highlights"), { desc = "highlights" })
