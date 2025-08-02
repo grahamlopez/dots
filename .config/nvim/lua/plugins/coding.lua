@@ -20,7 +20,7 @@ return {
         latex = { "latexindent" },
         lua = { "stylua" },
         markdown = { "prettier", "markdownlint" },
-        python = { "isort", "black"},
+        python = { "isort", "black" },
         sh = { "shfmt" },
         tex = { "latexindent" },
         typescript = { "prettier" },
@@ -37,7 +37,9 @@ return {
       },
       format_on_save = function(bufnr)
         -- Enable with a global or buffer-local variable
-        if not vim.g.enable_autoformat and not vim.b[bufnr].enable_autoformat then
+        if
+          not vim.g.enable_autoformat and not vim.b[bufnr].enable_autoformat
+        then
           return
         end
         return { timeout_ms = 500, lsp_format = "fallback" }
@@ -90,8 +92,8 @@ return {
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       keywords = {
-        -- RFE: make a blink completion source render-markdown callouts
-        -- FIXME, FIXME, BUG, FIXIT, ISSUE
+        -- RFE: make a blink completion source like the render-markdown callouts
+        -- FIXME, BUG, FIXIT, ISSUE
         -- HACK
         -- WARN, WARNING, XXX
         -- PERF, OPTIM, PERFORMANCE, OPTIMIZE
