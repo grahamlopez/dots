@@ -42,6 +42,17 @@ vim.api.nvim_create_autocmd("BufEnter", {
   end,
 })
 
+-- allow treesitter to actually parse and calculate folds on file open
+vim.api.nvim_create_autocmd({"BufReadPost", "BufWinEnter"}, {
+  pattern = {"*.c", "*.h", "*.md"},
+  callback = function()
+    vim.defer_fn(function()
+      vim.cmd("normal! zx")
+    end, 1)  -- 5 milliseconds, adjust as needed
+  end,
+})
+
+
 -- this one used to beneeded to catch the first time a certain help page is opened
 -- local function move_help_window()
 --   if vim.api.nvim_win_get_width(0) > 160 then

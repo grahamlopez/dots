@@ -1,5 +1,4 @@
 
-vim.opt.foldmethod = "indent"
 vim.opt.tabstop = 2        -- Tab width
 vim.opt.shiftwidth = 2     -- Indent width
 vim.opt.softtabstop = 2    -- Soft tab width

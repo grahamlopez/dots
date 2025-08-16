@@ -332,6 +332,8 @@ vim.keymap.set('n', '<leader>uD', function()
                 { desc = "Toggle diagnostics (global)" })
 vim.keymap.set("n", "<leader>uf", function() vim.b.enable_only_firstcol_fold = not vim.b.enable_only_firstcol_fold end,
                 { desc = "toggle firscol fold" })
+vim.keymap.set("n", "<leader>uF", function() vim_opt_toggle('foldmethod', 'expr', 'indent', 'foldmethod=expr') end,
+                { desc = "toggle foldmethod=expr/indent" })
 vim.keymap.set("n", "<leader>ul", function() vim.o.cursorline = not vim.o.cursorline end, { desc = "cursorline" })
 vim.keymap.set("n", "<leader>um", "<cmd>RenderMarkdown buf_toggle<cr>", { desc = "markdown render (buffer)" })
 vim.keymap.set("n", "<leader>uM", "<cmd>RenderMarkdown toggle<cr>", { desc = "markdown render (global)" })
@@ -360,6 +362,9 @@ vim.keymap.set("n", "<leader><leader>x", "<cmd>source %<CR>", { desc = "Execute 
 -- Folding
 -- see nvim-ufo spec until it stabilizes
 -- TODO: reset broken folds by closing the buffer and reopening, bonus for restoring window layout state
+vim.keymap.set("n", "z1", "<cmd>set foldlevel=1<cr>", { desc = "foldlevel=1" })
+vim.keymap.set("n", "z2", "<cmd>set foldlevel=2<cr>", { desc = "foldlevel=2" })
+vim.keymap.set("n", "z3", "<cmd>set foldlevel=3<cr>", { desc = "foldlevel=3" })
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 vim.keymap.set("n", "h", function() -- h/l: pulled from nvim-origami
   local function normal(cmdStr) vim.cmd.normal({ cmdStr, bang = true }) end

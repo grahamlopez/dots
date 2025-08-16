@@ -16,6 +16,7 @@ vim.opt.breakindent = true -- Maintain indent when wrapping
 vim.opt.wrap = false       -- Don't wrap lines
 vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
 vim.opt.textwidth = 80     -- Text width for formatting
+vim.opt.foldlevel = 1
 
 --[[ IDEA: big markdown ideas list
     - previewing:
