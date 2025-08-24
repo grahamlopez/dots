@@ -101,6 +101,7 @@ return {
         -- TEST, TESTING, PASSED, FAILED
         TODO = { icon = " ", color = "info", alt = { "NEXT" } },
         IDEA = { icon = "󰛨 ", color = "hint", alt = { "RFE" } },
+        LAST = { icon = "󰃢 ", color = "hint", alt = { "CLEANUP" } },
         UPSTREAM = { icon = " ", color = "info" },
         QUESTION = { icon = " ", color = "warning" },
       },
