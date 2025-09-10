@@ -105,6 +105,11 @@ can this be faked with :mkview?
   lorem ipsum
   ```
 
+# Reducing Plugins
+
+https://bower.sh/nvim-builtin-plugin-mgr
+
+
 # Plugins
 
 - <https://dotfyle.com/neovim/plugins/trending>
