@@ -49,3 +49,8 @@ edit `.dots-git/config` and add the following:
         showUntrackedFiles = no
 
 ```
+
+To change the remote e.g. from https: to git:
+```
+git remote set-url origin git@github.com/grahamlopez/dots.git
+```
