@@ -351,6 +351,7 @@ vim.keymap.set("n", "<leader>uN", function() vim.o.relativenumber = not vim.o.re
 vim.keymap.set("n", "<leader>up", "<cmd>TogglePicker<cr>", { desc = "Toggle Picker" })
 vim.keymap.set("n", "<leader>ut", "<cmd>TransparentToggle<cr>", { desc = "Transparent Toggle" })
 vim.keymap.set("n", "<leader>uw", function() vim.o.wrap = not vim.o.wrap end, { desc = "visual line wrap" })
+vim.keymap.set("n", "<leader>uW", function() vim.o.list = not vim.o.list end, { desc = "visual whitespace" })
 vim.keymap.set("n", "<leader>uz", function() require("snacks").zen() end, { desc = "Zen mode" })
 vim.keymap.set("n", "<leader>uZ", function() require("snacks").zen.zoom() end, { desc = "Zen zoom" })
 
