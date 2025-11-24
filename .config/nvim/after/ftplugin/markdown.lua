@@ -19,7 +19,8 @@ vim.opt.textwidth = 80     -- Text width for formatting
 vim.opt.foldlevel = 1
 
 --[[ IDEA: big markdown ideas list
-    - check out https://github.com/iwe-org/iwe
+    - https://github.com/iwe-org/iwe
+    - https://github.com/jakewvincent/mkdnflow.nvim
     - previewing:
       - synced external preview
     - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
