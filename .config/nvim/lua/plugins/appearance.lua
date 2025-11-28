@@ -18,7 +18,7 @@ return {
   -- https://github.com/f-person/auto-dark-mode.nvim
   {
     -- neovim detects terminal background at startup, BUT
-    -- doesn't work inside tmux
+    -- doesn't work inside tmux (new capability in tmux 3.6)
     -- doesn't affect already-running instances
     -- not needed anymore? https://github.com/vimpostor/vim-lumen?tab=readme-ov-file#is-this-plugin-still-needed-with-latest-vim
     -- this works, but TMUX doesn't propogate the DEC 2031 escape sequence to
