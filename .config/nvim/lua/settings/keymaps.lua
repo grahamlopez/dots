@@ -178,6 +178,38 @@ vim.keymap.set('n', "<leader>aT", "<cmd>PrtChatRespond<cr>", { desc = "trigger a
 vim.keymap.set("n", "<leader>bb", pick("buffers", "buffers"), { desc = "buffer list" })
 vim.keymap.set("n", "<leader>bd", "<cmd>b#<bar>bd#<cr>", { desc = "delete buffer" }) -- delete buffer - preserve window
 
+-- BOOKMARKS
+vim.keymap.set("n", "<leader>bp", function()
+  local url = vim.fn.getreg("+")
+  if url == "" then
+    vim.notify("System clipboard is empty", vim.log.levels.WARN)
+    return
+  end
+
+  -- Insert the markdown link skeleton
+  local link = string.format("[](%s)", url)
+  vim.api.nvim_put({ link }, "c", true, true)
+
+  -- Get current cursor position after the put: {line, col}
+  local pos = vim.api.nvim_win_get_cursor(0)  -- 1-based line, 0-based col [web:84]
+
+  -- After inserting "[](<url>)", the cursor is at the end: col points to ")"
+  -- The link text position is 1 character after "[".
+  -- That is: starting column + 1.
+  -- We can recover the starting column by subtracting the link length - 1.
+  local link_len = #link
+  local start_col = pos[2] - (link_len - 1)
+  local text_col = start_col + 1
+
+  -- Move cursor between [ and ]
+  vim.api.nvim_win_set_cursor(0, { pos[1], text_col })
+
+  -- Enter insert mode
+  vim.cmd("startinsert")
+end, { silent = true, desc = "bookmark paste (w/desc)" })
+-- TODO: paste bookmark directly from insert mode and keep going
+vim.keymap.set("n", "<leader>bP", 'a[<C-r>+](<C-r>+)<Esc>', { desc = "bookmark paste (url)" })
+
 -- GIT
 local gitsigns = require('gitsigns')
 -- https://github.com/nvimtools/hydra.nvim/wiki/Git
