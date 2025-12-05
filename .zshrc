@@ -131,34 +131,17 @@ function agent-ssh() {
 }
 
 function dark_theme() {
-  # change for plasma desktop - covers almost everything
-  plasma-apply-lookandfeel -a org.kde.breezedark.desktop
-
-  # change for all running konsole instances
-  for instance in $(qdbus6 | grep org.kde.konsole); do
-    for session in $(qdbus6 "$instance" | grep -E '^/Sessions/'); do
-      qdbus6 "$instance" "$session" org.kde.konsole.Session.setProfile "Dark"
-    done
-  done
-  # change default for new konsole instances
-  sed -i "s/^DefaultProfile=.*/DefaultProfile=Dark.profile/g" "$HOME/.config/konsolerc"
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 }
 
 function light_theme() {
-  # change for plasma desktop - covers almost everything
-  plasma-apply-lookandfeel -a org.kde.breeze.desktop
-
-  # change for all running konsole instances
-  for instance in $(qdbus6 | grep org.kde.konsole); do
-    for session in $(qdbus6 "$instance" | grep -E '^/Sessions/'); do
-      qdbus6 "$instance" "$session" org.kde.konsole.Session.setProfile "Light"
-    done
-  done
-  # change default for new konsole instances
-  sed -i "s/^DefaultProfile=.*/DefaultProfile=Light.profile/g" "$HOME/.config/konsolerc"
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 }
 
 
+# messing with neovim
+alias cvim="NVIM_APPNAME=nvim.cprog nvim"
+alias mvim="NVIM_APPNAME=nvim.markdown /home/graham/local/apps/neovim/bin/nvim"
 
 function uninstall_nvim() {
   if [ -z "$1" ]; then
@@ -199,11 +182,6 @@ showAllReposWithChanges() {
     )
     done
 }
-
-# messing with neovim
-alias lazyvim="NVIM_APPNAME=nvim.lazyvim nvim"
-alias ovim="NVIM_APPNAME=nvim.old nvim"
-alias pvim="NVIM_APPNAME=nvim.perp nvim"
 
 # more homegrown functions
 
