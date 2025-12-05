@@ -350,8 +350,9 @@ return {
         width = "block",
       },
       heading = {
-        width = "full",
+        width = "block",
         sign = false,
+        min_width = 80,
       },
       completions = { blink = { enabled = true } }, -- for callouts completions
     },
