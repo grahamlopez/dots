@@ -131,11 +131,11 @@ function agent-ssh() {
 }
 
 function dark_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 }
 
 function light_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 }
 
 
