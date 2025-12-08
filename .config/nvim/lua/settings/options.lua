@@ -37,7 +37,6 @@
 --]]
 
 -- General settings
-vim.opt.mouse = "nv" -- Disable mouse for speed
 vim.opt.clipboard = "unnamed,unnamedplus" -- Enable '*' and '+'; need wl-clipboard
 vim.opt.undofile = true -- Persistent undo
 -- vim.opt.backup = false -- No backup files
@@ -51,6 +50,7 @@ vim.opt.virtualedit = "block"
 -- Performance optimizations
 vim.opt.lazyredraw = true -- Don't redraw during macros
 -- opt.regexpengine = 1 -- Use old regex engine (faster for some patterns)
+-- vim.opt.mouse = "nv" -- Disable mouse for speed
 vim.opt.ttyfast = true -- Fast terminal connection
 
 -- Search settings
