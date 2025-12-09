@@ -2,9 +2,8 @@
 -- TODO: list {{{
 --    TODO: FIXME: IDEA: TRACK: highlight and quickfix
 --    transparent background
+--    g-<c-g> to output word/line count in visual mode
 -- }}}
-
-vim.loader.enable() -- Enable faster Lua module loading
 
 -- Keybindings {{{
 -- For modes, see `:help map-modes`
@@ -23,6 +22,8 @@ vim.keymap.set('n', "<leader>cO", "<cmd>e ~/.config/nvim/init.lua<cr>", { desc =
 vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true }) -- cancel highlighting
 vim.keymap.set( "n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
 vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
+
+vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
 -- }}}
 
 -- Options {{{
@@ -76,6 +77,7 @@ vim.opt.autowrite = true -- Auto-write before running commands
 vim.opt.history = 1000 -- More command history
 vim.opt.virtualedit = "block"
 -- Performance optimizations
+vim.loader.enable() -- Enable faster Lua module loading
 vim.opt.updatetime = 250 -- Faster completion (4000ms default)
 vim.opt.timeoutlen = 300 -- Faster which-key popup
 vim.opt.lazyredraw = true -- Don't redraw during macros

@@ -39,3 +39,5 @@ vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload
 -- .config/nvim/queries/markdown and remove those lines (and without ';; extends')
 -- 2. remove the lines directly from the runtime highlights.scm file itself
 
+vim.keymap.set("n", "<leader>P", 'a<C-o>:set paste<cr>[<C-r>+](<C-r>+)<C-o>:set nopaste<cr>', { desc = "url paste" })
+vim.keymap.set("n", "<leader>p", 'a<C-o>:set paste<cr>[](<C-r>+)<C-o>:set nopaste<cr><C-o>F]', { desc = "url paste w/desc" })
