@@ -31,13 +31,6 @@ vim.opt.foldlevel = 1
 vim.opt.conceallevel = 2
 -- vim.opt.concealcursor = "nc"
 vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload TS parser
--- To fix folded code blocks completely disappearing, we need to disable the
--- 'conceal_lines' on the fenced_code_block delimiters. According to
--- https://www.reddit.com/r/neovim/comments/1jo6d1n/how_do_i_override_treesitter_conceal_lines/
--- we really only have 2 options at the moment:
--- 1. copy share/nvim/runtime/queries/markdown/highlights.scm to
--- .config/nvim/queries/markdown and remove those lines (and without ';; extends')
--- 2. remove the lines directly from the runtime highlights.scm file itself
 
 vim.keymap.set("n", "<leader>P", 'a<C-o>:set paste<cr>[<C-r>+](<C-r>+)<C-o>:set nopaste<cr>', { desc = "url paste" })
 vim.keymap.set("n", "<leader>p", 'a<C-o>:set paste<cr>[](<C-r>+)<C-o>:set nopaste<cr><C-o>F]', { desc = "url paste w/desc" })

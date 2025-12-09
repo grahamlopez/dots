@@ -1,8 +1,8 @@
 
 -- TODO: list {{{
---    TODO: FIXME: IDEA: TRACK: highlight and quickfix
+--    TODO: FIXME: IDEA: TRACK: highlight
+--    better quickfix list navigation, preview, jumping (workflow)
 --    transparent background
---    g-<c-g> to output word/line count in visual mode
 -- }}}
 
 -- Keybindings {{{
@@ -227,19 +227,53 @@ vim.opt.sessionoptions = {
 -- }}}
 -- }}}
 
+-- Utilities (lightweight plugins) {{{
+-- https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+-- https://www.youtube.com/watch?v=AuXZA-xCv04
+if vim.fn.executable('rg') then
+  vim.opt.grepprg = "rg --vimgrep --no-hidden --no-heading"
+end
+vim.api.nvim_create_user_command("Todos", function()
+ vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
+ vim.cmd.copen()
+end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
+-- }}}
+
 -- Filetype specifics {{{
--- init.lua {{{
+-- This autocmd is to fix the problem of '--' indentation being right-shifted by
+-- two spaces only after lines with foldmarkers like '\{\{\{'
+-- these stay here; timing is wrong if these are moved to 'after/ftplugin/lua.lua'
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
+  callback = function()
+    vim.opt_local.indentexpr = "v:lua.lua_indent(v:lnum)"
+  end,
+})
+-- This autocmd defines the function to fix the '--' indentation problem
+-- addressed by the previous autocmd
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    _G.lua_indent = function(lnum)
+      local line = vim.fn.getline(lnum)
+      if line:match("^%s*--%s*") then  -- On comment lines/spaces after --, match prev comment indent
+        local prev = vim.fn.prevnonblank(lnum - 1)
+        if prev > 0 then
+          return vim.fn.indent(prev)
+        end
+      end
+      return vim.fn.eval("GetLuaIndent(" .. lnum .. ")")  -- Fallback to Lua indent
+    end
+  end,
+})
 vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = "init.lua",
   callback = function()
-    vim.opt_local.foldmethod = "marker"
-    vim.opt_local.foldmarker = "{{{,}}}"
-    vim.opt_local.foldlevel = 0
+    vim.opt.foldmethod = "marker"
+    vim.opt.foldmarker = "{{{,}}}"
+    vim.opt.foldlevel = 0
   end,
 })
 -- }}}
--- }}}
-vim.keymap.set({ "n" }, "<c-h>", "<cmd>restart<cr>", { silent = true })
 
 --[[ IDEA: big markdown ideas list
 -- list of suggestions
@@ -269,3 +303,18 @@ vim.keymap.set({ "n" }, "<c-h>", "<cmd>restart<cr>", { silent = true })
       - easier bolding etc. with mini.surround and/or keymaps
       - better bullet lists: https://github.com/bullets-vim/bullets.vim
 --]]
+
+-- Archived info {{{
+--  TRACK: g-<c-g> to output word/line count in visual mode
+--    not an issue with 0.11.4. --clean -u NORC doesn't help
+--    WAR: use :messages to get the text from g-<c-g>
+--
+--  TRACK: To fix folded code blocks in markdown files completely disappearing,
+--  we need to disable the 'conceal_lines' on the fenced_code_block delimiters.
+--  According to
+--  https://www.reddit.com/r/neovim/comments/1jo6d1n/how_do_i_override_treesitter_conceal_lines/
+--  we really only have 2 options at the moment:
+--  1. copy share/nvim/runtime/queries/markdown/highlights.scm to
+--  .config/nvim/queries/markdown and remove those lines (and without ';; extends')
+--  2. remove the lines directly from the runtime highlights.scm file itself
+-- }}}
