@@ -1,7 +1,6 @@
 
 -- TODO: list {{{
---    conceal markdown links
---    TODO:, FIXME:, IDEA: highlight and quickfix
+--    TODO: FIXME: IDEA: TRACK: highlight and quickfix
 --    transparent background
 -- }}}
 
@@ -237,49 +236,34 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 -- }}}
-
--- markdown {{{
--- list of suggestions
---  https://mambusskruj.github.io/posts/pub-neovim-for-markdown/#syntax-highlights-and-conceals
---
---vim.api.nvim_create_autocmd("FileType", {
---  pattern = "markdown",
---  callback = function()
---    vim.opt_local.conceallevel = 2
---    vim.opt_local.concealcursor = "nc"  -- Hide on normal/insert, show on command/visual
---    vim.b.markdown_syntax_conceal = 1  -- Force legacy syntax conceal
---    vim.cmd("syntax enable")
---    vim.cmd("syntax sync fromstart")
---	  vim.g.markdown_minlines = 500
---  end,
---})
-
-vim.api.nvim_create_autocmd("BufReadPost", {
-  pattern = "*.md",
-  callback = function()
-    vim.opt_local.foldlevel = 99
-    vim.opt_local.conceallevel = 2
-    vim.opt_local.concealcursor = "nc"
-    vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload TS parser
-    -- TODO understand
-    -- 1. Why is the above vim.treesitter.start() necessary?
-    -- 2. How do I know if a node is governed by markdown or markdown_inline?
-    --    e.g. 'fenced_code_block_delimiter' vs. 'link_destination'? 
-    -- 3. Why is there different behavior based on if the treesitter queries go
-    --    into 'queries/markdown/highlights.scm' or
-    --    'after/queries/markdown/highlights.scm' (same for markdown_inline)?
-    --
-    -- unneeded suggestions
-    -- vim.opt_local.syntax = "OFF"  -- Disable legacy syntax
-    -- vim.b.ts_highlight = true     -- Force TS highlighting
-  end,
-})
--- }}}
-
--- testing {{{
--- vim.treesitter.query.set('markdown', 'highlights', ';; extends\n((fenced_code_block_delimiter) @conceal (#set! conceal "foo"))')
--- vim.treesitter.query.set('markdown_inline', 'highlights', ';; extends\n((link_destination) @conceal (#set! conceal "foo" priority 1000))')
--- vim.treesitter.query.set('lua', 'highlights', ';; extends\n((identifier) @conceal (#set! conceal "foo"))')
--- }}}
 -- }}}
 vim.keymap.set({ "n" }, "<c-h>", "<cmd>restart<cr>", { silent = true })
+
+--[[ IDEA: big markdown ideas list
+-- list of suggestions
+--  https://mambusskruj.github.io/posts/pub-neovim-for-markdown/#syntax-highlights-and-conceals
+
+    - https://github.com/iwe-org/iwe
+    - https://github.com/jakewvincent/mkdnflow.nvim
+    - previewing:
+      - synced external preview
+    - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
+    - url linking improvements
+      - fast entry
+        - paste from clipboard with prompt for link title
+          - or else a snippet
+        - paste from clipboard in visual mode
+        - shortcut to title the url under the cursor
+      - use TOC to jump/navigate
+    - filetype changes
+      - textwidth (e.g. 100, 120?)
+        - can this be set within specific files, e.g. for prose vs. notes differences?
+    - table input and manipulation
+    - image support
+    - A couple of videos to start ideas:
+      - <https://www.youtube.com/watch?v=DgKI4hZ4EEI>
+      - <https://linkarzu.com/posts/neovim/markdown-setup-2025/>
+    - other ideas:
+      - easier bolding etc. with mini.surround and/or keymaps
+      - better bullet lists: https://github.com/bullets-vim/bullets.vim
+--]]
