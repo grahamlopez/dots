@@ -1,7 +1,9 @@
 
 -- TODO: list {{{
---    TODO: FIXME: IDEA: TRACK: highlight
 --    better quickfix list navigation, preview, jumping (workflow)
+--      https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+--      https://www.youtube.com/watch?v=AuXZA-xCv04
+--      update quickfix list on changes (e.g. delete TODO)
 --    transparent background
 -- }}}
 
@@ -228,8 +230,8 @@ vim.opt.sessionoptions = {
 -- }}}
 
 -- Utilities (lightweight plugins) {{{
--- https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
--- https://www.youtube.com/watch?v=AuXZA-xCv04
+--
+-- grep todo keywords and add to quickfix
 if vim.fn.executable('rg') then
   vim.opt.grepprg = "rg --vimgrep --no-hidden --no-heading"
 end
@@ -237,6 +239,20 @@ vim.api.nvim_create_user_command("Todos", function()
  vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
  vim.cmd.copen()
 end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
+
+-- highlight todo keywords
+vim.api.nvim_set_hl(0, "darkTodoPattern", { fg = "#ffaf00", bold = true })
+vim.api.nvim_set_hl(0, "lightTodoPattern", { fg = "#cd4848", bold = true })
+vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter" }, {
+  callback = function()
+    vim.fn.clearmatches()
+    if vim.o.background == "dark" then
+      vim.fn.matchadd("darkTodoPattern", "\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):")
+    else
+      vim.fn.matchadd("lightTodoPattern", "\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):")
+    end
+  end
+})
 -- }}}
 
 -- Filetype specifics {{{
