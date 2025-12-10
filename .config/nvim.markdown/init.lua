@@ -1,9 +1,10 @@
 
 -- TODO: list {{{
 --    better quickfix list navigation, preview, jumping (workflow)
---      https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 --      https://www.youtube.com/watch?v=AuXZA-xCv04
 --      update quickfix list on changes (e.g. delete TODO)
+--      difference between quickfix and location lists
+--      enable list wrap in quickfix window
 --    transparent background
 -- }}}
 
@@ -24,6 +25,9 @@ vim.keymap.set('n', "<leader>cO", "<cmd>e ~/.config/nvim/init.lua<cr>", { desc =
 vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true }) -- cancel highlighting
 vim.keymap.set( "n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
 vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
+vim.keymap.set( "n", "]q", ":cnext<cr>zv", {})
+vim.keymap.set( "n", "[q", ":cprev<cr>zv", {})
+vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 
 vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
 -- }}}
@@ -297,36 +301,38 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 -- }}}
 
---[[ IDEA: big markdown ideas list
+-- big markdown ideas list {{{
 -- list of suggestions
 --  https://mambusskruj.github.io/posts/pub-neovim-for-markdown/#syntax-highlights-and-conceals
-
-    - https://github.com/iwe-org/iwe
-    - https://github.com/jakewvincent/mkdnflow.nvim
-    - previewing:
-      - synced external preview
-    - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
-    - url linking improvements
-      - fast entry
-        - paste from clipboard with prompt for link title
-          - or else a snippet
-        - paste from clipboard in visual mode
-        - shortcut to title the url under the cursor
-      - use TOC to jump/navigate
-    - filetype changes
-      - textwidth (e.g. 100, 120?)
-        - can this be set within specific files, e.g. for prose vs. notes differences?
-    - table input and manipulation
-    - image support
-    - A couple of videos to start ideas:
-      - <https://www.youtube.com/watch?v=DgKI4hZ4EEI>
-      - <https://linkarzu.com/posts/neovim/markdown-setup-2025/>
-    - other ideas:
-      - easier bolding etc. with mini.surround and/or keymaps
-      - better bullet lists: https://github.com/bullets-vim/bullets.vim
---]]
+--
+--    - https://github.com/iwe-org/iwe
+--    - https://github.com/jakewvincent/mkdnflow.nvim
+--    - previewing:
+--      - synced external preview
+--    - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
+--    - url linking improvements
+--      - fast entry
+--        - paste from clipboard with prompt for link title
+--          - or else a snippet
+--        - paste from clipboard in visual mode
+--        - shortcut to title the url under the cursor
+--      - use TOC to jump/navigate
+--    - filetype changes
+--      - textwidth (e.g. 100, 120?)
+--        - can this be set within specific files, e.g. for prose vs. notes differences?
+--    - table input and manipulation
+--    - image support
+--    - A couple of videos to start ideas:
+--      - <https://www.youtube.com/watch?v=DgKI4hZ4EEI>
+--      - <https://linkarzu.com/posts/neovim/markdown-setup-2025/>
+--    - other ideas:
+--      - easier bolding etc. with mini.surround and/or keymaps
+--      - better bullet lists: https://github.com/bullets-vim/bullets.vim
+-- }}}
 
 -- Archived info {{{
+--  Improving vimgrep+quickfix workflow
+--    https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
 --  TRACK: g-<c-g> to output word/line count in visual mode
 --    not an issue with 0.11.4. --clean -u NORC doesn't help
 --    WAR: use :messages to get the text from g-<c-g>
