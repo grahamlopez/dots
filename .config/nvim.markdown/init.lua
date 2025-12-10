@@ -123,6 +123,12 @@ vim.opt.shortmess:append("c")
 
 -- Appearance {{{
 vim.opt.termguicolors = true -- needs terminal support (most do)
+-- WSL2/tmux terminal background detection fix
+if vim.fn.has("wsl") == 1 then
+  -- Query Windows registry for current theme (light=1, dark=0)
+  local is_dark = vim.fn.system("powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'"):match("0")
+  vim.o.background = is_dark == "0" and "dark" or "light"
+end
 vim.opt.number = false
 vim.opt.relativenumber = false
 vim.opt.signcolumn = "number"
