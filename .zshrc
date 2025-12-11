@@ -71,14 +71,8 @@ if [[ -f "$moduleinit" ]]; then
   source $moduleinit
   module use ~/local/modulefiles
 fi
-if [[ "$(hostname)" = "fi-kermit" ]] ; then
-  module use /opt/nvidia/hpc_sdk/modulefiles/nvhpc
-  export PATH="/home/glopez/local/bin:${PATH}"
-fi
 
-if [[ "$(hostname)" = "NV-7STSW14" ]] ; then
-  export PATH="/home/graham/local/apps/nvim-linux-x86_64/bin:${PATH}"
-fi
+export PATH="${HOME}/local/bin:${PATH}"
 
 #################################################################
 # }}}

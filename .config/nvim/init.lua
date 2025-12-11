@@ -1,6 +1,9 @@
 
 -- TODO: list {{{
---   bold, italic, strikethrough conceals
+--  bold, italic, strikethrough conceals
+--  LSP: lua
+--  built-in completion
+--  fuzzy searching: buffer, cwd, help pages
 -- }}}
 
 -- Keybindings {{{
