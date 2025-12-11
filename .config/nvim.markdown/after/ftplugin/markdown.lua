@@ -1,6 +1,6 @@
 -- Global settings in init.lua (like vim.opt.tabstop = 2) get overridden by
--- filetype-specific indent scripts that load after your config during filetype
--- detection.
+-- built-in filetype-specific indent scripts that load after your config during
+-- filetype detection.
 -- 
 -- Neovim loads configs in this order:
 --     init.lua (your global options)
@@ -34,3 +34,53 @@ vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload
 
 vim.keymap.set("n", "<leader>P", 'a<C-o>:set paste<cr>[<C-r>+](<C-r>+)<C-o>:set nopaste<cr>', { desc = "url paste" })
 vim.keymap.set("n", "<leader>p", 'a<C-o>:set paste<cr>[](<C-r>+)<C-o>:set nopaste<cr><C-o>F]', { desc = "url paste w/desc" })
+
+vim.api.nvim_create_user_command("ToMarkdownLink", function()
+  vim.cmd.normal({ 'Ea)', bang = true })
+  vim.cmd.normal({ 'Bi(', bang = true })
+  vim.cmd.normal({ 'i[]', bang = true })
+  vim.cmd.startinsert()
+end, { desc = "convert raw url to title markdown link", nargs = 0 })
+
+-- Strawman keymapping for markdown list items
+local function in_markdown_list_item()
+  local ts = vim.treesitter
+  local bufnr = vim.api.nvim_get_current_buf()
+  local lang = ts.language.get_lang(vim.bo[bufnr].filetype)
+  if not lang then
+    return false
+  end
+
+  local parser = ts.get_parser(bufnr, lang)
+  if not parser then
+    return false
+  end
+
+  local tree = parser:parse()[1]
+  if not tree then
+    return false
+  end
+
+  local root = tree:root()
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  row = row - 1
+
+  local node = root:named_descendant_for_range(row, col, row, col)
+  while node do
+    local t = node:type()
+    if t == "list_item" or t == "tight_list_item" then
+      return true
+    end
+    node = node:parent()
+  end
+
+  return false
+end
+vim.keymap.set("n", "<leader>t", function() -- strawman
+  if in_markdown_list_item() then
+    return "o- "
+  else
+    print("keybind false")
+    return "o"
+  end
+end, { expr = true, silent = true, buffer = true })

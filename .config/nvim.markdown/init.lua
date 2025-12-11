@@ -1,11 +1,6 @@
 
 -- TODO: list {{{
---    better quickfix list navigation, preview, jumping (workflow)
---      https://www.youtube.com/watch?v=AuXZA-xCv04
---      update quickfix list on changes (e.g. delete TODO)
---      difference between quickfix and location lists
---      enable list wrap in quickfix window
---    transparent background
+--   bold, italic, strikethrough conceals
 -- }}}
 
 -- Keybindings {{{
@@ -28,7 +23,6 @@ vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = t
 vim.keymap.set( "n", "]q", ":cnext<cr>zv", {})
 vim.keymap.set( "n", "[q", ":cprev<cr>zv", {})
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
-
 vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
 -- }}}
 
@@ -85,7 +79,7 @@ vim.opt.virtualedit = "block"
 -- Performance optimizations
 vim.loader.enable() -- Enable faster Lua module loading
 vim.opt.updatetime = 250 -- Faster completion (4000ms default)
-vim.opt.timeoutlen = 300 -- Faster which-key popup
+vim.opt.timeoutlen = 500 -- More lenient keybindings vs. faster which-key popup
 vim.opt.lazyredraw = true -- Don't redraw during macros
 -- opt.regexpengine = 1 -- Use old regex engine (faster for some patterns)
 -- vim.opt.mouse = "nv" -- Disable mouse for speed
@@ -126,16 +120,17 @@ vim.opt.shortmess:append("c")
 -- }}}
 
 -- Appearance {{{
-vim.opt.termguicolors = true -- needs terminal support (most do)
--- WSL2/tmux terminal background detection fix
+vim.opt.termguicolors = true
+-- WSL2/tmux terminal background detection fix {{{
 if vim.fn.has("wsl") == 1 then
   -- Query Windows registry for current theme (light=1, dark=0)
   local is_dark = vim.fn.system("powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'"):match("0")
   vim.o.background = is_dark == "0" and "dark" or "light"
 end
+-- }}}
 vim.opt.number = false
 vim.opt.relativenumber = false
-vim.opt.signcolumn = "number"
+vim.opt.signcolumn = "auto"
 vim.opt.colorcolumn = ""
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
@@ -158,6 +153,60 @@ vim.opt.listchars = {
   extends = "▸",
   precedes = "◂",
 }
+vim.cmd.colorscheme('default')
+-- background transparency {{{
+local transparent_enabled = false
+local saved_hls = {}
+local groups = {
+  'Normal',
+  'NormalNC',
+  'NormalFloat',
+  'FloatBorder',
+  'SignColumn',
+  'WinSeparator',
+}
+local function save_current_hls()
+  for _, name in ipairs(groups) do
+    -- get current definition from global namespace
+    saved_hls[name] = vim.api.nvim_get_hl(0, { name = name, link = false })
+  end
+end
+local function apply_saved_hls()
+  for _, name in ipairs(groups) do
+    local def = saved_hls[name]
+    if def then
+      vim.api.nvim_set_hl(0, name, def)
+    end
+  end
+end
+local function apply_transparent()
+  for _, name in ipairs(groups) do
+    vim.api.nvim_set_hl(0, name, { bg = 'none' })
+  end
+end
+function _G.ToggleTransparent()
+  if transparent_enabled then
+    apply_saved_hls()
+    transparent_enabled = false
+  else
+    -- on first enable, capture scheme defaults
+    if next(saved_hls) == nil then
+      save_current_hls()
+    end
+    apply_transparent()
+    transparent_enabled = true
+  end
+end
+-- keep working with ColorScheme so it’s correct on startup
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = function()
+    saved_hls = {}          -- clear cache; next toggle will re-save
+    transparent_enabled = false
+  end,
+})
+vim.keymap.set('n', '<leader>ut', ToggleTransparent, { desc = 'Toggle transparent background' })
+-- }}}
 -- }}}
 
 -- Indentation and formatting {{{
@@ -199,7 +248,7 @@ vim.opt.foldmethod = "expr" -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
 vim.opt.foldlevel = 99 -- Start with all folds open
 vim.opt.foldenable = true -- Enable folding
-vim.opt.foldcolumn = "1" -- enable minimal foldcolumn for mouse interaction
+vim.opt.foldcolumn = "0" -- enable minimal foldcolumn for mouse interaction
 vim.opt.fillchars:append({ fold = " " })
 
 -- vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
@@ -247,7 +296,8 @@ if vim.fn.executable('rg') then
 end
 vim.api.nvim_create_user_command("Todos", function()
  vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
- vim.cmd.copen()
+ --vim.cmd.copen()
+ vim.cmd("CopenSmart 25")
 end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
 
 -- highlight todo keywords
@@ -262,6 +312,37 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter" }, {
       vim.fn.matchadd("lightTodoPattern", "\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):")
     end
   end
+})
+
+local function qf_open_smart(max_height, min_height)
+  max_height = max_height or 15
+  min_height = min_height or 1
+
+  local qf_list = vim.fn.getqflist()
+  local n_items = #qf_list
+
+  if n_items == 0 then return end
+
+  local h = math.min(n_items, max_height)
+  h = math.max(h, min_height)
+
+  vim.cmd(h .. "copen")
+
+  vim.wo.winfixheight = true
+end
+
+vim.api.nvim_create_user_command("CopenSmart", function(opts)
+  -- optional: allow :CopenSmart 20
+  local maxh = tonumber(opts.args) or 15
+  qf_open_smart(maxh, 1)
+end, { nargs = "?", desc = "Open quickfix sized to contents with max height" })
+
+-- Auto-size quickfix after typical quickfix commands
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = { "make", "grep", "vimgrep", "lvimgrep" },
+  callback = function()
+    qf_open_smart(20, 3)   -- max 15 lines, min 3
+  end,
 })
 -- }}}
 
@@ -302,24 +383,13 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- }}}
 
 -- big markdown ideas list {{{
--- list of suggestions
---  https://mambusskruj.github.io/posts/pub-neovim-for-markdown/#syntax-highlights-and-conceals
 --
 --    - https://github.com/iwe-org/iwe
 --    - https://github.com/jakewvincent/mkdnflow.nvim
 --    - previewing:
 --      - synced external preview
 --    - table of contents: markdown-toc, https://youtu.be/BVyrXsZ_ViA
---    - url linking improvements
---      - fast entry
---        - paste from clipboard with prompt for link title
---          - or else a snippet
---        - paste from clipboard in visual mode
---        - shortcut to title the url under the cursor
 --      - use TOC to jump/navigate
---    - filetype changes
---      - textwidth (e.g. 100, 120?)
---        - can this be set within specific files, e.g. for prose vs. notes differences?
 --    - table input and manipulation
 --    - image support
 --    - A couple of videos to start ideas:
@@ -328,6 +398,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 --    - other ideas:
 --      - easier bolding etc. with mini.surround and/or keymaps
 --      - better bullet lists: https://github.com/bullets-vim/bullets.vim
+--      - https://mambusskruj.github.io/posts/pub-neovim-for-markdown
 -- }}}
 
 -- Archived info {{{
