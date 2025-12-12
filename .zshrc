@@ -135,7 +135,7 @@ function light_theme() {
 
 # messing with neovim
 alias cvim="NVIM_APPNAME=nvim.cprog nvim"
-alias mvim="NVIM_APPNAME=nvim.markdown nvim"
+alias ovim="NVIM_APPNAME=nvim.old nvim"
 
 function uninstall_nvim() {
   if [ -z "$1" ]; then

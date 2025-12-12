@@ -1,6 +1,5 @@
 
 -- TODO: list {{{
---  bold, italic, strikethrough conceals
 --  LSP: lua
 --  built-in completion
 --  fuzzy searching: buffer, cwd, help pages
@@ -16,7 +15,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-vim.keymap.set("n", "<leader>co", 
+vim.keymap.set("n", "<leader>co",
   function() vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua") end,
   { desc = "Edit Neovim config" })
 vim.keymap.set('n', "<leader>cO", "<cmd>e ~/.config/nvim/init.lua<cr>", { desc = "main config open" })
@@ -27,6 +26,8 @@ vim.keymap.set( "n", "]q", ":cnext<cr>zv", {})
 vim.keymap.set( "n", "[q", ":cprev<cr>zv", {})
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
+
+vim.cmd("cabbrev vh vert help")
 -- }}}
 
 -- Options {{{
@@ -133,12 +134,13 @@ end
 -- }}}
 vim.opt.number = false
 vim.opt.relativenumber = false
-vim.opt.signcolumn = "auto"
+vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = ""
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 5 -- Keep 8 columns left/right of cursor
+vim.opt.wrap = true
 vim.opt.pumheight = 15 -- Maximum items in popup menu
 vim.opt.pumblend = 10 -- Popup menu transparency
 vim.opt.winheight = 5
@@ -157,6 +159,7 @@ vim.opt.listchars = {
   precedes = "◂",
 }
 vim.cmd.colorscheme('default')
+
 -- background transparency {{{
 local transparent_enabled = false
 local saved_hls = {}
@@ -289,6 +292,53 @@ vim.opt.sessionoptions = {
 }
 -- vim.opt.sessionoptions:append('globals') -- part of what's needed to preserve bufferline ordering
 -- }}}
+-- }}}
+
+-- LSP {{{
+-- see lsp-quickstart, lsp-config, lsp-defaults
+vim.lsp.config['lua_ls'] = {
+  -- Command and arguments to start the server.
+  cmd = { 'lua-language-server' },
+  -- Filetypes to automatically attach to.
+  filetypes = { 'lua' },
+  -- Sets the "workspace" to the directory where any of these files is found.
+  -- Files that share a root directory will reuse the LSP server connection.
+  -- Nested lists indicate equal priority, see |vim.lsp.Config|.
+  root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
+  -- Specific settings to send to the server. The schema is server-defined.
+  -- Example: https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        globals = { 'vim' }, -- Recognize vim as a global
+      },
+      workspace = {
+        library = { vim.env.VIMRUNTIME }, -- Expose Neovim runtime API
+        checkThirdParty = false,          -- Skip third-party checks
+      },
+    }
+  }
+}
+-- Configure diagnostic display
+-- see diagnostic-quickstart
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = '●',
+    source = "if_many",
+  },
+  float = {
+    source = true,
+    border = "rounded",
+  },
+  signs = true,
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
+vim.lsp.enable({'lua_ls'})
 -- }}}
 
 -- Utilities (lightweight plugins) {{{
