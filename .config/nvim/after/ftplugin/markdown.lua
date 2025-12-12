@@ -28,6 +28,9 @@ vim.opt.wrap = false       -- Don't wrap lines
 vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
 vim.opt.textwidth = 80     -- Text width for formatting
 vim.opt.foldlevel = 1
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldenable = true
 vim.opt.conceallevel = 2
 -- vim.opt.concealcursor = "nc"
 vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload TS parser
