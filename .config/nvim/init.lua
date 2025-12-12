@@ -1,7 +1,4 @@
-
 -- TODO: list {{{
---  LSP: lua
---  built-in completion
 --  fuzzy searching: buffer, cwd, help pages
 -- }}}
 
@@ -19,11 +16,11 @@ vim.keymap.set("n", "<leader>co",
   function() vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua") end,
   { desc = "Edit Neovim config" })
 vim.keymap.set('n', "<leader>cO", "<cmd>e ~/.config/nvim/init.lua<cr>", { desc = "main config open" })
-vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true }) -- cancel highlighting
-vim.keymap.set( "n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
-vim.keymap.set( "n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
-vim.keymap.set( "n", "]q", ":cnext<cr>zv", {})
-vim.keymap.set( "n", "[q", ":cprev<cr>zv", {})
+vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true })                        -- cancel highlighting
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })  -- deal with line wrap
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })  -- deal with line wrap
+vim.keymap.set("n", "]q", ":cnext<cr>zv", {})
+vim.keymap.set("n", "[q", ":cprev<cr>zv", {})
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
 
@@ -75,15 +72,15 @@ vim.opt.undofile = true -- Persistent undo
 -- vim.opt.backup = false -- No backup files
 -- vim.opt.writebackup = false -- No backup before overwriting
 -- vim.opt.swapfile = false -- No swap files
-vim.opt.hidden = true -- Allow hidden buffers
-vim.opt.autoread = true -- Auto-read changed files
+vim.opt.hidden = true    -- Allow hidden buffers
+vim.opt.autoread = true  -- Auto-read changed files
 vim.opt.autowrite = true -- Auto-write before running commands
-vim.opt.history = 1000 -- More command history
+vim.opt.history = 1000   -- More command history
 vim.opt.virtualedit = "block"
 -- Performance optimizations
-vim.loader.enable() -- Enable faster Lua module loading
-vim.opt.updatetime = 250 -- Faster completion (4000ms default)
-vim.opt.timeoutlen = 500 -- More lenient keybindings vs. faster which-key popup
+vim.loader.enable()       -- Enable faster Lua module loading
+vim.opt.updatetime = 250  -- Faster completion (4000ms default)
+vim.opt.timeoutlen = 500  -- More lenient keybindings vs. faster which-key popup
 vim.opt.lazyredraw = true -- Don't redraw during macros
 -- opt.regexpengine = 1 -- Use old regex engine (faster for some patterns)
 -- vim.opt.mouse = "nv" -- Disable mouse for speed
@@ -116,7 +113,7 @@ end
 -- }}}
 
 -- Search settings {{{
-vim.opt.hlsearch = true -- Set highlight on search
+vim.opt.hlsearch = true   -- Set highlight on search
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.smartcase = true
 vim.opt.inccommand = "split"
@@ -128,21 +125,23 @@ vim.opt.termguicolors = true
 -- WSL2/tmux terminal background detection fix {{{
 if vim.fn.has("wsl") == 1 then
   -- Query Windows registry for current theme (light=1, dark=0)
-  local is_dark = vim.fn.system("powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'"):match("0")
+  local is_dark = vim.fn.system(
+  "powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'")
+  :match("0")
   vim.o.background = is_dark == "0" and "dark" or "light"
 end
 -- }}}
 vim.opt.number = false
 vim.opt.relativenumber = false
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "auto"
 vim.opt.colorcolumn = ""
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 5 -- Keep 8 columns left/right of cursor
 vim.opt.wrap = true
-vim.opt.pumheight = 15 -- Maximum items in popup menu
-vim.opt.pumblend = 10 -- Popup menu transparency
+vim.opt.pumheight = 15    -- Maximum items in popup menu
+vim.opt.pumblend = 10     -- Popup menu transparency
 vim.opt.winheight = 5
 vim.opt.winminheight = 5
 vim.opt.winwidth = 5
@@ -203,11 +202,12 @@ function _G.ToggleTransparent()
     transparent_enabled = true
   end
 end
+
 -- keep working with ColorScheme so it’s correct on startup
 vim.api.nvim_create_autocmd('ColorScheme', {
   pattern = '*',
   callback = function()
-    saved_hls = {}          -- clear cache; next toggle will re-save
+    saved_hls = {} -- clear cache; next toggle will re-save
     transparent_enabled = false
   end,
 })
@@ -218,16 +218,16 @@ vim.keymap.set('n', '<leader>ut', ToggleTransparent, { desc = 'Toggle transparen
 -- Indentation and formatting {{{
 -- see also conform.nvim settings
 -- vim.opt.formatoptions -= t -- disable wrap as you type
-vim.opt.tabstop = 2 -- Tab width
-vim.opt.shiftwidth = 2 -- Indent width
-vim.opt.softtabstop = 2 -- Soft tab width
-vim.opt.expandtab = true -- Use spaces instead of tabs
+vim.opt.tabstop = 2        -- Tab width
+vim.opt.shiftwidth = 2     -- Indent width
+vim.opt.softtabstop = 2    -- Soft tab width
+vim.opt.expandtab = true   -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart autoindenting
-vim.opt.autoindent = true -- Copy indent from current line
+vim.opt.autoindent = true  -- Copy indent from current line
 vim.opt.breakindent = true -- Maintain indent when wrapping
-vim.opt.wrap = false -- Don't wrap lines
-vim.opt.linebreak = true -- Break at word boundaries if wrap enabled
-vim.opt.textwidth = 80 -- Text width for formatting
+vim.opt.wrap = false       -- Don't wrap lines
+vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
+vim.opt.textwidth = 80     -- Text width for formatting
 -- }}}
 
 -- Completion {{{
@@ -250,11 +250,11 @@ vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 --    what can be done about fold debugging e.g. showing fold locations, etc.?
 --    remove need to close+re-open file when folds get messed up from just normal editing
 --    e.g. subheadings get messed up when removing list items from top-level heading in markdown files
-vim.opt.foldmethod = "expr" -- Use expression folding
+vim.opt.foldmethod = "expr"                          -- Use expression folding
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- TreeSitter folding
-vim.opt.foldlevel = 99 -- Start with all folds open
-vim.opt.foldenable = true -- Enable folding
-vim.opt.foldcolumn = "0" -- enable minimal foldcolumn for mouse interaction
+vim.opt.foldlevel = 99                               -- Start with all folds open
+vim.opt.foldenable = true                            -- Enable folding
+vim.opt.foldcolumn = "0"                             -- enable minimal foldcolumn for mouse interaction
 vim.opt.fillchars:append({ fold = " " })
 
 -- vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()" -- TreeSitter fold text with syntax highlighting
@@ -294,7 +294,7 @@ vim.opt.sessionoptions = {
 -- }}}
 -- }}}
 
--- LSP {{{
+-- LSP, diagnostics, completion {{{
 -- see lsp-quickstart, lsp-config, lsp-defaults
 vim.lsp.config['lua_ls'] = {
   -- Command and arguments to start the server.
@@ -322,6 +322,7 @@ vim.lsp.config['lua_ls'] = {
     }
   }
 }
+vim.lsp.enable({ 'lua_ls' })
 -- Configure diagnostic display
 -- see diagnostic-quickstart
 vim.diagnostic.config({
@@ -333,12 +334,11 @@ vim.diagnostic.config({
     source = true,
     border = "rounded",
   },
-  signs = true,
+  signs = false,
   underline = true,
   update_in_insert = false,
   severity_sort = true,
 })
-vim.lsp.enable({'lua_ls'})
 -- }}}
 
 -- Utilities (lightweight plugins) {{{
@@ -348,9 +348,9 @@ if vim.fn.executable('rg') then
   vim.opt.grepprg = "rg --vimgrep --no-hidden --no-heading"
 end
 vim.api.nvim_create_user_command("Todos", function()
- vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
- --vim.cmd.copen()
- vim.cmd("CopenSmart 25")
+  vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
+  --vim.cmd.copen()
+  vim.cmd("CopenSmart 25")
 end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
 
 -- highlight todo keywords
@@ -394,7 +394,7 @@ end, { nargs = "?", desc = "Open quickfix sized to contents with max height" })
 vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   pattern = { "make", "grep", "vimgrep", "lvimgrep" },
   callback = function()
-    qf_open_smart(20, 3)   -- max 15 lines, min 3
+    qf_open_smart(20, 3) -- max 15 lines, min 3
   end,
 })
 -- }}}
@@ -415,13 +415,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     _G.lua_indent = function(lnum)
       local line = vim.fn.getline(lnum)
-      if line:match("^%s*--%s*") then  -- On comment lines/spaces after --, match prev comment indent
+      if line:match("^%s*--%s*") then -- On comment lines/spaces after --, match prev comment indent
         local prev = vim.fn.prevnonblank(lnum - 1)
         if prev > 0 then
           return vim.fn.indent(prev)
         end
       end
-      return vim.fn.eval("GetLuaIndent(" .. lnum .. ")")  -- Fallback to Lua indent
+      return vim.fn.eval("GetLuaIndent(" .. lnum .. ")") -- Fallback to Lua indent
     end
   end,
 })
