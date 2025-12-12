@@ -16,9 +16,9 @@ vim.keymap.set("n", "<leader>co",
   function() vim.cmd.edit(vim.fn.stdpath("config") .. "/init.lua") end,
   { desc = "Edit Neovim config" })
 vim.keymap.set('n', "<leader>cO", "<cmd>e ~/.config/nvim/init.lua<cr>", { desc = "main config open" })
-vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true })                        -- cancel highlighting
-vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })  -- deal with line wrap
-vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })  -- deal with line wrap
+vim.keymap.set({ "n" }, "<esc>", ":noh<cr>", { silent = true })                       -- cancel highlighting
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true }) -- deal with line wrap
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true }) -- deal with line wrap
 vim.keymap.set("n", "]q", ":cnext<cr>zv", {})
 vim.keymap.set("n", "[q", ":cprev<cr>zv", {})
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
@@ -126,8 +126,8 @@ vim.opt.termguicolors = true
 if vim.fn.has("wsl") == 1 then
   -- Query Windows registry for current theme (light=1, dark=0)
   local is_dark = vim.fn.system(
-  "powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'")
-  :match("0")
+        "powershell.exe -NoProfile -Command '[int](Get-ItemProperty -Path \"HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize\" -Name AppsUseLightTheme).AppsUseLightTheme'")
+      :match("0")
   vim.o.background = is_dark == "0" and "dark" or "light"
 end
 -- }}}
@@ -139,7 +139,6 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 5 -- Keep 8 columns left/right of cursor
-vim.opt.wrap = true
 vim.opt.pumheight = 15    -- Maximum items in popup menu
 vim.opt.pumblend = 10     -- Popup menu transparency
 vim.opt.winheight = 5
@@ -225,7 +224,7 @@ vim.opt.expandtab = true   -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart autoindenting
 vim.opt.autoindent = true  -- Copy indent from current line
 vim.opt.breakindent = true -- Maintain indent when wrapping
-vim.opt.wrap = false       -- Don't wrap lines
+vim.opt.wrap = true        -- visually wrap lines when needed
 vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
 vim.opt.textwidth = 80     -- Text width for formatting
 -- }}}
@@ -234,6 +233,7 @@ vim.opt.textwidth = 80     -- Text width for formatting
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 vim.opt.wildmode = "longest:full,full" -- Command completion mode
 vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
+vim.opt.wildignorecase = true
 -- }}}
 
 -- Folding {{{
@@ -454,12 +454,55 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 --      - https://mambusskruj.github.io/posts/pub-neovim-for-markdown
 -- }}}
 
+-- big nvim ideas list from previous config {{{
+--
+--  ## For writing mode
+--
+--  - <https://trebaud.github.io/posts/neovim-for-writers/>
+--  - <https://miragiancycle.github.io/OVIWrite/>
+--  - <https://bhupesh.me/writing-like-a-pro-with-vale-and-neovim/>
+--  - <https://www.reddit.com/r/neovim/comments/z26vhz/how_could_i_use_neovim_for_general_writing_and/>
+--  - focus/zen modes tuned for writing
+--  - comments, sidebar, etc.
+--  - can a proportional font be used?
+--  - I started a config at .config/nvim.writing - see hash 2c5f0eb for latest
+--
+--  ## PKM / logseq reproduction
+--
+--  - markdown is lingua-franca; no need yet to swim upstream on this one
+--  - linking, backlinking, tagging (check out markdown-oxide lsp)
+--  - autocompletion creates local file links
+--  - how much of logseq to bring forward?
+--  - comprehensive mouse support
+--  - todo workflow with automatic and hidden timestamps
+--  - linkarzu's workflow: <https://youtu.be/59hvZl077hM>
+--    - fast link navigation
+--  - follow local file links with shortcut
+--  - use pickers
+--  - show all in quick/loc list
+--
+--  ## Custom theming
+--
+--  <https://github.com/rktjmp/lush.nvim>
+--  <https://github.com/roobert/palette.nvim>
+--  <https://vimcolors.org/>
+--  <https://nvimcolors.com/>
+--
+-- }}}
+
 -- Archived info {{{
+--  Minimal setup
+--    why I got rid of all my neovim plugins
+--      https://yobibyte.github.io/vim.html
+--    vanilla neovim setup, no plugins, telescope-like functionality
+--      https://www.youtube.com/watch?v=mQ9gmHHe-nI)
+--
 --  Improving vimgrep+quickfix workflow
 --    https://gist.github.com/romainl/56f0c28ef953ffc157f36cc495947ab3
+--
 --  TRACK: g-<c-g> to output word/line count in visual mode
 --    not an issue with 0.11.4. --clean -u NORC doesn't help
---    WAR: use :messages to get the text from g-<c-g>
+--    WAR: use :1messages to get the text from g-<c-g>
 --
 --  TRACK: To fix folded code blocks in markdown files completely disappearing,
 --  we need to disable the 'conceal_lines' on the fenced_code_block delimiters.
