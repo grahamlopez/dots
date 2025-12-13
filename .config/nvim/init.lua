@@ -2,6 +2,8 @@
 --  fuzzy searching: buffer, cwd, help pages
 --  lsp-autocompletion
 --    https://www.reddit.com/r/neovim/comments/1pig7ed/does_anyone_have_working_code_for_builtin/
+--    'ins-autocompletion', 'autocomplete', 'complete', 'completeopt'
+--  cmdline-autocompletion
 -- }}}
 
 -- Keybindings, Abbreviations {{{
@@ -72,6 +74,7 @@ vim.opt.autowrite = true                              -- Auto-write before runni
 -- vim.opt.backup = false -- No backup files
 vim.opt.breakindent = true                            -- Maintain indent when wrapping
 vim.opt.clipboard:append { "unnamed", "unnamedplus" } -- requires wl-clipboard
+vim.opt.cmdheight = 0 -- docs say "experimental"
 vim.opt.colorcolumn = ""
 vim.cmd.colorscheme('default')
 vim.opt.cursorline = true
@@ -130,6 +133,7 @@ vim.opt.virtualedit = "block"
 vim.opt.wildmode = "longest:full,full" -- Command completion mode
 vim.opt.wildignore:append({ "*.o", "*.obj", ".git", "node_modules", "*.pyc" })
 vim.opt.wildignorecase = true
+vim.opt.wildoptions:append({ "fuzzy" }) -- FIXME: menu disappears with next keypress
 vim.opt.winheight = 5
 vim.opt.winminheight = 5
 vim.opt.winminwidth = 5
@@ -217,7 +221,7 @@ vim.api.nvim_create_user_command("Todos", function()
   vim.cmd("CopenSmart 25")
 end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
 
--- highlight todo keywords
+-- highlight todo keywords FIXME: not working anymore
 vim.api.nvim_set_hl(0, "darkTodoPattern", { fg = "#ffaf00", bold = true })
 vim.api.nvim_set_hl(0, "lightTodoPattern", { fg = "#cd4848", bold = true })
 vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter" }, {
