@@ -1,5 +1,5 @@
 -- TODO: list {{{
---  fuzzy searching: buffer, cwd, help pages
+--  fuzzy searching: buffer, file, grep, help pages
 --  lsp-autocompletion
 --    https://www.reddit.com/r/neovim/comments/1pig7ed/does_anyone_have_working_code_for_builtin/
 --    'ins-autocompletion', 'autocomplete', 'complete', 'completeopt'
@@ -210,7 +210,43 @@ vim.diagnostic.config({
 -- }}}
 
 -- Utilities (lightweight plugins) {{{
---
+-- fuzzy-file-picker and TODO: live-grep {{{
+local filescache = {} -- Files cache (per-process)
+-- Helper to (re)build the cache from the current directory
+local function build_files_cache()
+  local files = vim.fn.globpath('.', '**', true, true) -- globpath('.', '**', 1, 1)
+  -- filter out directories: !isdirectory(v:val)
+  files = vim.tbl_filter(function(path)
+    return vim.fn.isdirectory(path) == 0
+  end, files)
+  -- fnamemodify(v:val, ':.') to make paths relative to cwd
+  files = vim.tbl_map(function(path)
+    return vim.fn.fnamemodify(path, ':.')
+  end, files)
+  filescache = files
+end
+-- This is the function used by 'findfunc'
+local function Find(arg, _)
+  if #filescache == 0 then
+    build_files_cache()
+  end
+  if arg == '' then
+    return filescache
+  end
+  return vim.fn.matchfuzzy(filescache, arg)
+end
+-- Expose it under a global name so 'findfunc' can see it
+_G.Find = Find
+-- Tell :find to use this function
+vim.o.findfunc = 'v:lua.Find'
+-- Clear cache on CmdlineEnter :
+vim.api.nvim_create_autocmd('CmdlineEnter', {
+  pattern = ':',
+  callback = function()
+    filescache = {}
+  end,
+})
+-- }}}
 -- TODO and friends {{{
 -- grep todo keywords and add to quickfix
 if vim.fn.executable('rg') then
@@ -433,7 +469,8 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- Archived info {{{
 --
 --  Keymap reminders
---    CTRL-W_] --> mostly like :lua vim.lsp.buf.definition() 
+--    ctrl-w_] --> mostly like :lua vim.lsp.buf.definition() 
+--    i_ctrl-u --> useful for unwanted auto-inserted comment
 --
 --  Minimal setup
 --    why I got rid of all my neovim plugins
