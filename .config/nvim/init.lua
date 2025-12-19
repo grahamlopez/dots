@@ -80,7 +80,7 @@ vim.opt.colorcolumn = ""
 vim.cmd.colorscheme('default')
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
-vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
+vim.opt.completeopt = { "fuzzy", "menu", "menuone", "noselect", "noinsert" }
 vim.opt.diffopt:append("linematch:60") -- Better diffs
 vim.opt.expandtab = true
 vim.opt.foldmethod = "expr"
@@ -247,16 +247,17 @@ vim.api.nvim_create_autocmd('CmdlineEnter', {
   end,
 })
 -- }}}
+
 -- TODO and friends {{{
 -- grep todo keywords and add to quickfix
-if vim.fn.executable('rg') then
+if vim.fn.executable('rg') then -- FIXME: redundant: this is already the default
   vim.opt.grepprg = "rg --vimgrep --no-hidden --no-heading"
 end
 vim.api.nvim_create_user_command("Todos", function()
   vim.cmd.vimgrep({ '/\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):/', '**/*' })
   --vim.cmd.copen()
   vim.cmd("CopenSmart 25")
-end, { desc = "vimgrep TODO: and friends to quickfix", nargs = 0 })
+end, { desc = "vimgrep TODO and friends to quickfix", nargs = 0 })
 
 -- highlight todo keywords
 vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter" }, {
