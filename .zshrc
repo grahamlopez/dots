@@ -132,6 +132,9 @@ function light_theme() {
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
 }
 
+function reset_hypr_scaling() {
+  hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
+}
 
 # messing with neovim
 alias cvim="NVIM_APPNAME=nvim.cprog nvim"

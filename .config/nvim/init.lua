@@ -357,6 +357,9 @@ vim.api.nvim_create_autocmd('ColorScheme', {
     transparent_enabled = false
   end,
 })
+vim.api.nvim_create_user_command("TransparentToggle", function()
+  ToggleTransparent()
+end, { desc = "Toggle background transparency", nargs = 0 })
 vim.keymap.set('n', '<leader>ut', ToggleTransparent, { desc = 'Toggle transparent background' })
 -- }}}
 -- }}}
