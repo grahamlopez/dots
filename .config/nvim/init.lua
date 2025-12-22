@@ -1,4 +1,5 @@
 -- TODO: list {{{
+--  better highlighting/colors for listchars
 --  fuzzy searching: buffer, file, grep, help pages
 --  lsp-autocompletion
 --    https://www.reddit.com/r/neovim/comments/1pig7ed/does_anyone_have_working_code_for_builtin/
