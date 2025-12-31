@@ -261,10 +261,11 @@ vim.api.nvim_create_user_command("Todos", function()
 end, { desc = "vimgrep TODO and friends to quickfix", nargs = 0 })
 
 -- highlight todo keywords
-vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter" }, {
+vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter", "WinNew", "WinEnter" }, {
   callback = function()
     vim.api.nvim_set_hl(0, "darkTodoPattern", { fg = "#ffaf00", bold = true })
     vim.api.nvim_set_hl(0, "lightTodoPattern", { fg = "#cd4848", bold = true })
+    vim.fn.clearmatches()
     if vim.o.background == "dark" then
       vim.fn.matchadd("darkTodoPattern", "\\(TODO\\|FIXME\\|IDEA\\|TRACK\\):")
     else
