@@ -136,6 +136,39 @@ function reset_hypr_scaling() {
   hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
 }
 
+function brightness_set () {
+  case $1 in
+    1)
+      echo 100 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    2)
+      echo 1000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    3)
+      echo 5000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    4)
+      echo 10000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    5)
+      echo 20000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    6)
+      echo 40000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    7)
+      echo 60000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    8)
+      echo 80000 > /sys/class/backlight/intel_backlight/brightness
+      ;;
+    *)
+      echo "provide setting level 1-8"
+      ;;
+  esac
+}
+
+
 # messing with neovim
 alias cvim="NVIM_APPNAME=nvim.cprog nvim"
 alias ovim="NVIM_APPNAME=nvim.old nvim"

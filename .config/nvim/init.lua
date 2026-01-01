@@ -316,6 +316,8 @@ local groups = {
   'FloatBorder',
   'SignColumn',
   'WinSeparator',
+  -- 'Folded',
+  -- 'FoldColumn',
 }
 local function save_current_hls()
   for _, name in ipairs(groups) do
