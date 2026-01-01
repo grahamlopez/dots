@@ -307,7 +307,7 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
 -- }}}
 
 -- background transparency {{{
-local transparent_enabled = false
+local transparent_enabled = true  -- startup default
 local saved_hls = {}
 local groups = {
   'Normal',
@@ -352,12 +352,14 @@ function _G.ToggleTransparent()
   end
 end
 
--- keep working with ColorScheme so it’s correct on startup
-vim.api.nvim_create_autocmd('ColorScheme', {
+vim.api.nvim_create_autocmd({'VimEnter', 'ColorScheme'}, {
   pattern = '*',
   callback = function()
     saved_hls = {} -- clear cache; next toggle will re-save
-    transparent_enabled = false
+    if transparent_enabled then
+      save_current_hls()
+      apply_transparent()
+    end
   end,
 })
 vim.api.nvim_create_user_command("TransparentToggle", function()
