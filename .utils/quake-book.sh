@@ -9,7 +9,7 @@ current_ws=$(hyprctl activeworkspace -j | jq '.id')
 if [ -z "$books_workspace" ]; then
 
 	echo "start"
-	hyprctl dispatch -- exec "[float; size 1200 800; move 226 500]" kitty --class booksdown -e nvim ~/Sync/notes/bookmarks.md
+	hyprctl dispatch -- exec "[float; size 1200 800; move 226 500]" kitty --class booksdown -e /home/graham/local/bin/nvim ~/Sync/notes/bookmarks.md
 
 elif [ "$books_workspace" == "special:booksdown" ]; then
 
