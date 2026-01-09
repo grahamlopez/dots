@@ -251,6 +251,15 @@ function djvutopdf {
     ddjvu -format=pdf -mode=black ${name}.djvu ${name}.pdf
 }
 
+# bit-perfect compare two directories
+function bit_diff_dirs {
+    src=$1
+    dst=$2
+    (cd ${src}  && find . -type f -print0 | xargs -0 sha256sum | sort -k2 > /tmp/src.sha256)
+    (cd ${dst}  && find . -type f -print0 | xargs -0 sha256sum | sort -k2 > /tmp/dst.sha256)
+    diff --color /tmp/src.sha256 /tmp/dst.sha256
+}
+
 # abbreviations and magic expansion
 # obtained from stackoverflow (but the link now redirects incorrectly)
 
