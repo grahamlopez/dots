@@ -45,6 +45,25 @@ vim.api.nvim_create_user_command("ToMarkdownLink", function()
   vim.cmd.startinsert()
 end, { desc = "convert raw url to title markdown link", nargs = 0 })
 
+-- Enhance 'gf' to follow Markdown link from label/brackets/parentheses
+vim.keymap.set("n", "gf", function()
+  local line = vim.api.nvim_get_current_line()
+  local col  = vim.api.nvim_win_get_cursor(0)[2] + 1 -- 1‑based
+  -- Find the nearest "(" after any "[" on the line
+  local open_paren = line:find("%b[]%b()", 1) and line:find("%(", col) or nil
+  if not open_paren then
+    -- fallback: just try <cfile> under cursor (e.g. bare paths)
+    local file = vim.fn.expand("<cfile>")
+    if file ~= "" then
+      vim.cmd.edit(file)
+    end
+    return
+  end
+  -- Move cursor to just after "(" and use gf logic there
+  vim.api.nvim_win_set_cursor(0, { vim.api.nvim_win_get_cursor(0)[1], open_paren })
+  vim.cmd.normal({ args = { "gf" }, bang = false })
+end, { buffer = true })
+
 -- Strawman keymapping for markdown list items
 local function in_markdown_list_item()
   local ts = vim.treesitter
