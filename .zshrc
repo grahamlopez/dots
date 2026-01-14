@@ -136,6 +136,10 @@ function reset_hypr_scaling() {
   hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
 }
 
+function opacity_kitty_toggle () {
+  kitten @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
+}
+
 function brightness_set () {
   case $1 in
     1)
