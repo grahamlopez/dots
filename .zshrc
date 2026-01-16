@@ -240,11 +240,18 @@ function dcleanup() {
 }
 
 # pandoc markdown to nice pdf
-function mdtopdf {
+function mdtopdf_greek {
     name=$1:r
     ext=$1:e
     echo "${name}.${ext} --> ${name}.pdf"
-    pandoc -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
+    pandoc --pdf-engine=tectonic -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
+}
+
+function mdtopdf_greek {
+    name=$1:r
+    ext=$1:e
+    echo "${name}.${ext} --> ${name}.pdf"
+    pandoc --pdf-engine=tectonic -V mainfont="Gentium Plus" -V monospacefont="Gentium Plus Mono" -V mainlang="greek" -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
 }
 
 # djvu to pdf
