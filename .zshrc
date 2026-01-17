@@ -141,37 +141,27 @@ function opacity_kitty_toggle () {
 }
 
 function brightness_set () {
-  case $1 in
-    1)
-      echo 100 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    2)
-      echo 1000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    3)
-      echo 5000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    4)
-      echo 10000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    5)
-      echo 20000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    6)
-      echo 40000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    7)
-      echo 60000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    8)
-      echo 80000 > /sys/class/backlight/intel_backlight/brightness
-      ;;
-    *)
-      echo "provide setting level 1-8"
-      ;;
-  esac
-}
+  local max val
 
+  max=$(< /sys/class/backlight/intel_backlight/max_brightness) || {
+    echo "Cannot read max_brightness" >&2
+    return 1
+  }
+
+  case $1 in
+    1) val=$(( max * 1  / 100 )) ;;   # 1%
+    2) val=$(( max * 5  / 100 )) ;;   # 5%
+    3) val=$(( max * 10 / 100 )) ;;   # 10%
+    4) val=$(( max * 25 / 100 )) ;;   # 25%
+    5) val=$(( max * 40 / 100 )) ;;   # 40%
+    6) val=$(( max * 60 / 100 )) ;;   # 60%
+    7) val=$(( max * 80 / 100 )) ;;   # 80%
+    8) val=$(( max * 100 / 100 )) ;;  # 100%
+    *) echo "provide setting level 1-8" ; return 1 ;;
+  esac
+
+  echo "$val" > /sys/class/backlight/intel_backlight/brightness
+}
 
 # messing with neovim
 alias cvim="NVIM_APPNAME=nvim.cprog nvim"
