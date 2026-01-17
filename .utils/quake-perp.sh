@@ -1,49 +1,30 @@
 #!/bin/env bash
 
-perp_workspace=$(hyprctl clients -j | jq -rec '.[] | select(.tags[] == "perp") | .workspace .name')
-
-# convert the tag to a window address
-perp_address=$(hyprctl clients -j | jq -rec '.[] | select(.tags[] == "perp" ) | .address')
-
-echo "perp currently on $perp_workspace"
-
+perp_workspace=$(hyprctl clients -j | jq -rec '.[] | select(.class == "perpdown") | .workspace .name')
 current_ws=$(hyprctl activeworkspace -j | jq '.id')
 
-echo "current workspace is ${current_ws}"
-
 if [ -z "$perp_workspace" ]; then
+  echo "start"
 
-	echo "start"
+  # firefox-bin, with Wayland class set via --name
+  hyprctl dispatch exec "[float; size 1400 1300] firefox-bin --no-remote -P perpdown --name perpdown --new-window 'https://perplexity.ai'"
 
-  # open a new firefox window with perplexity
-	hyprctl dispatch -- exec "firefox-bin --new-window 'ext+container:name=Personal&url=https://perplexity.ai'"
+  # wait for the window to show
+  sleep 0.5
 
-  sleep 0.2
+  perp_addr=$(hyprctl clients -j | jq -rec '.[] | select(.class == "perpdown") | .address')
+  [ -z "$perp_addr" ] && exit 0
 
-  # Create and move window to special workspace
-  hyprctl dispatch movetoworkspace special:perp
+  # center horizontally, move near top
+  hyprctl dispatch centerwindow
+  hyprctl dispatch moveactive "0 -50%"
 
-  # tag the window for later tracking
-  hyprctl dispatch tagwindow +perp
-
-  # convert the tag to a window address
-  perp_address=$(hyprctl clients -j | jq -rec '.[] | select(.tags[] == "perp" ) | .address')
-
-  # bring the window to our current workspace and float
-	hyprctl dispatch movetoworkspace ${current_ws}, address:${perp_address}
-	hyprctl dispatch setfloating address:${perp_address}
-	hyprctl dispatch resizewindowpixel exact 1400 1300,address:${perp_address}
-	hyprctl dispatch movewindowpixel exact 750 150,address:${perp_address}
-
-elif [ "$perp_workspace" == "special:perp" ]; then
-
-	echo "show"
-	#hyprctl dispatch movetoworkspace "1,class:perp"
-	hyprctl dispatch movetoworkspace ${current_ws}, address:${perp_address}
-
+elif [ "$perp_workspace" = "special:perpdown" ]; then
+  echo "show"
+  perp_addr=$(hyprctl clients -j | jq -rec '.[] | select(.class == "perpdown") | .address')
+  hyprctl dispatch movetoworkspace "${current_ws},address:${perp_addr}"
 else
-
-	echo "hide"
-	hyprctl dispatch movetoworkspacesilent special:perp, address:${perp_address}
-
+  echo "hide"
+  perp_addr=$(hyprctl clients -j | jq -rec '.[] | select(.class == "perpdown") | .address')
+  hyprctl dispatch movetoworkspacesilent "special:perpdown,address:${perp_addr}"
 fi
