@@ -137,7 +137,11 @@ function reset_hypr_scaling() {
 }
 
 function opacity_kitty_toggle () {
-  kitten @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
+  if [ -n "$TMUX" ] ; then
+    echo "Opacity toggle disabled inside tmux" >&2
+    return 1
+  fi
+  kitty @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
 }
 
 function brightness_set () {
