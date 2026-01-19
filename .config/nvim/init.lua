@@ -26,6 +26,7 @@ vim.keymap.set("n", "]q", ":cnext<cr>zv", {})
 vim.keymap.set("n", "[q", ":cprev<cr>zv", {})
 vim.keymap.set("n", "zh", "zM zv", { desc = "fold everywhere but here" })
 vim.keymap.set({ "n" }, "<leader>R", "<cmd>restart<cr>", { silent = true })
+vim.keymap.set({ "n" }, "<C-b>", ":buffers<CR>:b<Space>", { silent = true })
 
 vim.cmd("cabbrev vh vert help")
 -- }}}
