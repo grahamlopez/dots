@@ -21,7 +21,7 @@ set completion-highlight-fg '#01080D'
 set completion-highlight-bg '#bfc1c2'
 
 # Default foreground/background color
-set default-bg rgba(1,8,13,0.85)
+set default-bg rgba(1,8,13,1.00)
 
 # Input bar
 set inputbar-fg '#bfc1c2'
@@ -70,3 +70,12 @@ set index-bg '#01080D'
 # Selected element in index mode
 set index-active-fg '#01080D'
 set index-active-bg '#bfc1c2'
+
+
+# suggested by perplexity to remove recolor transparency
+#set recolor true
+#set recolor-keephue true
+#
+## Fully opaque foreground/background colors (example dark theme)
+#set recolor-darkcolor   "#000000"
+#set recolor-lightcolor  "#f5f5f5"
