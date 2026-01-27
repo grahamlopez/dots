@@ -368,6 +368,30 @@ vim.api.nvim_create_user_command("TransparentToggle", function()
 end, { desc = "Toggle background transparency", nargs = 0 })
 vim.keymap.set('n', '<leader>ut', ToggleTransparent, { desc = 'Toggle transparent background' })
 -- }}}
+
+-- listchars display {{{
+-- Show listchars
+vim.opt.listchars = {
+  tab = "▸ ",
+  trail = "·",
+  space = "·",
+  extends = "⟩",
+  precedes = "⟨",
+}
+
+-- Color all listchars whitespace
+vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter", "WinNew", "WinEnter" }, {
+  callback = function()
+    vim.api.nvim_set_hl(0, "Whitespace", {
+      fg = "#d70000",      -- red visible on dark/light
+      ctermfg = 160,       -- 256‑color terminals
+    })
+    -- Optionally tweak others that may be involved
+    vim.api.nvim_set_hl(0, "NonText",  { fg = "#444444" })
+    vim.api.nvim_set_hl(0, "SpecialKey", { fg = "#5f5f5f" })
+  end
+})
+-- }}}
 -- }}}
 
 -- Filetype specifics {{{
