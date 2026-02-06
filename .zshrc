@@ -265,6 +265,10 @@ function bit_diff_dirs {
     diff --color /tmp/src.sha256 /tmp/dst.sha256
 }
 
+# sorting greek words. Ensure that `locale -a` shows `el_GR.utf8`
+# if not, add `el_GR.utf8 UTF-8` to `/etc/locale.gen` and run `locale-gen`
+alias sort_greek='LC_COLLATE=el_GR.utf8 sort'
+
 # abbreviations and magic expansion
 # obtained from stackoverflow (but the link now redirects incorrectly)
 
