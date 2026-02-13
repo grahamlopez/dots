@@ -35,8 +35,8 @@ setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded 
 #setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
 export SHELL=$(which zsh)
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 export LESS='-ifqm'         # set up the parameters for 'less'
 export PAGER='less'     # use less for stuff (such as man)
 #export PAGER='less -RM'
@@ -74,7 +74,6 @@ fi
 
 export PATH="${HOME}/local/bin:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
-
 
 #################################################################
 # }}}
@@ -114,6 +113,7 @@ alias grep="grep --color=auto"
 alias less="less -RM"
 alias tmux="tmux -2"
 [ $(command -v nvim) ] && alias vim="nvim"
+alias vimall="nvim **/*(.)"
 
 # shortcuts
 alias fric='vim ${HOME}/Sync/notes/valence_computing/fric.md'
