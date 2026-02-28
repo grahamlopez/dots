@@ -11,6 +11,12 @@ if [ -z "$drop_workspace" ]; then
 	echo "start"
 	hyprctl dispatch -- exec "[float; size 1200 600]" kitty --class dropdown
   sleep 0.1
+  # wait for the window to appear
+  while ! hyprctl clients -j | jq -e '.[] | select(.class == "dropdown")' >/dev/null 2>&1; do
+    sleep 0.05
+  done
+  addr=$(hyprctl clients -j | jq -r '.[] | select(.class == "dropdown") | .address')
+  hyprctl dispatch focuswindow "address:$addr"
   hyprctl dispatch centerwindow
   hyprctl dispatch moveactive "0 -80%"
 

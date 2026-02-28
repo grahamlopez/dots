@@ -147,14 +147,23 @@ function opacity_kitty_toggle () {
 }
 
 function brightness_set () {
-  local max val
+  local max val backpath
 
-  max=$(< /sys/class/backlight/intel_backlight/max_brightness) || {
+  if [ -d /sys/class/backlight/intel_backlight ]; then # flattop, nvgen
+    backpath=/sys/class/backlight/intel_backlight
+  elif [ -d /sys/class/backlight/acpi_video0 ]; then # startop
+    backpath=/sys/class/backlight/acpi_video0
+  else
+    echo "cannot find backlight" >&2
+    return 1
+  fi
+
+  max=$(< ${backpath}/max_brightness) || {
     echo "Cannot read max_brightness" >&2
     return 1
   }
 
-  case $1 in
+  case "$1" in
     1) val=$(( max * 1  / 100 )) ;;   # 1%
     2) val=$(( max * 5  / 100 )) ;;   # 5%
     3) val=$(( max * 10 / 100 )) ;;   # 10%
@@ -166,7 +175,7 @@ function brightness_set () {
     *) echo "provide setting level 1-8" ; return 1 ;;
   esac
 
-  echo "$val" > /sys/class/backlight/intel_backlight/brightness
+  echo "$val" > ${backpath}/brightness
 }
 
 # messing with neovim
