@@ -121,14 +121,33 @@ alias nvpn='nmcli connection up nvidia\ beaverton'
 alias gpg-kill-agent='gpgconf --kill gpg-agent'
 alias ssh-kill-agent='pkill ssh-agent'
 alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME' # dotfile management
-function agent-ssh() {
-  eval "$(ssh-agent -s)"
-  ssh-add ${HOME}/.ssh/id_ed25519
-}
-# Reuse the same agent in all shells
-if [[ -z "$SSH_AUTH_SOCK" && -S /tmp/ssh-agent-$USER ]]; then
-  export SSH_AUTH_SOCK="/tmp/ssh-agent-$USER"
+# Reuse ssh-agent if it’s already running
+if [ -S "${HOME}/.ssh/agent.sock" ]; then
+    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
 fi
+function agent-ssh () {
+    # Kill any existing agent that might be using this socket
+    [ -S "${HOME}/.ssh/agent.sock" ] && \
+        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 || true
+
+    eval "$(ssh-agent -a "${HOME}/.ssh/agent.sock" -s)"
+    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
+    ssh-add "${HOME}/.ssh/id_ed25519"
+}
+function _lazy_ssh_agent() {
+    # If we already have a usable agent with keys, do nothing
+    if [ -S "${HOME}/.ssh/agent.sock" ]; then
+        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 && {
+            export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
+            return
+        }
+    fi
+
+    # Otherwise, delegate to the known-good setup
+    agent-ssh
+}
+export GIT_SSH="${HOME}/.utils/lazy_ssh.sh"
+alias ssh="${HOME}/.utils/lazy_ssh.sh"
 
 function dark_theme() {
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
