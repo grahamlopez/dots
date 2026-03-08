@@ -59,21 +59,8 @@ export REPORTTIME=5
 # specific environments                                       {{{
 #################################################################
 
-# start a keychain if available
-[ $(command -v keychain) ] && eval "$(keychain --nogui --quiet --eval --agents ssh id_ed25519)"
-
 # disable gnome/kde-ssh keyring nonsense on remote servers
 [ -n "$SSH_CONNECTION" ] && unset SSH_ASKPASS
-
-# use modulefiles if available
-moduleinit=${HOME}/local/apps/modules-4.7.1/init/zsh
-if [[ -f "$moduleinit" ]]; then
-  source $moduleinit
-  module use ~/local/modulefiles
-fi
-
-export PATH="${HOME}/local/bin:${PATH}"
-export PATH="${HOME}/.local/bin:${PATH}"
 
 #################################################################
 # }}}
@@ -116,58 +103,16 @@ alias tmux="tmux -2"
 alias vimall="nvim **/*(.)"
 
 # shortcuts
-alias fric='vim ${HOME}/Sync/notes/valence_computing/fric.md'
-alias nvpn='nmcli connection up nvidia\ beaverton'
-alias gpg-kill-agent='gpgconf --kill gpg-agent'
-alias ssh-kill-agent='pkill ssh-agent'
 alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME' # dotfile management
-# Reuse ssh-agent if it’s already running
-if [ -S "${HOME}/.ssh/agent.sock" ]; then
-    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-fi
-function agent-ssh () {
-    # Kill any existing agent that might be using this socket
-    [ -S "${HOME}/.ssh/agent.sock" ] && \
-        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 || true
-
-    eval "$(ssh-agent -a "${HOME}/.ssh/agent.sock" -s)"
-    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-    ssh-add "${HOME}/.ssh/id_ed25519"
-}
-function _lazy_ssh_agent() {
-    # If we already have a usable agent with keys, do nothing
-    if [ -S "${HOME}/.ssh/agent.sock" ]; then
-        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 && {
-            export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-            return
-        }
-    fi
-
-    # Otherwise, delegate to the known-good setup
-    agent-ssh
-}
-export GIT_SSH="${HOME}/.utils/lazy_ssh.sh"
-alias ssh="${HOME}/.utils/lazy_ssh.sh"
-
-function dark_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-}
-
-function light_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-}
-
-function reset_hypr_scaling() {
-  hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
-}
-
-function opacity_kitty_toggle () {
-  if [ -n "$TMUX" ] ; then
-    echo "Opacity toggle disabled inside tmux" >&2
-    return 1
+# for config file management
+function git() {
+  if [[ $(pwd) == ${HOME} || $(pwd) == ${HOME}/.config/nvim ]] ; then
+    command git --git-dir=$HOME/.dots-git/ --work-tree=$HOME "$@"
+  else
+    command git "$@"
   fi
-  kitty @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
 }
+
 
 function brightness_set () {
   local max val backpath
@@ -201,95 +146,6 @@ function brightness_set () {
   echo "$val" > ${backpath}/brightness
 }
 
-# messing with neovim
-alias cvim="NVIM_APPNAME=nvim.cprog nvim"
-alias ovim="NVIM_APPNAME=nvim.old nvim"
-
-function uninstall_nvim() {
-  if [ -z "$1" ]; then
-    echo "uninstalling main nvim state"
-    rm -rf ${HOME}/.local/share/nvim
-    rm -rf ${HOME}/.local/state/nvim
-    rm -rf ${HOME}/.cache/nvim
-  else
-    echo "uninstalling nvim.$1 state"
-    rm -rf ${HOME}/.local/share/nvim.$1
-    rm -rf ${HOME}/.local/state/nvim.$1
-    rm -rf ${HOME}/.cache/nvim.$1
-  fi
-}
-function reinstall_lazyvim() {
-  uninstall_nvim "lazyvim"
-  rm -rf ${HOME}/.config/nvim.lazyvim
-  mkdir -p ${HOME}/.config/nvim.lazyvim
-  /usr/bin/git clone https://github.com/LazyVim/starter ${HOME}/.config/nvim.lazyvim
-}
-function reinstall_kickstart() {
-  uninstall_nvim "kickstart"
-  rm -rf ${HOME}/.config/nvim.kickstart
-  mkdir -p ${HOME}/.config/nvim.kickstart
-  /usr/bin/git clone https://github.com/nvim-lua/kickstart.nvim.git ${HOME}/.config/nvim.kickstart
-}
-
-
-# check git repos under current directory
-# needs some work and cleanup
-showAllReposWithChanges() {
-  for n in `find -name .git`
-    do (
-      cd ${n/%.git/}
-      if [ "$(/usr/bin/git status --porcelain)" ]
-        then echo $PWD
-      fi
-    )
-    done
-}
-
-# more homegrown functions
-
-# for config file management
-function git() {
-  if [[ $(pwd) == ${HOME} || $(pwd) == ${HOME}/.config/nvim ]] ; then
-    command git --git-dir=$HOME/.dots-git/ --work-tree=$HOME "$@"
-  else
-    command git "$@"
-  fi
-}
-
-# python and conda related stuff
-function conda_zsh_init() {
-  eval "$(/home/graham/local/apps/miniconda3/bin/conda shell.zsh hook)"
-}
-
-# for docker cleanup
-function dcleanup() {
-    docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-    docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
-}
-
-# pandoc markdown to nice pdf
-function mdtopdf_greek {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    pandoc --pdf-engine=tectonic -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
-}
-
-function mdtopdf_greek {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    pandoc --pdf-engine=tectonic -V mainfont="Gentium Plus" -V monospacefont="Gentium Plus Mono" -V mainlang="greek" -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
-}
-
-# djvu to pdf
-function djvutopdf {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    ddjvu -format=pdf -mode=black ${name}.djvu ${name}.pdf
-}
-
 # bit-perfect compare two directories
 function bit_diff_dirs {
     src=$1
@@ -298,13 +154,6 @@ function bit_diff_dirs {
     (cd ${dst}  && find . -type f -print0 | xargs -0 sha256sum | sort -k2 > /tmp/dst.sha256)
     diff --color /tmp/src.sha256 /tmp/dst.sha256
 }
-
-# sorting greek words. Ensure that `locale -a` shows `el_GR.utf8`
-# if not, add `el_GR.utf8 UTF-8` to `/etc/locale.gen` and run `locale-gen`
-alias sort_greek='LC_COLLATE=el_GR.utf8 sort'
-
-# abbreviations and magic expansion
-# obtained from stackoverflow (but the link now redirects incorrectly)
 
 setopt extendedglob
 typeset -Ag abbreviations
@@ -397,8 +246,8 @@ export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUPSTREAM="auto"
 export GIT_PS1_SHOWCOLORHINTS=true
 
-PROMPT='$GREEN%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
-# PROMPT='$RED%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR' # root
+#PROMPT='$GREEN%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
+PROMPT='$RED%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR' # root
 
 RPROMPT='$RED%(?..[%?]) $CYAN|$WHITE%*$NOCOLOR'
 
