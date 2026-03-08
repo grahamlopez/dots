@@ -125,6 +125,10 @@ function agent-ssh() {
   eval "$(ssh-agent -s)"
   ssh-add ${HOME}/.ssh/id_ed25519
 }
+# Reuse the same agent in all shells
+if [[ -z "$SSH_AUTH_SOCK" && -S /tmp/ssh-agent-$USER ]]; then
+  export SSH_AUTH_SOCK="/tmp/ssh-agent-$USER"
+fi
 
 function dark_theme() {
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
