@@ -1,5 +1,5 @@
 [user]
-    name = Graham Lopez
+    name = graham
     email = m477@duck.com
 
 [color]
@@ -64,3 +64,6 @@
 	conflictstyle = diff3
 [mergetool]
 	prompt = false
+
+[include]
+    path = ~/.gitconfig-local
