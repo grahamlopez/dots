@@ -150,8 +150,10 @@ function _lazy_ssh_agent() {
     # Otherwise, delegate to the known-good setup
     agent-ssh
 }
-export GIT_SSH="${HOME}/.utils/lazy_ssh.sh"
-alias ssh="${HOME}/.utils/lazy_ssh.sh"
+if [[ -f "${HOME}/.utils/lazy_ssh.sh" ]]; then
+  export GIT_SSH="${HOME}/.utils/lazy_ssh.sh"
+  alias ssh="${HOME}/.utils/lazy_ssh.sh"
+fi
 
 function dark_theme() {
   gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
