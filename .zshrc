@@ -72,6 +72,10 @@ if [[ -f "$moduleinit" ]]; then
   module use ~/local/modulefiles
 fi
 
+if [[ -f "/mnt/c/Users/glopez/Synct/notes/bookmarks.md" ]]; then
+  alias bookmarks="vim /mnt/c/Users/glopez/Synct/notes/bookmarks.md"
+fi
+
 export PATH="${HOME}/local/bin:${PATH}"
 export PATH="${HOME}/.local/bin:${PATH}"
 
@@ -421,3 +425,7 @@ export MANPAGER='less -s -M +Gg'
 #     efibootmgr -n $1
 #     reboot
 # }
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
