@@ -148,11 +148,11 @@ summarize_repo() {
     while IFS= read -r line; do
         local xy="${line:0:2}"
         case "$xy" in
-            "??") ((untracked++)) ;;
-            "UU"|"AA"|"DD"|"AU"|"UA"|"DU"|"UD") ((unmerged++)) ;;
+            "??") (( ++untracked )) ;;
+            "UU"|"AA"|"DD"|"AU"|"UA"|"DU"|"UD") (( ++unmerged )) ;;
             *)
-                [[ "${xy:0:1}" != " " && "${xy:0:1}" != "?" ]] && ((staged++))
-                [[ "${xy:1:1}" != " " && "${xy:1:1}" != "?" ]] && ((modified++))
+                [[ "${xy:0:1}" != " " && "${xy:0:1}" != "?" ]] && (( ++staged ))  || true
+                [[ "${xy:1:1}" != " " && "${xy:1:1}" != "?" ]] && (( ++modified )) || true
                 ;;
         esac
     done < <("${g[@]}" status --porcelain 2>/dev/null)
@@ -187,7 +187,7 @@ summarize_repo() {
             printf "  sync    ${YELLOW}${ICON_DIVERGED} diverged${RESET}  ${GREEN}${ICON_AHEAD}%d${RESET} ahead  ${RED}${ICON_BEHIND}%d${RESET} behind\n" \
                 "$ahead" "$behind"
         elif (( ahead > 0 )); then
-            printf "  sync    ${GREEN}${ICON_AHEAD}%d ahead${RESET} of upstream\n" "$ahead"
+            printf "  sync    ${YELLOW}${ICON_AHEAD}%d ahead${RESET} of upstream\n" "$ahead"
         elif (( behind > 0 )); then
             printf "  sync    ${RED}${ICON_BEHIND}%d behind${RESET} upstream\n" "$behind"
         else
