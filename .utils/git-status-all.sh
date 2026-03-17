@@ -17,6 +17,7 @@ BARE_REPOS=(
 IGNORE_PATHS=(
     ~/.claude/plugins          # plugin marketplace repos — noisy
     ~/Synct                    # syncthing-managed, not real dev repos
+    ~/.nvm
 )
 # ─────────────────────────────────────────────────────────────────────────────
 

@@ -971,7 +971,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 	// Events
 	// -----------------------------------------------------------------------
 
-	// Restore state on session start/resume
+	// Restore state on session start/resume (also handles /new clearing stale state)
 	pi.on("session_start", async (_event, ctx) => {
 		const entries = ctx.sessionManager.getEntries();
 		const last = entries
@@ -987,6 +987,10 @@ export default function plannerExtension(pi: ExtensionAPI) {
 					}
 				}
 			}
+		} else {
+			// New/fresh session — clear any stale in-memory state
+			state = null;
+			planMode = false;
 		}
 		updateUI(ctx);
 	});
