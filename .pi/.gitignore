@@ -1,0 +1,17 @@
+# Secrets — API keys, tokens, credentials
+agent/auth.json
+agent/models.json
+
+# Session logs — large, machine-generated, per-machine
+agent/sessions/
+
+# Bundled binaries — platform-specific, large
+agent/bin/
+
+# Node dependency trees inside extensions
+agent/extensions/*/node_modules/
+agent/extensions/*/package-lock.json
+
+# Skill eval/benchmark artifacts (generated output)
+agent/skills/skill-creator/eval-viewer/*.html
+agent/skills/skill-creator/scripts/__pycache__/
