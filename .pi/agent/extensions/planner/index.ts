@@ -127,6 +127,19 @@ function isSafeCommand(cmd: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Code review prompt
+// ---------------------------------------------------------------------------
+
+const CODE_REVIEW_PROMPT = `This project values above all else implementation simplicity and reuse of available framework/library components and common well-understood patterns in an effort to have the highest possible long-term maintainability for agentic developers. Please carefully analyze this implementation and tell me if you like it. Check for and comment about:
+- Custom or overly complex implementation
+- Code brevity and understandability. Are there any opportunities to simplify or remove code?
+- Unnecessary hoisting or redirection
+- Code duplication of any kind
+- Test coverage and potency: are there missing tests or tests that don't exercise the app's functionality or otherwise trivially pass
+- Error handling gaps
+`;
+
+// ---------------------------------------------------------------------------
 // Status icons/colors
 // ---------------------------------------------------------------------------
 
@@ -1035,6 +1048,102 @@ export default function plannerExtension(pi: ExtensionAPI) {
 			planMode = false;
 			updateUI(ctx);
 			ctx.ui.notify("Plan cleared.", "info");
+		},
+	});
+
+	// -----------------------------------------------------------------------
+	// /plan-code-review — spawn a code review subagent
+	// -----------------------------------------------------------------------
+
+	pi.registerCommand("plan-code-review", {
+		description: "Spawn a code review subagent. Usage: /plan-code-review [--no-tmux] [--model <model>] [scope description or files]",
+
+		getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
+			const modelArgMatch = prefix.match(/^--model\s+(.*)$/);
+			if (modelArgMatch) {
+				const modelPrefix = modelArgMatch[1];
+				const models = modelRegistry?.getAvailable() ?? [];
+				const items: AutocompleteItem[] = models.map((m) => ({
+					value: `--model ${m.provider}/${m.id}`,
+					label: `${m.provider}/${m.id} — ${m.name}`,
+				}));
+				const filtered = items.filter((i) => i.value.startsWith(`--model ${modelPrefix}`));
+				return filtered.length > 0 ? filtered : null;
+			}
+
+			const items: AutocompleteItem[] = [
+				{ value: "--no-tmux", label: "--no-tmux — headless execution (no tmux pane)" },
+				{ value: "--model", label: "--model <model> — model for the review agent" },
+			];
+			const filtered = items.filter((i) => i.value.startsWith(prefix));
+			return filtered.length > 0 ? filtered : null;
+		},
+
+		handler: async (args, ctx) => {
+			await ctx.waitForIdle();
+
+			const parts = args.trim().split(/\s+/).filter(Boolean);
+			const noTmux = parts.includes("--no-tmux");
+
+			let model: string | undefined;
+			const modelIdx = parts.indexOf("--model");
+			if (modelIdx !== -1) {
+				model = parts[modelIdx + 1];
+				if (!model || model.startsWith("--")) {
+					ctx.ui.notify("--model requires a value, e.g. --model claude-sonnet-4-5", "error");
+					return;
+				}
+				parts.splice(modelIdx, 2);
+			}
+
+			const scope = parts.filter((p) => p !== "--no-tmux").join(" ");
+			const prompt = scope ? `${CODE_REVIEW_PROMPT}\nFocus on: ${scope}` : CODE_REVIEW_PROMPT;
+
+			const useTmux = !noTmux && isTmuxAvailable();
+
+			let originalWindowId: string | undefined;
+			if (useTmux) {
+				resetExecutionWindow();
+				originalWindowId = getOriginalWindowId();
+			}
+
+			ctx.ui.notify(`Starting code review${scope ? ` — ${scope}` : ""}${model ? ` [${model}]` : ""}`, "info");
+
+			try {
+				const output = useTmux
+					? await spawnInTmuxPane({
+							cwd: ctx.cwd,
+							prompt,
+							taskId: "code-review",
+							taskTitle: "Code Review",
+							planLabel: "code-review",
+							model,
+						})
+					: await spawnImplementer({ cwd: ctx.cwd, prompt, model });
+
+				const lastAssistant = [...output.messages].reverse().find((m) => m.role === "assistant");
+				const text =
+					lastAssistant?.content
+						?.filter((c: any) => c.type === "text")
+						.map((c: any) => c.text)
+						.join("\n") || "(no output)";
+
+				const cost = output.usage.cost > 0 ? ` ($${output.usage.cost.toFixed(3)})` : "";
+				const modelTag = output.model ? ` [${output.model}]` : "";
+
+				pi.sendMessage(
+					{
+						customType: "planner-code-review",
+						content: `**Code Review${cost}${modelTag}**\n\n${text}`,
+						display: true,
+					},
+					{ triggerTurn: false },
+				);
+			} finally {
+				if (useTmux && originalWindowId) {
+					selectWindow(originalWindowId);
+				}
+			}
 		},
 	});
 

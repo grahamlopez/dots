@@ -28,6 +28,9 @@ The problem this solves: when you divide a plan into tasks for separate implemen
 | `/plan-execute task-1` | Execute (or re-run) a specific task |
 | `/plan-status` | Show current plan progress and full token usage |
 | `/plan-clear` | Clear the plan and all results |
+| `/plan-code-review` | Spawn a code review subagent (tmux pane by default) |
+| `/plan-code-review --no-tmux` | Run the review headlessly |
+| `/plan-code-review src/foo.ts` | Review a specific scope or set of files |
 | `Ctrl+Alt+P` | Toggle planning mode (shortcut) |
 
 ## Planning Mode
