@@ -115,7 +115,6 @@ bindkey '^U' kill-whole-line
 alias ls="ls --color=auto -F"
 alias grep="grep --color=auto"
 alias less="less -RM"
-alias tmux="tmux -2"
 [ $(command -v nvim) ] && alias vim="nvim"
 alias vimall="nvim **/*(.)"
 

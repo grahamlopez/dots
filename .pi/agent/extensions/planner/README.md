@@ -22,6 +22,7 @@ The problem this solves: when you divide a plan into tasks for separate implemen
 | `/plan` | Toggle planning mode (read-only tools, submit_plan enabled) |
 | `/plan compact` | Compact brainstorm context first, then enter planning mode |
 | `/plan-execute` | Execute all pending tasks (interactive tmux panes by default) |
+| `/plan-execute --model <model>` | Execute with a default model for all tasks (e.g. `--model claude-sonnet-4-5`) |
 | `/plan-execute --no-tmux` | Execute all pending tasks headlessly (no tmux panes) |
 | `/plan-execute --hierarchical` | Execute all pending tasks serially (no worktrees) |
 | `/plan-execute task-1` | Execute (or re-run) a specific task |
@@ -51,7 +52,16 @@ The agent can still use `read`, `grep`, `find`, `ls`, and safe bash commands (gi
 
 ## Plan Structure
 
-The `submit_plan` tool enforces a specific JSON schema. Each task has:
+The `submit_plan` tool enforces a specific JSON schema. The plan has:
+
+| Field | Purpose |
+|-------|---------|
+| `goal` | One-sentence summary of the overall feature or change |
+| `context` | Brief architectural context shared across all tasks |
+| `defaultModel` | Optional default model for all tasks (e.g. `claude-sonnet-4-5`). Individual tasks override via their own `model` field |
+| `tasks` | Array of tasks (see below) |
+
+Each task has:
 
 | Field | Purpose |
 |-------|---------|
@@ -63,7 +73,7 @@ The `submit_plan` tool enforces a specific JSON schema. Each task has:
 | `acceptance` | Concrete, testable completion criteria |
 | `dependsOn` | Task IDs that must complete first (empty = independent) |
 | `skills` | Optional skill names relevant to the task |
-| `model` | Optional model override |
+| `model` | Optional model override for this task |
 
 ### What makes a good plan
 
@@ -190,6 +200,32 @@ When parallel tasks run in the same directory, the last writer wins — silently
 | `/plan-execute --hierarchical` | Serial, one at a time | Full — sequential, no overlap | Interactive tmux panes (if tmux) |
 | `/plan-execute` (no git repo) | Parallel, shared directory | ⚠ None — last writer wins | Interactive tmux panes (if tmux) |
 | `/plan-execute task-1` | Single task | N/A — only one task runs | Interactive tmux pane (if tmux) |
+
+All modes accept `--model <model>` to set a default model for the run. Combinable with other flags: `/plan-execute --model claude-sonnet-4-5 --hierarchical`. The `<model>` gets passed through to `pi --model`, so use `pi --list-models` to get the available options. Pi also does fuzzy matching on these, so that should work here as well.
+
+### Model Resolution
+
+Each sub-agent's model is resolved deterministically with this precedence:
+
+```
+/plan-execute --model  >  task.model  >  plan.defaultModel  >  sub-agent's own default
+```
+
+| Level | Set by | Example |
+|-------|--------|---------|
+| `--model` flag | User (at launch time) | Hard override — "use this model, period" |
+| `task.model` | Planner (per-task in submit_plan) | Route a specific task to a different model |
+| `plan.defaultModel` | Planner (plan-level in submit_plan) | Planner's suggested baseline for all tasks |
+| Sub-agent default | Environment (API key, settings) | Fallback when nothing is specified |
+
+The user's explicit flag wins over everything the LLM set in the plan. This is intentional — `task.model` and `plan.defaultModel` are LLM-generated and non-deterministic, while `--model` is the user's direct control.
+
+**Example:** You have a plan with `defaultModel: "claude-sonnet-4-5"` and one task with `model: "claude-opus-4-5"`. Running `/plan-execute --model gpt-4o`:
+
+- **All tasks use `gpt-4o`** — the flag overrides both the task-level and plan-level model
+- Without the flag, the one task would use `claude-opus-4-5` and the rest would use `claude-sonnet-4-5`
+
+This lets you test a plan on a cheaper model, switch providers, or lock down exactly which endpoint your sub-agents hit — without modifying the plan.
 
 #### Conflict Example
 

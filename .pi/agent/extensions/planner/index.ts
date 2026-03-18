@@ -166,6 +166,9 @@ function generatePlanMarkdown(plan: Plan): string {
 	const lines: string[] = [];
 	lines.push(`# ${plan.goal}`, "");
 	lines.push("## Context", "", plan.context, "");
+	if (plan.defaultModel) {
+		lines.push(`**Default Model:** ${plan.defaultModel}`, "");
+	}
 	lines.push(`## Tasks (${plan.tasks.length})`, "");
 	for (const t of plan.tasks) {
 		const deps = t.dependsOn.length > 0 ? t.dependsOn.join(", ") : "none";
@@ -244,6 +247,30 @@ export default function plannerExtension(pi: ExtensionAPI) {
 	let planMode = false;
 	let planningUsage = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, turns: 0 };
 	let planningModel: string | undefined;
+	let modelRegistry: ExtensionContext["modelRegistry"] | null = null;
+
+	// -----------------------------------------------------------------------
+	// Model resolution helpers
+	// -----------------------------------------------------------------------
+
+	/** Resolve the effective model for a task, returning both the value and its source. */
+	function resolveTaskModel(task: Task, executeLevelModel?: string): { model: string | undefined; source: string } {
+		if (executeLevelModel) return { model: executeLevelModel, source: "--model" };
+		if (task.model) return { model: task.model, source: "task" };
+		if (state?.plan.defaultModel) return { model: state.plan.defaultModel, source: "plan default" };
+		return { model: undefined, source: "sub-agent default" };
+	}
+
+	/** Build a pre-execution model summary showing what each task will use. */
+	function formatModelSummary(tasks: Task[], executeLevelModel?: string): string {
+		const lines: string[] = [];
+		for (const t of tasks) {
+			const { model, source } = resolveTaskModel(t, executeLevelModel);
+			const display = model ?? "(sub-agent default)";
+			lines.push(`  ${t.id}: ${t.title} → ${display} (${source})`);
+		}
+		return lines.join("\n");
+	}
 
 	// -----------------------------------------------------------------------
 	// State helpers
@@ -359,11 +386,14 @@ export default function plannerExtension(pi: ExtensionAPI) {
 
 	let mergeQueue: Promise<void> = Promise.resolve();
 
-	async function runTask(task: Task, ctx: ExtensionContext, useWorktree: boolean = false, useTmux: boolean = false): Promise<void> {
+	async function runTask(task: Task, ctx: ExtensionContext, useWorktree: boolean = false, useTmux: boolean = false, executeLevelModel?: string): Promise<void> {
 		state!.statuses[task.id] = "running";
 		updateUI(ctx);
 
 		const brief = assembleTaskBrief(task, state!.plan, state!.results);
+
+		// Resolve effective model: executeLevelModel > task.model > plan.defaultModel > omit
+		const { model: effectiveModel } = resolveTaskModel(task, executeLevelModel);
 
 		let wt: WorktreeInfo | null = null;
 		let taskCwd = ctx.cwd;
@@ -384,12 +414,12 @@ export default function plannerExtension(pi: ExtensionAPI) {
 						taskId: task.id,
 						taskTitle: task.title,
 						planLabel: planLabel(state!.planId, state!.plan.goal),
-						model: task.model,
+						model: effectiveModel,
 					})
 				: await spawnImplementer({
 						cwd: taskCwd,
 						prompt: brief,
-						model: task.model,
+						model: effectiveModel,
 					});
 
 			const { summary, filesChanged, notes } = parseOutput(output.messages);
@@ -457,7 +487,8 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				const isErr = state!.statuses[task.id] === "failed";
 				const icon = isErr ? "✗" : "✓";
 				const cost = output.usage.cost > 0 ? ` ($${output.usage.cost.toFixed(3)})` : "";
-				let content = `**${icon} ${task.id}: ${task.title}${cost}**\n\n${summary}`;
+				const modelTag = ` [${effectiveModel ?? "(default)"}]`;
+				let content = `**${icon} ${task.id}: ${task.title}${cost}${modelTag}**\n\n${summary}`;
 				if (notes) content += `\n\n**Notes:** ${notes}`;
 				pi.sendMessage(
 					{
@@ -612,6 +643,9 @@ export default function plannerExtension(pi: ExtensionAPI) {
 					theme.fg("success", "✓ ") +
 					theme.fg("toolTitle", theme.bold(plan.goal)) +
 					theme.fg("dim", ` (${plan.tasks.length} tasks)`);
+				if (plan.defaultModel) {
+					text += theme.fg("dim", ` · model: ${plan.defaultModel}`);
+				}
 				for (const t of plan.tasks) {
 					const deps =
 						t.dependsOn.length > 0
@@ -628,6 +662,9 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				new Text(theme.fg("success", "✓ ") + theme.fg("toolTitle", theme.bold(plan.goal)), 0, 0),
 			);
 			c.addChild(new Text(theme.fg("dim", plan.context), 0, 0));
+			if (plan.defaultModel) {
+				c.addChild(new Text(theme.fg("dim", `Default model: ${plan.defaultModel}`), 0, 0));
+			}
 
 			for (const t of plan.tasks) {
 				c.addChild(new Spacer(1));
@@ -706,13 +743,28 @@ export default function plannerExtension(pi: ExtensionAPI) {
 	// -----------------------------------------------------------------------
 
 	pi.registerCommand("plan-execute", {
-		description: "Execute plan tasks. Usage: /plan-execute [--hierarchical] [--no-tmux] [task-id]",
+		description: "Execute plan tasks. Usage: /plan-execute [--hierarchical] [--no-tmux] [--model <model>] [task-id]",
 
 		getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
 			if (!state) return null;
+
+			// If the user just typed "--model ", complete with available model IDs
+			const modelArgMatch = prefix.match(/^--model\s+(.*)$/);
+			if (modelArgMatch) {
+				const modelPrefix = modelArgMatch[1];
+				const models = modelRegistry?.getAvailable() ?? [];
+				const items: AutocompleteItem[] = models.map((m) => ({
+					value: `--model ${m.provider}/${m.id}`,
+					label: `${m.provider}/${m.id} — ${m.name}`,
+				}));
+				const filtered = items.filter((i) => i.value.startsWith(`--model ${modelPrefix}`));
+				return filtered.length > 0 ? filtered : null;
+			}
+
 			const items: AutocompleteItem[] = [
 				{ value: "--hierarchical", label: "--hierarchical — serial execution, no worktrees" },
 				{ value: "--no-tmux", label: "--no-tmux — headless execution (no tmux panes)" },
+				{ value: "--model", label: "--model <model> — override model for all tasks" },
 				...state.plan.tasks.map((t) => ({
 					value: t.id,
 					label: `${t.id} — ${t.title} [${state!.statuses[t.id]}]`,
@@ -734,6 +786,20 @@ export default function plannerExtension(pi: ExtensionAPI) {
 			const parts = args.trim().split(/\s+/).filter(Boolean);
 			const hierarchical = parts.includes("--hierarchical");
 			const noTmux = parts.includes("--no-tmux");
+
+			// Parse --model <value> flag
+			let executeLevelModel: string | undefined;
+			const modelIdx = parts.indexOf("--model");
+			if (modelIdx !== -1) {
+				executeLevelModel = parts[modelIdx + 1];
+				if (!executeLevelModel || executeLevelModel.startsWith("--")) {
+					ctx.ui.notify("--model requires a value, e.g. --model claude-sonnet-4-5", "error");
+					return;
+				}
+				// Remove --model and its value from parts for targetId detection
+				parts.splice(modelIdx, 2);
+			}
+
 			const targetId = parts.find((p) => !p.startsWith("--")) || null;
 
 			// Tmux mode: default on when inside tmux, opt-out with --no-tmux
@@ -781,7 +847,9 @@ export default function plannerExtension(pi: ExtensionAPI) {
 						state.statuses[task.id] = "pending";
 					}
 
-					await runTask(task, ctx, false, useTmux);
+					const { model: taskModel, source: taskModelSource } = resolveTaskModel(task, executeLevelModel);
+					ctx.ui.notify(`Executing: ${task.id}: ${task.title}\nModel: ${taskModel ?? "(sub-agent default)"} (${taskModelSource})`, "info");
+					await runTask(task, ctx, false, useTmux, executeLevelModel);
 					return;
 				}
 
@@ -809,7 +877,8 @@ export default function plannerExtension(pi: ExtensionAPI) {
 					: hierarchical
 						? `serial${tmuxLabel}`
 						: `parallel (shared dir${tmuxLabel})`;
-				ctx.ui.notify(`Executing: ${state.plan.goal} (${pending.length} tasks, ${mode})`, "info");
+				const modelSummary = formatModelSummary(pending, executeLevelModel);
+				ctx.ui.notify(`Executing: ${state.plan.goal} (${pending.length} tasks, ${mode})\n\nModels:\n${modelSummary}`, "info");
 
 				const MAX_CONCURRENCY = hierarchical ? 1 : 4;
 				let running = 0;
@@ -828,7 +897,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 							running++;
 							// Use worktrees when parallel AND in a git repo
 							const worktreeForTask = useWorktrees && MAX_CONCURRENCY > 1;
-							runTask(task, ctx, worktreeForTask, useTmux).finally(() => {
+							runTask(task, ctx, worktreeForTask, useTmux, executeLevelModel).finally(() => {
 								running--;
 								tryStart();
 							});
@@ -875,6 +944,8 @@ export default function plannerExtension(pi: ExtensionAPI) {
 			for (const t of state.plan.tasks) {
 				const r = state.results[t.id];
 				if (r) {
+					// Show actual model from spawner, or fall back to resolved model, or (default)
+					const { model: resolvedModel } = resolveTaskModel(t, executeLevelModel);
 					usageRows.push({
 						label: `${t.id}: ${t.title}`,
 						input: r.usage.input,
@@ -883,7 +954,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 						cacheWrite: r.usage.cacheWrite,
 						cost: r.usage.cost,
 						turns: r.usage.turns,
-						model: r.model,
+						model: r.model ?? resolvedModel ?? "(default)",
 					});
 				}
 			}
@@ -971,8 +1042,9 @@ export default function plannerExtension(pi: ExtensionAPI) {
 	// Events
 	// -----------------------------------------------------------------------
 
-	// Restore state on session start/resume (also handles /new clearing stale state)
+	// Restore state on initial session load
 	pi.on("session_start", async (_event, ctx) => {
+		modelRegistry = ctx.modelRegistry;
 		const entries = ctx.sessionManager.getEntries();
 		const last = entries
 			.filter((e: any) => e.type === "custom" && e.customType === "planner-state")
@@ -987,10 +1059,34 @@ export default function plannerExtension(pi: ExtensionAPI) {
 					}
 				}
 			}
-		} else {
-			// New/fresh session — clear any stale in-memory state
+		}
+		updateUI(ctx);
+	});
+
+	// Clear or restore state on /new and /resume
+	pi.on("session_switch", async (event, ctx) => {
+		if (event.reason === "new") {
 			state = null;
 			planMode = false;
+		} else {
+			// Resuming a session — restore plan state if it has one
+			const entries = ctx.sessionManager.getEntries();
+			const last = entries
+				.filter((e: any) => e.type === "custom" && e.customType === "planner-state")
+				.pop() as any;
+			if (last?.data) {
+				state = last.data;
+				if (state) {
+					for (const t of state.plan.tasks) {
+						if (state.statuses[t.id] === "running") {
+							state.statuses[t.id] = "pending";
+						}
+					}
+				}
+			} else {
+				state = null;
+				planMode = false;
+			}
 		}
 		updateUI(ctx);
 	});
@@ -1039,6 +1135,7 @@ Guidelines for a good plan:
 - Use dependsOn for tasks that consume interfaces/types/files created by earlier tasks
 - Independent tasks will run in parallel — don't add unnecessary dependencies
 - Use the skills field on tasks to list relevant skill names when the task matches a skill's description. Sub-agents have skill discovery — this ensures they load the right skills.
+- Use defaultModel at the plan level to set a model for all tasks (e.g. 'claude-sonnet-4-5'). Individual tasks can override via their own model field. Omit defaultModel to use whatever model the caller specifies.
 
 Do NOT make file changes. Focus on understanding the code and creating a solid plan.`,
 				display: false,

@@ -36,6 +36,12 @@ export const PlanSchema = Type.Object({
 		description:
 			"Brief architectural context shared across all tasks — just enough for any implementer to understand where their work fits in the codebase.",
 	}),
+	defaultModel: Type.Optional(
+		Type.String({
+			description:
+				"Default model for all tasks. Individual tasks can override via their own model field. Omit to use the caller's default.",
+		}),
+	),
 	tasks: Type.Array(TaskSchema, { minItems: 1 }),
 });
 
