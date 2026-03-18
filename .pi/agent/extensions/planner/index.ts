@@ -46,7 +46,7 @@ import {
 	createTaskWorktree,
 	isGitRepo,
 	mergeBack,
-	symlinkDeps,
+	setupWorktree,
 	type WorktreeInfo,
 } from "./worktree.js";
 
@@ -130,7 +130,7 @@ function isSafeCommand(cmd: string): boolean {
 // Code review prompt
 // ---------------------------------------------------------------------------
 
-const CODE_REVIEW_PROMPT = `This project values above all else implementation simplicity and reuse of available framework/library components and common well-understood patterns in an effort to have the highest possible long-term maintainability for agentic developers. Please carefully analyze this implementation and tell me if you like it. Check for and comment about:
+const CODE_REVIEW_PROMPT = `We just finished some new work. This project values above all else implementation simplicity and reuse of available framework/library components and common well-understood patterns in an effort to have the highest possible long-term maintainability for agentic developers. Please carefully analyze this new work and tell me if you like it. Check for and comment about:
 - Custom or overly complex implementation
 - Code brevity and understandability. Are there any opportunities to simplify or remove code?
 - Unnecessary hoisting or redirection
@@ -415,7 +415,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 			// --- Set up worktree if requested ---
 			if (useWorktree) {
 				wt = createTaskWorktree(ctx.cwd, state!.planId, task.id);
-				symlinkDeps(ctx.cwd, wt.path);
+				setupWorktree(ctx.cwd, wt.path);
 				taskCwd = wt.path;
 			}
 

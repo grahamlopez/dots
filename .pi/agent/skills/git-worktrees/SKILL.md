@@ -74,6 +74,13 @@ working immediately.
 
 Write `TASK.md` with at minimum:
 
+- **Setup**: exact commands to install dependencies and prepare the
+  worktree. Check the project's `AGENTS.md` for a "Worktrees" section —
+  if it exists, copy those setup steps verbatim. At minimum: install
+  dependencies (`npm ci`, `pip install`, etc.), generate any build
+  artifacts, and copy environment files. Prefer a real install over
+  symlinking dependency directories — symlinked deps can cause
+  path-resolution failures in bundlers and test frameworks.
 - **Task**: what to do, in enough detail that someone unfamiliar with the
   conversation could act on it.
 - **Context**: relevant files, modules, patterns, constraints, or design
@@ -219,8 +226,11 @@ git worktree unlock ../<worktree-path>
   all worktrees. Only the working tree and index are independent.
 - **Sibling directories only.** Never nest a worktree inside the repo.
 - **Build artifacts are per-worktree.** Each worktree needs its own
-  dependency install (`go mod download`, `npm ci`, etc.). The new pi
-  session will handle this naturally when it reads TASK.md and starts
-  working.
+  dependency install (`go mod download`, `npm ci`, etc.). Prefer a real
+  install over symlinking dependency directories from the main repo —
+  symlinks can cause path-resolution failures in bundlers, test
+  frameworks, and dev servers (especially in Node.js/SvelteKit). If the
+  project has a `.worktree-setup` script, reference it in the TASK.md
+  Setup section — it automates the correct setup.
 - **Clean up TASK.md before the final commit** in the worktree session —
   it's scaffolding, not part of the feature.

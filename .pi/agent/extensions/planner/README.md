@@ -186,13 +186,32 @@ When parallel tasks run in the same directory, the last writer wins — silently
 **When executing in a git repo**, each parallel task automatically gets its own **git worktree** — a separate working directory on its own branch. This means:
 
 - Parallel tasks have **full file isolation** — no overwrites possible
-- Dependency directories (`node_modules`, `.venv`, etc.) are **symlinked** from the main repo to avoid reinstall overhead
+- Dependency setup is **project-configurable** — see [`.worktree-setup` hook](#worktree-setup-hook) below. Default: symlink dependency directories from the main repo
 - After a task completes, its branch is **rebased onto main** and **fast-forward merged** back
 - Merges happen **sequentially** (serialized queue), so each rebase sees the latest HEAD
 - If rebase fails (real conflict), the task is marked failed and the **worktree is left in place** for manual inspection/resolution
 - Successful merges clean up the worktree and branch automatically
 
 **When NOT in a git repo**, tasks still run in parallel but share the working directory. A warning is shown. Use `--hierarchical` for safe serial execution.
+
+#### `.worktree-setup` Hook
+
+If a `.worktree-setup` script exists in the project root, it runs **instead of** the default dependency symlinking when a worktree is created. This gives projects full control over dependency setup.
+
+The script receives the main repo path as `$1` and runs with `cwd` set to the worktree path. It has a 2-minute timeout.
+
+**When to use this:** When the default symlink approach causes problems. Symlinked `node_modules` can break tools that resolve paths through the symlink target (e.g. `@testing-library/svelte`, Vite's `fs.allow`, SvelteKit type generation). A `.worktree-setup` script that runs `npm ci` gives proper isolation.
+
+Example `.worktree-setup` for a Node.js/SvelteKit project:
+
+```bash
+#!/usr/bin/env bash
+set -e
+npm ci                                    # real install, not symlink
+[ -f "$1/.env" ] && cp "$1/.env" .        # copy environment config
+```
+
+If no `.worktree-setup` script exists, the default behavior applies: dependency directories (`node_modules`, `.venv`, `vendor`, etc.) are symlinked from the main repo.
 
 #### Execution Modes
 
@@ -300,7 +319,7 @@ Gives the implementer a clean tool set (read, bash, edit, write) without the pla
 Wave-based execution waits for an entire batch to finish before starting the next. If tasks A and B are in the same wave, and A takes 1 minute but B takes 10, task C (which only depends on A) waits 10 minutes unnecessarily. The pool scheduler starts C as soon as A completes.
 
 **Why git worktrees for parallel isolation?**
-When two agents edit the same file concurrently, the last writer silently wins. Application-level file locking is fragile and doesn't compose with arbitrary tool calls. Git worktrees give each task a real isolated working directory on its own branch, and git's rebase/merge machinery detects conflicts properly. Dependency directories (node_modules, etc.) are symlinked to avoid reinstall overhead. On conflict, the worktree is preserved for manual resolution rather than silently corrupting the codebase.
+When two agents edit the same file concurrently, the last writer silently wins. Application-level file locking is fragile and doesn't compose with arbitrary tool calls. Git worktrees give each task a real isolated working directory on its own branch, and git's rebase/merge machinery detects conflicts properly. Dependency directories (node_modules, etc.) are symlinked by default to avoid reinstall overhead, but projects can override this with a `.worktree-setup` script for proper isolation when symlinks cause path-resolution issues. On conflict, the worktree is preserved for manual resolution rather than silently corrupting the codebase.
 
 **Why serialize merge-back instead of merging in parallel?**
 Each completed task rebases onto main before merging. If two tasks merge simultaneously, they'd both rebase onto the same HEAD and the second fast-forward would fail. Sequential merging ensures each rebase sees the latest HEAD (including all previously merged tasks), producing linear history and correct conflict detection.

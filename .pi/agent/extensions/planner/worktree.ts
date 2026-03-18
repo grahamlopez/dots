@@ -128,6 +128,34 @@ export function symlinkDeps(mainCwd: string, worktreePath: string): void {
 }
 
 /**
+ * Set up a worktree's dependencies. If the project has a `.worktree-setup`
+ * script, it runs INSTEAD of the default symlink approach — giving the
+ * project full control over dependency setup (e.g. `npm ci` for proper
+ * isolation instead of symlinks that break path resolution).
+ *
+ * The script receives the main repo path as $1 and runs with cwd = worktree.
+ * If no script exists, falls back to symlinkDeps.
+ */
+export function setupWorktree(mainCwd: string, worktreePath: string): void {
+	const scriptPath = path.join(mainCwd, ".worktree-setup");
+	if (fs.existsSync(scriptPath)) {
+		const result = spawnSync("bash", [scriptPath, mainCwd], {
+			cwd: worktreePath,
+			encoding: "utf-8",
+			timeout: 120_000,
+			stdio: ["ignore", "pipe", "pipe"],
+		});
+		if (result.status !== 0) {
+			// Non-fatal — log warning, sub-agent may still work or fix things
+			const stderr = (result.stderr ?? "").slice(0, 500);
+			console.error(`[planner] .worktree-setup failed (exit ${result.status}): ${stderr}`);
+		}
+	} else {
+		symlinkDeps(mainCwd, worktreePath);
+	}
+}
+
+/**
  * Commit any uncommitted changes in a worktree.
  * Returns true if a commit was made, false if the tree was clean.
  */
@@ -214,7 +242,12 @@ export function cleanupWorktree(mainCwd: string, wt: WorktreeInfo): void {
 					// ignore
 				}
 			}
-			git(["worktree", "remove", "--force", wt.path], mainCwd);
+			const result = git(["worktree", "remove", "--force", wt.path], mainCwd);
+			if (!result.ok && fs.existsSync(wt.path)) {
+				// Fallback: force-remove directory (e.g. real node_modules from npm ci)
+				fs.rmSync(wt.path, { recursive: true, force: true });
+				git(["worktree", "prune"], mainCwd);
+			}
 		}
 	} catch {
 		// Best-effort cleanup
