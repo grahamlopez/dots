@@ -54,6 +54,8 @@ import {
 // Bash safety — adapted from plan-mode example
 // ---------------------------------------------------------------------------
 
+// Only block commands that mutate state. Anything not matched here is allowed,
+// so agents can freely use grep, find, rg, pipes, xargs, compound commands, etc.
 const DESTRUCTIVE = [
 	/\brm\b/i,
 	/\brmdir\b/i,
@@ -66,8 +68,8 @@ const DESTRUCTIVE = [
 	/\bln\b/i,
 	/\btee\b/i,
 	/\btruncate\b/i,
-	/(^|[^<])>(?!>)/,
-	/>>/,
+	/(^|[^<])>(?!>|\/dev\/null|&)/,
+	/>>(?!\/dev\/null)/,
 	/\bnpm\s+(install|uninstall|update|ci|link|publish)/i,
 	/\byarn\s+(add|remove|install|publish)/i,
 	/\bpnpm\s+(add|remove|install|publish)/i,
@@ -77,53 +79,8 @@ const DESTRUCTIVE = [
 	/\bpkill\b/i,
 ];
 
-const SAFE = [
-	/^\s*cat\b/,
-	/^\s*head\b/,
-	/^\s*tail\b/,
-	/^\s*less\b/,
-	/^\s*more\b/,
-	/^\s*grep\b/,
-	/^\s*rg\b/,
-	/^\s*find\b/,
-	/^\s*fd\b/,
-	/^\s*ls\b/,
-	/^\s*pwd\b/,
-	/^\s*tree\b/,
-	/^\s*wc\b/,
-	/^\s*sort\b/,
-	/^\s*uniq\b/,
-	/^\s*diff\b/,
-	/^\s*file\b/,
-	/^\s*stat\b/,
-	/^\s*du\b/,
-	/^\s*df\b/,
-	/^\s*echo\b/,
-	/^\s*printf\b/,
-	/^\s*env\b/,
-	/^\s*which\b/,
-	/^\s*type\b/,
-	/^\s*uname\b/,
-	/^\s*whoami\b/,
-	/^\s*date\b/,
-	/^\s*uptime\b/,
-	/^\s*git\s+(status|log|diff|show|branch|remote|config\s+--get)/i,
-	/^\s*git\s+ls-/i,
-	/^\s*npm\s+(list|ls|view|info|outdated|audit)/i,
-	/^\s*node\s+--version/i,
-	/^\s*jq\b/,
-	/^\s*sed\s+-n/i,
-	/^\s*awk\b/,
-	/^\s*curl\b/,
-	/^\s*wget\b/,
-	/^\s*bat\b/,
-	/^\s*exa\b/,
-	/^\s*tsc\b/,
-	/^\s*python3?\s+--version/i,
-];
-
 function isSafeCommand(cmd: string): boolean {
-	return !DESTRUCTIVE.some((p) => p.test(cmd)) && SAFE.some((p) => p.test(cmd));
+	return !DESTRUCTIVE.some((p) => p.test(cmd));
 }
 
 // ---------------------------------------------------------------------------
@@ -616,6 +573,9 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				}
 			}
 
+			// Capture the model that wrote the plan from the live context
+			state.planningModel = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : planningModel;
+
 			// Exit plan mode now that we have a plan
 			if (planMode) planMode = false;
 
@@ -1056,7 +1016,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 	// -----------------------------------------------------------------------
 
 	pi.registerCommand("plan-code-review", {
-		description: "Spawn a code review subagent. Usage: /plan-code-review [--no-tmux] [--model <model>] [scope description or files]",
+		description: "Spawn a code review subagent. Usage: /plan-code-review [--no-tmux] [--model <model>] [--desc <description>] [scope description or files]",
 
 		getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
 			const modelArgMatch = prefix.match(/^--model\s+(.*)$/);
@@ -1074,6 +1034,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 			const items: AutocompleteItem[] = [
 				{ value: "--no-tmux", label: "--no-tmux — headless execution (no tmux pane)" },
 				{ value: "--model", label: "--model <model> — model for the review agent" },
+				{ value: "--desc", label: "--desc <description> — custom description of the work being reviewed" },
 			];
 			const filtered = items.filter((i) => i.value.startsWith(prefix));
 			return filtered.length > 0 ? filtered : null;
@@ -1096,8 +1057,29 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				parts.splice(modelIdx, 2);
 			}
 
+			let desc: string | undefined;
+			const descIdx = parts.indexOf("--desc");
+			if (descIdx !== -1) {
+				const descTokens: string[] = [];
+				let i = descIdx + 1;
+				while (i < parts.length && !parts[i].startsWith("--")) {
+					descTokens.push(parts[i]);
+					i++;
+				}
+				if (descTokens.length === 0) {
+					ctx.ui.notify("--desc requires a value, e.g. --desc 'refactored auth module'", "error");
+					return;
+				}
+				desc = descTokens.join(" ");
+				parts.splice(descIdx, 1 + descTokens.length);
+			}
+
 			const scope = parts.filter((p) => p !== "--no-tmux").join(" ");
-			const prompt = scope ? `${CODE_REVIEW_PROMPT}\nFocus on: ${scope}` : CODE_REVIEW_PROMPT;
+
+			const reviewPrompt = desc
+				? CODE_REVIEW_PROMPT.replace("We just finished some new work.", `We just finished some new work: ${desc}.`)
+				: CODE_REVIEW_PROMPT;
+			const prompt = scope ? `${reviewPrompt}\nFocus on: ${scope}` : reviewPrompt;
 
 			const useTmux = !noTmux && isTmuxAvailable();
 
@@ -1107,7 +1089,7 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				originalWindowId = getOriginalWindowId();
 			}
 
-			ctx.ui.notify(`Starting code review${scope ? ` — ${scope}` : ""}${model ? ` [${model}]` : ""}`, "info");
+			ctx.ui.notify(`Starting code review${desc ? ` — ${desc}` : scope ? ` — ${scope}` : ""}${model ? ` [${model}]` : ""}`, "info");
 
 			try {
 				const output = useTmux
@@ -1214,7 +1196,6 @@ export default function plannerExtension(pi: ExtensionAPI) {
 				planningUsage.cost += u.cost?.total || 0;
 				planningUsage.turns++;
 			}
-			if (!planningModel && msg.model) planningModel = msg.model;
 		}
 	});
 

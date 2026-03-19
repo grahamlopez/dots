@@ -6,6 +6,7 @@
  *   - The implementer system prompt (--append-system-prompt)
  *   - The assembled task brief as its prompt
  *   - Default coding tools (read, bash, edit, write)
+ *   - research and web_fetch tools (explicitly loaded via -e)
  *   - No parent extensions (--no-extensions) for a clean tool set
  *
  * Output is captured via --mode json and parsed for usage tracking.
@@ -24,6 +25,7 @@ export const IMPLEMENTER_PROMPT = `You are an implementation agent executing a f
 - Follow constraints exactly — they represent deliberated architectural decisions
 - If you discover something that contradicts a constraint, note the conflict clearly but still work toward satisfying the goal
 - Work until all acceptance criteria are met
+- If you've attempted the same fix 2-3 times without progress, stop and reconsider your approach before trying again. If the issue involves a library, framework, or runtime behavior you're uncertain about, use the research or web_fetch tool to look up the specific error or API. Don't use research for bugs in the project's own logic — those are only solvable by reading the code.
 - If you get stuck, explain what's blocking you rather than producing broken code
 
 When you are finished, end your final message with this exact format:
@@ -61,6 +63,11 @@ export async function spawnImplementer(opts: {
 	onMessage?: (text: string) => void;
 }): Promise<SubagentOutput> {
 	const args = ["--mode", "json", "-p", "--no-session", "--no-extensions"];
+
+	// Explicitly load research and web_fetch extensions (allowed even with --no-extensions)
+	const extDir = path.join(os.homedir(), ".pi/agent/extensions");
+	args.push("-e", path.join(extDir, "research.ts"));
+	args.push("-e", path.join(extDir, "web-fetch/index.ts"));
 
 	// Write implementer system prompt to temp file
 	const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-plan-"));

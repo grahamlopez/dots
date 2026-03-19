@@ -7,6 +7,7 @@
  *   - Interactive pi with the implementer system prompt
  *   - The assembled task brief as its initial prompt
  *   - A session file in a temp directory (read back for structured results)
+ *   - research and web_fetch tools (explicitly loaded via -e)
  *   - No parent extensions (--no-extensions) for a clean tool set
  *
  * Completion is detected by polling for an exit-code marker file.
@@ -136,6 +137,12 @@ export async function spawnInTmuxPane(opts: {
 
 	// 2. Build the pi command arguments
 	const piArgs = ["--no-extensions", "--append-system-prompt", promptFile, "--session-dir", sessionDir];
+
+	// Explicitly load research and web_fetch extensions (allowed even with --no-extensions)
+	const extDir = path.join(os.homedir(), ".pi/agent/extensions");
+	piArgs.push("-e", path.join(extDir, "research.ts"));
+	piArgs.push("-e", path.join(extDir, "web-fetch/index.ts"));
+
 	if (opts.model) piArgs.push("--model", opts.model);
 	piArgs.push(`@${briefFile}`);
 
