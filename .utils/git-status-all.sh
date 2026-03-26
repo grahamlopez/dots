@@ -46,6 +46,12 @@ ICON_MODIFIED="±"
 ICON_UNTRACKED="?"
 ICON_DETACHED="⚠"
 
+DO_FETCH=false
+if [[ "${1:-}" == "--fetch" ]]; then
+    DO_FETCH=true
+    shift
+fi
+
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     cat <<EOF
 
@@ -58,7 +64,9 @@ DESCRIPTION
     of each one's status relative to its upstream.
 
 ARGUMENTS
-    PATH    Directory to scan. Defaults to \$HOME if omitted.
+    --fetch  Fetch from upstream before checking status. Gives accurate
+             behind/ahead counts at the cost of speed and network access.
+    PATH     Directory to scan. Defaults to \$HOME if omitted.
 
 OUTPUT
     Each repository shows:
@@ -96,6 +104,7 @@ IGNORE LIST
 EXAMPLES
     $(basename "$0")                  Scan entire home directory
     $(basename "$0") ~/work           Scan only ~/work
+    $(basename "$0") --fetch ~/work   Fetch remotes first, then scan ~/work
     $(basename "$0") ~/work/myrepo    Scan a single repo directory
 
 EOF
@@ -131,6 +140,11 @@ summarize_repo() {
         branch=$("${g[@]}" rev-parse --short HEAD 2>/dev/null || echo "unknown")
         detached=true
     }
+
+    # Fetch upstream if requested
+    if $DO_FETCH; then
+        "${g[@]}" fetch --quiet 2>/dev/null || true
+    fi
 
     # Get upstream tracking info
     local upstream ahead behind
