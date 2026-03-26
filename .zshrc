@@ -124,6 +124,8 @@ alias nvpn='nmcli connection up nvidia\ beaverton'
 alias gpg-kill-agent='gpgconf --kill gpg-agent'
 alias ssh-kill-agent='pkill ssh-agent'
 alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME' # dotfile management
+# launch kitty to trust remote ssh hosts with our local clipboard contents
+alias kitty_trusted='kitty -o clipboard_control="write-clipboard write-primary read-clipboard read-primary no-ask"'
 # Reuse ssh-agent if it’s already running
 if [ -S "${HOME}/.ssh/agent.sock" ]; then
     export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
