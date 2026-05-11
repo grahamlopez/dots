@@ -392,6 +392,19 @@ vim.api.nvim_create_autocmd({ "ColorScheme", "OptionSet", "VimEnter", "WinNew", 
   end
 })
 -- }}}
+-- Glow markdown viewer {{{
+vim.api.nvim_create_user_command("Glow", function()
+  local cols = math.max(vim.api.nvim_win_get_width(0) - 2, 20)
+  local file = vim.fn.expand("%:p")
+
+  if file == "" then
+    vim.notify("Glow: current buffer has no file name", vim.log.levels.WARN)
+    return
+  end
+
+  vim.cmd("terminal glow -w " .. cols .. " " .. vim.fn.fnameescape(file))
+end, {})
+-- }}}
 -- }}}
 
 -- Filetype specifics {{{
