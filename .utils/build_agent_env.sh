@@ -397,6 +397,12 @@ install_dotfiles() {
 
   if [ ! -d "$DOTFILES_DIR" ]; then
     git clone --bare "$DOTFILES_REPO" "$DOTFILES_DIR"
+    # A bare clone leaves remote.origin.fetch unset, so no refs/remotes/origin/*
+    # tracking refs exist and "origin/main" is not a valid object name. Configure
+    # the refspec and fetch so the tracking refs (and origin/HEAD) materialize.
+    git --git-dir="$DOTFILES_DIR" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+    git --git-dir="$DOTFILES_DIR" fetch --prune origin
+    git --git-dir="$DOTFILES_DIR" remote set-head origin --auto >/dev/null 2>&1 || true
   else
     git --git-dir="$DOTFILES_DIR" fetch --prune origin
   fi
