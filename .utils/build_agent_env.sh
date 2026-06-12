@@ -232,6 +232,7 @@ sudo apt-get update && sudo apt-get install -y \
   shellcheck \
   tar \
   unzip \
+  util-linux \
   wget \
   xclip \
   xz-utils
@@ -291,6 +292,7 @@ EOF2
     python3 \
     rg \
     sed \
+    setsid \
     shellcheck \
     ssh-keygen \
     ssh-keyscan \
@@ -449,7 +451,9 @@ latest_github_tag() {
   location=$(curl -fsSIL "$latest_url" | tr -d '\r' | awk '/^[Ll]ocation:/ {value=$2} END {print value}')
   tag=${location##*/}
 
-  [ -n "$tag" ] && [ "$tag" != "$location" ] || die "could not determine latest release tag for $repo"
+  if [ -z "$tag" ] || [ "$tag" = "$location" ]; then
+    die "could not determine latest release tag for $repo"
+  fi
   printf '%s\n' "$tag"
 }
 
@@ -542,7 +546,7 @@ install_nvim() {
 
 install_nvm_node() {
   log "Installing nvm, Node.js, and npm"
-  export NVM_DIR=$HOME/.nvm
+  export NVM_DIR="$HOME/.nvm"
 
   if [ ! -s "$NVM_DIR/nvm.sh" ]; then
     mkdir -p "$NVM_DIR"
@@ -560,7 +564,7 @@ install_nvm_node() {
 
 install_global_npm_tools() {
   log "Installing global npm development tools"
-  export NVM_DIR=$HOME/.nvm
+  export NVM_DIR="$HOME/.nvm"
   # shellcheck disable=SC1091
   . "$NVM_DIR/nvm.sh"
   nvm use default >/dev/null
@@ -577,7 +581,7 @@ install_ai_tools() {
   [ "$SKIP_AI_TOOLS" = 0 ] || return 0
 
   log "Installing agent CLIs"
-  export NVM_DIR=$HOME/.nvm
+  export NVM_DIR="$HOME/.nvm"
   # shellcheck disable=SC1091
   . "$NVM_DIR/nvm.sh"
   nvm use default >/dev/null
@@ -589,7 +593,7 @@ install_ai_tools() {
     "$HOME/.claude/local/bin/claude"
 
   download_file "$CODEX_INSTALL_URL" "$SCRATCH_DIR/codex-install.sh"
-  sh "$SCRATCH_DIR/codex-install.sh"
+  CODEX_NON_INTERACTIVE=true sh "$SCRATCH_DIR/codex-install.sh"
   symlink_file "$BIN_DIR/codex" \
     "$HOME/.local/bin/codex" \
     "$HOME/.codex/bin/codex"
@@ -605,7 +609,9 @@ install_ai_tools() {
     "$HOME/.local/bin/agent"
 
   download_file "$PI_INSTALL_URL" "$SCRATCH_DIR/pi-install.sh"
-  sh "$SCRATCH_DIR/pi-install.sh"
+  # Pi reads its install confirmation from /dev/tty. Running it without a
+  # controlling TTY makes its installer choose the install/reinstall default.
+  TERM=dumb setsid sh "$SCRATCH_DIR/pi-install.sh"
   symlink_file "$BIN_DIR/pi" \
     "$HOME/.local/bin/pi" \
     "$HOME/.pi/bin/pi"
