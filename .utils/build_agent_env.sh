@@ -11,18 +11,22 @@ set -eu
 #   DOTFILES_REPO=git@github.com:grahamlopez/dots \
 #   PI_AGENT_REPO=git@github.com:grahamlopez/pi-configs \
 #   INSTALL_ROOT="$HOME/local" \
+#   GO_VERSION=go1.26.4 \
 #   sh build_agent_env.sh
 
 DOTFILES_REPO=${DOTFILES_REPO:-git@github.com:grahamlopez/dots}
 PI_AGENT_REPO=${PI_AGENT_REPO:-git@github.com:grahamlopez/pi-configs}
 INSTALL_ROOT=${INSTALL_ROOT:-"$HOME/local"}
 APPS_DIR=${APPS_DIR:-"$INSTALL_ROOT/apps"}
+OPT_DIR=${OPT_DIR:-"$INSTALL_ROOT/opt"}
 BIN_DIR=${BIN_DIR:-"$INSTALL_ROOT/bin"}
 SCRATCH_DIR=${SCRATCH_DIR:-"$INSTALL_ROOT/scratch"}
 DOTFILES_DIR=${DOTFILES_DIR:-"$HOME/.dots-git"}
 PI_AGENT_DIR=${PI_AGENT_DIR:-"$HOME/.pi"}
 NVM_VERSION=${NVM_VERSION:-v0.40.4}
 NODE_VERSION=${NODE_VERSION:-node}
+GO_VERSION=${GO_VERSION:-latest}
+GO_INSTALL_DIR=${GO_INSTALL_DIR:-"$OPT_DIR/go"}
 CLAUDE_INSTALL_URL=${CLAUDE_INSTALL_URL:-https://claude.ai/install.sh}
 CODEX_INSTALL_URL=${CODEX_INSTALL_URL:-https://chatgpt.com/codex/install.sh}
 CURSOR_INSTALL_URL=${CURSOR_INSTALL_URL:-https://cursor.com/install}
@@ -33,6 +37,7 @@ SKIP_DOTFILES=0
 SKIP_PI_AGENT=0
 SKIP_TMUX=0
 SKIP_NVIM=0
+SKIP_GO=0
 SKIP_AI_TOOLS=0
 
 usage() {
@@ -45,6 +50,7 @@ Options:
   --skip-pi-configs  Do not clone or update the pi-configs repo.
   --skip-tmux        Do not build tmux from GitHub releases.
   --skip-nvim        Do not install Neovim from GitHub releases.
+  --skip-go          Do not install Go from official binary releases.
   --skip-ai-tools    Do not install Claude, Codex, Cursor, or pi.dev CLIs.
   -h, --help         Show this help.
 
@@ -54,6 +60,8 @@ Environment overrides:
   INSTALL_ROOT       Default: $HOME/local
   NVM_VERSION        Default: v0.40.4
   NODE_VERSION       Default: node
+  GO_VERSION         Default: latest (or set to go1.26.4 / 1.26.4)
+  GO_INSTALL_DIR     Default: $INSTALL_ROOT/opt/go
   CLAUDE_INSTALL_URL Default: https://claude.ai/install.sh
   CODEX_INSTALL_URL  Default: https://chatgpt.com/codex/install.sh
   CURSOR_INSTALL_URL Default: https://cursor.com/install
@@ -77,6 +85,9 @@ while [ "$#" -gt 0 ]; do
       ;;
     --skip-nvim)
       SKIP_NVIM=1
+      ;;
+    --skip-go)
+      SKIP_GO=1
       ;;
     --skip-ai-tools)
       SKIP_AI_TOOLS=1
@@ -145,7 +156,8 @@ require_ubuntu_2404() {
 }
 
 ensure_dirs() {
-  mkdir -p "$APPS_DIR" "$BIN_DIR" "$SCRATCH_DIR"
+  mkdir -p "$APPS_DIR" "$OPT_DIR" "$BIN_DIR" "$SCRATCH_DIR"
+  export GOBIN="$BIN_DIR"
   export PATH="$BIN_DIR:$HOME/.local/bin:$HOME/.claude/local/bin:$HOME/.codex/bin:$HOME/.pi/bin:$PATH"
 }
 
@@ -192,17 +204,25 @@ ensure_profile_snippet() {
   marker='# agent-env bootstrap'
 
   touch "$profile"
-  if grep -Fq "$marker" "$profile"; then
-    return 0
-  fi
-
-  cat >> "$profile" <<EOF2
+  if ! grep -Fq "$marker" "$profile"; then
+    cat >> "$profile" <<EOF2
 
 # agent-env bootstrap
 export PATH="$BIN_DIR:\$HOME/.local/bin:\$PATH"
+export GOBIN="$BIN_DIR"
 export NVM_DIR="\$HOME/.nvm"
 [ -s "\$NVM_DIR/nvm.sh" ] && . "\$NVM_DIR/nvm.sh"
 EOF2
+    return 0
+  fi
+
+  if ! grep -Fq 'export GOBIN=' "$profile"; then
+    cat >> "$profile" <<EOF2
+
+# Go user command installs
+export GOBIN="$BIN_DIR"
+EOF2
+  fi
 }
 
 print_apt_prereq_command() {
@@ -287,12 +307,14 @@ EOF2
     git \
     jq \
     make \
+    mktemp \
     ninja \
     pkg-config \
     python3 \
     rg \
     sed \
     setsid \
+    sha256sum \
     shellcheck \
     ssh-keygen \
     ssh-keyscan \
@@ -544,6 +566,97 @@ install_nvim() {
   symlink_file "$BIN_DIR/nvim" "$prefix/bin/nvim"
 }
 
+go_release_arch() {
+  arch=$(uname -m)
+  case "$arch" in
+    x86_64|amd64)
+      printf 'amd64\n'
+      ;;
+    aarch64|arm64)
+      printf 'arm64\n'
+      ;;
+    *)
+      die "unsupported architecture for Go release asset: $arch"
+      ;;
+  esac
+}
+
+latest_go_version() {
+  version=$(curl -fsSL 'https://go.dev/VERSION?m=text' | awk 'NR == 1 { print; exit }')
+  [ -n "$version" ] || die "could not determine latest Go version"
+  printf '%s\n' "$version"
+}
+
+normalize_go_version() {
+  version=$1
+  case "$version" in
+    latest)
+      latest_go_version
+      ;;
+    go*)
+      printf '%s\n' "$version"
+      ;;
+    [0-9]*)
+      printf 'go%s\n' "$version"
+      ;;
+    *)
+      die "GO_VERSION must be 'latest' or a Go release version like go1.26.4"
+      ;;
+  esac
+}
+
+install_go() {
+  [ "$SKIP_GO" = 0 ] || return 0
+
+  log "Installing Go from official binary releases"
+  version=$(normalize_go_version "$GO_VERSION")
+  case "$version" in
+    *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-]*)
+      die "GO_VERSION resolved to unsafe release name: $version"
+      ;;
+  esac
+
+  arch=$(go_release_arch)
+  filename=$version.linux-$arch.tar.gz
+  prefix=$GO_INSTALL_DIR/$version
+  archive=$SCRATCH_DIR/$filename
+  metadata=$SCRATCH_DIR/go-releases.json
+
+  download_file 'https://go.dev/dl/?mode=json&include=all' "$metadata"
+  sha256=$(jq -r --arg filename "$filename" '[.[] | .files[] | select(.filename == $filename) | .sha256][0] // ""' "$metadata")
+  [ -n "$sha256" ] || die "could not find checksum for $filename in Go release metadata"
+
+  mkdir -p "$GO_INSTALL_DIR" "$BIN_DIR"
+
+  if [ -x "$prefix/bin/go" ]; then
+    log "Go $version is already installed"
+  elif [ -e "$prefix" ]; then
+    die "$prefix exists but does not contain bin/go"
+  else
+    extract_dir=$SCRATCH_DIR/go-extract-$version
+    rm -rf "$extract_dir"
+    mkdir -p "$extract_dir"
+
+    download_file "https://go.dev/dl/$filename" "$archive"
+    printf '%s  %s\n' "$sha256" "$archive" | sha256sum -c -
+
+    tar -xzf "$archive" -C "$extract_dir"
+    [ -x "$extract_dir/go/bin/go" ] || die "Go archive did not contain go/bin/go"
+    mv "$extract_dir/go" "$prefix"
+    rm -rf "$extract_dir"
+  fi
+
+  ln -sfn "$version" "$GO_INSTALL_DIR/current"
+  symlink_file "$BIN_DIR/go" "$GO_INSTALL_DIR/current/bin/go"
+  symlink_file "$BIN_DIR/gofmt" "$GO_INSTALL_DIR/current/bin/gofmt"
+
+  export GOBIN="$BIN_DIR"
+  goroot=$("$BIN_DIR/go" env GOROOT)
+  [ -d "$goroot/src" ] || die "installed go reported unusable GOROOT: $goroot"
+
+  log "Go $version installed with GOROOT=$goroot and GOBIN=$GOBIN"
+}
+
 install_nvm_node() {
   log "Installing nvm, Node.js, and npm"
   export NVM_DIR="$HOME/.nvm"
@@ -625,9 +738,9 @@ Done.
 Installed into:
   $INSTALL_ROOT
 
-Make sure this is on your PATH in new shells:
-  $BIN_DIR
-  $HOME/.local/bin
+Make sure these settings are active in new shells:
+  PATH includes $BIN_DIR and $HOME/.local/bin
+  GOBIN=$BIN_DIR
 
 If this was the first nvm install in the shell, open a new terminal or run:
   export NVM_DIR="\$HOME/.nvm"
@@ -648,6 +761,7 @@ main() {
   install_pi_agent_repo
   install_tmux
   install_nvim
+  install_go
   install_nvm_node
   ensure_profile_snippet
   install_global_npm_tools

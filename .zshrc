@@ -77,6 +77,7 @@ if [[ -f "/mnt/c/Users/glopez/Synct/notes/bookmarks.md" ]]; then
 fi
 
 export PATH="${HOME}/local/bin:${PATH}"
+export GOBIN="${HOME}/local/bin"
 export PATH="${HOME}/.local/bin:${PATH}"
 
 #################################################################
