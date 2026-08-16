@@ -1,28 +1,8 @@
 #!/bin/env bash
+# Dropdown bookmarks buffer (CTRL + 8). Geometry lives in the window rules for
+# class "booksdown" in ~/.config/hypr/hyprland.lua.
 
-books_workspace=$(hyprctl clients -j | jq -rec '.[] | select(.class == "booksdown") | .workspace .name')
+source "$(dirname "$(readlink -f "$0")")/hypr-lib.sh"
 
-echo "booksdown currently on $books_workspace"
-
-current_ws=$(hyprctl activeworkspace -j | jq '.id')
-
-if [ -z "$books_workspace" ]; then
-
-	echo "start"
-	hyprctl dispatch -- exec "[float; size 1200 800]" kitty --class booksdown -e /home/graham/local/bin/nvim ~/Synct/notes/bookmarks.md
-  sleep 0.1
-  hyprctl dispatch centerwindow
-  hyprctl dispatch moveactive "0 -80%"
-
-elif [ "$books_workspace" == "special:booksdown" ]; then
-
-	echo "show"
-	#hyprctl dispatch movetoworkspace "1,class:booksdown"
-	hyprctl dispatch movetoworkspace "${current_ws},class:booksdown"
-
-else
-
-	echo "hide"
-	hyprctl dispatch movetoworkspacesilent "special:booksdown,class:booksdown"
-
-fi
+hypr_dropdown booksdown \
+    kitty --class booksdown -e /home/graham/local/bin/nvim "$HOME/Synct/notes/bookmarks.md"

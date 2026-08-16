@@ -1,6 +1,9 @@
 #!/bin/env bash
+# Clipboard history picker (CTRL + 0). One-shot: it exits once you choose, so it
+# has no special workspace of its own -- it just opens on the current one.
+# Geometry lives in the window rules for class "clipdown" in
+# ~/.config/hypr/hyprland.lua.
 
-hyprctl dispatch -- exec "[float; size 1200 600]" kitty --class clipdown sh -c '/home/graham/.utils/quake-clip-picker.sh'
-sleep 0.2
-hyprctl dispatch centerwindow
-hyprctl dispatch moveactive "0 -80%"
+source "$(dirname "$(readlink -f "$0")")/hypr-lib.sh"
+
+hypr_exec kitty --class clipdown sh -c /home/graham/.utils/quake-clip-picker.sh

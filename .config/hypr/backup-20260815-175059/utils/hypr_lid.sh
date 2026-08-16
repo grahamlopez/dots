@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-source "$(dirname "$(readlink -f "$0")")/hypr-lib.sh"
-
 # always kill the quake term as its positioning gets confused
 quake_pid = $(ps -eaf | grep 'class dropdown' | grep -v grep | awk '{print $2}')
 kill ${quake_pid}
@@ -10,9 +8,9 @@ kill ${quake_pid}
 if [[ "$(hyprctl monitors)" =~ DP-[0-9][0-9]* ]]; then
   # Handle lid events when external monitor is present
   if [[ $1 == "open" ]]; then                             # monitor connected, lid open
-    hypr_monitor "eDP-1" "preferred" "auto-down" 1
+    hyprctl keyword monitor "eDP-1, preferred, auto-down, 1"
   else                                                    # monitor connected, lid closed
-    hypr_monitor_disable "eDP-1"
+    hyprctl keyword monitor "eDP-1, disable"
   fi
 else # monitor is not connected
   # Get current lid state
@@ -20,6 +18,6 @@ else # monitor is not connected
   if [[ "$lid_state" == "closed" ]]; then                 # no monitor, lid closed
     systemctl suspend
   else                                                    # no monitor, lid open
-    hypr_monitor "eDP-1" "preferred" "0x0" 1
+    hyprctl keyword monitor "eDP-1, preferred, 0x0, 1"
   fi
 fi
