@@ -261,7 +261,39 @@ bindkey -M isearch " " self-insert
 # Appearance and prompt                                       {{{
 #################################################################
 
-eval `/usr/bin/dircolors ~/.dir_colors`
+# Start from dircolors' built-in defaults, then re-apply my palette on top.
+# Later keys win, so these overrides beat the stock values.
+#
+# Why not a ~/.dir_colors file: dircolors only emits LS_COLORS when TERM
+# matches one of the file's TERM globs. The old solarized file was written for
+# coreutils 5.97 and lists no xterm-kitty (and no COLORTERM catch-all), so it
+# silently produced an EMPTY LS_COLORS - no colour at all - outside tmux.
+# The built-in defaults cover modern terminals; only the palette was worth keeping.
+#
+# Palette: dirs cyan, symlinks magenta, executables red, source/text green,
+# archives magenta, media yellow, backups cyan. The stock ow/tw/st/su/sg
+# entries are cleared because they use unreadable coloured backgrounds
+# (other-writable dirs default to blue-on-green).
+eval "$(dircolors -b)"
+LS_COLORS+=":di=36:ln=35:ex=01;31:ow=:tw=:st=:su=:sg="
+for _e in c h cc cpp cxx hpp py sh zsh bash pl pm rb js ts jsx html htm css scss \
+          md org tex txt vim lua el conf cfg ini yml yaml toml json xml; do
+  LS_COLORS+=":*.$_e=32"
+done
+for _e in tar tgz tbz tbz2 gz bz bz2 xz zst zip 7z rar arj cab deb rpm jar war \
+          apk iso dmg msi gem Z z; do
+  LS_COLORS+=":*.$_e=1;35"
+done
+for _e in png jpg jpeg gif bmp tif tiff svg svgz xcf xpm ppm pgm pbm webp \
+          mp4 m4v mkv avi mov mpg mpeg webm wmv flv ogv ogm vob qt rm rmvb asf \
+          mp3 flac wav aac ogg opus mid midi mka ra au pdf ps eps; do
+  LS_COLORS+=":*.$_e=33"
+done
+for _e in bak old orig swp swo dist; do
+  LS_COLORS+=":*.$_e=01;36"
+done
+unset _e
+export LS_COLORS
 
 # colored completion - use my LS_COLORS
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
@@ -305,16 +337,34 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
   ACYAN=$'\e[0;36m'
   APURPLE=$'\e[0;35m'
 
-# for git repo information
-source ~/.zsh/git-prompt.sh
+# for git repo information. Prefer the copy shipped with git (so it updates
+# when git does), falling back to the vendored one on machines whose packaging
+# omits it. Paths differ by distro; first readable hit wins.
+for _gp in /usr/share/git/git-prompt.sh \
+           /usr/share/git-core/contrib/completion/git-prompt.sh \
+           /usr/share/git/completion/git-prompt.sh \
+           /usr/lib/git-core/git-sh-prompt \
+           ~/.zsh/git-prompt.sh; do
+  [[ -r $_gp ]] && source $_gp && break
+done
+unset _gp
 setopt prompt_subst
 
 export GIT_PS1_SHOWDIRTYSTATE=true
 export GIT_PS1_SHOWUPSTREAM="auto"
 export GIT_PS1_SHOWCOLORHINTS=true
 
-PROMPT='$GREEN%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR'
-# PROMPT='$RED%m$CYAN:$CYAN%3~$YELLOW$(__git_ps1 "(%s)")$CYAN-| $NOCOLOR' # root
+# The dotfiles bare repo has core.worktree=$HOME, so git can resolve $HOME
+# itself as a work tree and the prompt then reports the dots repo while you
+# are just sitting at home. Suppress it in that one directory; subdirectories
+# and every real repo are unaffected.
+_git_ps1() {
+  [[ $PWD == $HOME ]] && return
+  __git_ps1 "$@"
+}
+
+PROMPT='$GREEN%m$CYAN:$CYAN%3~$YELLOW$(_git_ps1 "(%s)")$CYAN-| $NOCOLOR'
+# PROMPT='$RED%m$CYAN:$CYAN%3~$YELLOW$(_git_ps1 "(%s)")$CYAN-| $NOCOLOR' # root
 
 RPROMPT='$RED%(?..[%?]) $CYAN|$WHITE%*$NOCOLOR'
 

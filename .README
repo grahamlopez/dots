@@ -10,6 +10,10 @@ alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME'
 dgit config status.showUntrackedFiles no
 ```
 
+Note the consequence of `showUntrackedFiles no`: a new file in $HOME is
+invisible to `dgit status` until you `dgit add` it - status will look clean
+even when it isn't. Use `dgit status -uall` to see untracked files.
+
 ## Usage
 
 Now any files in $HOME can be versioned as usual with things like:
@@ -52,5 +56,5 @@ edit `.dots-git/config` and add the following:
 
 To change the remote e.g. from https: to git:
 ```
-git remote set-url origin git@github.com/grahamlopez/dots.git
+git remote set-url origin git@github.com:grahamlopez/dots.git
 ```
