@@ -6,6 +6,8 @@
 # Format: "git-dir:work-tree"  — both support ~ expansion.
 BARE_REPOS=(
     ~/.dots-git:~
+    ~/.dots-gui-git:~
+    ~/.dots-ai-git:~
 )
 # ─────────────────────────────────────────────────────────────────────────────
 
