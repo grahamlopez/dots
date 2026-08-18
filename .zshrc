@@ -8,9 +8,12 @@
 # general options                                             {{{
 #################################################################
 
-# load some custom completions
-fpath=(~/.zsh/completion ~/.zsh/completion/conda-zsh-completion $fpath)
-# this is as directed in 20.2.1 of zsh manual
+# Add completions only if they exist on this machine. /some/path/to/dir(N/)
+# matches a 'dir/' directory, but not recursively, and "N" drops the path when
+# there is no match, instead of leaving a dead path sitting in fpath.
+fpath=(~/.zsh/completion(N/) ~/.zsh/completion/conda-zsh-completion(N/) $fpath)
+
+# completion system (see 20.2.1 of the zsh manual)
 autoload -Uz compinit
 compinit -i
 
@@ -34,12 +37,14 @@ setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded 
 #setopt HIST_VERIFY               # Don't execute immediately upon history expansion.
 #setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 
-export SHELL=$(which zsh)
+export SHELL=${commands[zsh]}   # zsh's own command table; no subprocess
 export EDITOR=nvim
 export VISUAL=nvim
-export LESS='-ifqm'         # set up the parameters for 'less'
-export PAGER='less'     # use less for stuff (such as man)
-#export PAGER='less -RM'
+# Single source of truth for less. -R passes color through, which the old
+# '-ifqm' lacked - anything piping color to less without the alias showed
+# raw escape codes. MANPAGER below adds only what is man-specific.
+export LESS='-ifqMR'
+export PAGER='less'
 
 umask 077
 limit coredumpsize 0        # Turn off core dumps
@@ -62,6 +67,9 @@ export REPORTTIME=5
 # disable gnome/kde-ssh keyring nonsense on remote servers
 [ -n "$SSH_CONNECTION" ] && unset SSH_ASKPASS
 
+# -U keeps these arrays de-duplicated, so re-sourcing this file (or a nested
+# shell) cannot stack the same directory onto PATH twice.
+typeset -U path PATH
 export PATH="${HOME}/local/bin:${PATH}"
 export GOBIN="${HOME}/local/bin"
 export PATH="${HOME}/.local/bin:${PATH}"
@@ -101,8 +109,8 @@ bindkey '^U' kill-whole-line
 # general commands defaults
 alias ls="ls --color=auto -F"
 alias grep="grep --color=auto"
-alias less="less -RM"
-[ $(command -v nvim) ] && alias vim="nvim"
+# $+commands[x] is zsh's own lookup: no subprocess, no quoting hazard
+(( $+commands[nvim] )) && alias vim="nvim"
 alias vimall="nvim **/*(.)"
 
 # dotfile management
@@ -258,39 +266,44 @@ eval `/usr/bin/dircolors ~/.dir_colors`
 # colored completion - use my LS_COLORS
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-# Color shortcuts
-  RED='%{[0;31m%}'
-  LIGHTRED='%{[1;31m%}'
+# Color shortcuts. $'\e' rather than a literal ESC byte, so these lines stay
+# readable in diffs, pagers and web views (same idiom as LESS_TERMCAP_* below).
+# The %{...%} pairs tell zsh the escape occupies zero display columns; the
+# A* variants are bare ANSI, for echo/printf rather than the prompt.
+# PROMPT/RPROMPT currently use only RED GREEN YELLOW CYAN WHITE NOCOLOR;
+# the others are kept for reference.
+  RED=$'%{\e[0;31m%}'
+  LIGHTRED=$'%{\e[1;31m%}'
 
-  GREEN='%{[0;32m%}'
-  LIGHTGREEN='%{[1;32m%}'
+  GREEN=$'%{\e[0;32m%}'
+  LIGHTGREEN=$'%{\e[1;32m%}'
 
-  YELLOW='%{[0;33m%}'
-  LIGHTYELLOW='%{[1;33m%}'
+  YELLOW=$'%{\e[0;33m%}'
+  LIGHTYELLOW=$'%{\e[1;33m%}'
 
-  BLUE='%{[0;34m%}'
-  LIGHTBLUE='%{[1;34m%}'
+  BLUE=$'%{\e[0;34m%}'
+  LIGHTBLUE=$'%{\e[1;34m%}'
 
-  PURPLE='%{[0;35m%}'
-  LIGHTPURPLE='%{[1;35m%}'
+  PURPLE=$'%{\e[0;35m%}'
+  LIGHTPURPLE=$'%{\e[1;35m%}'
 
-  CYAN='%{[0;36m%}'
-  LIGHTCYAN='%{[1;36m%}'
+  CYAN=$'%{\e[0;36m%}'
+  LIGHTCYAN=$'%{\e[1;36m%}'
 
-  GRAY='%{[1;30m%}'
-  LIGHTGRAY='%{[0;37m%}'
+  GRAY=$'%{\e[1;30m%}'
+  LIGHTGRAY=$'%{\e[0;37m%}'
 
-  WHITE='%{[0;37m%}'
-  LIGHTWHITE='%{[1;37m%}'
+  WHITE=$'%{\e[0;37m%}'
+  LIGHTWHITE=$'%{\e[1;37m%}'
 
-  NOCOLOR='%{[0m%}'
+  NOCOLOR=$'%{\e[0m%}'
 
-  ARED='[0;31m'
-  ANOCOLOR='[0;0m'
-  AGREEN='[0;32m'
-  ABLUE='[0;34m'
-  ACYAN='[0;36'
-  APURPLE='[0;35m'
+  ARED=$'\e[0;31m'
+  ANOCOLOR=$'\e[0;0m'
+  AGREEN=$'\e[0;32m'
+  ABLUE=$'\e[0;34m'
+  ACYAN=$'\e[0;36m'
+  APURPLE=$'\e[0;35m'
 
 # for git repo information
 source ~/.zsh/git-prompt.sh
@@ -314,7 +327,8 @@ export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 export GROFF_NO_SGR=1                  # for konsole and gnome-terminal
 
-export MANPAGER='less -s -M +Gg'
+# inherits $LESS; -s squeezes blank lines, +Gg is the man line-count trick
+export MANPAGER='less -s +Gg'
 
 #################################################################
 # }}}
@@ -325,6 +339,8 @@ export MANPAGER='less -s -M +Gg'
 # Auto installed stuff                                        {{{
 #################################################################
 
+# Intentional: the -s guards make this a no-op on machines without ~/.nvm,
+# and load nvm on the ones that have it. Not dead code - leave it.
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
