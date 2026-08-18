@@ -89,7 +89,7 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
 vim.opt.foldenable = true
-vim.opt.foldcolumn = "0" -- enable minimal foldcolumn for mouse interaction
+vim.opt.foldcolumn = "0" -- "1" shows the fold gutter (click to open/close folds)
 vim.opt.fillchars:append({ fold = " " })
 vim.opt.hidden = true
 vim.opt.history = 1000    -- More command history
@@ -97,11 +97,8 @@ vim.opt.hlsearch = true   -- Set highlight on search
 vim.opt.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search
 vim.opt.inccommand = "split"
 vim.opt.laststatus = 3
-vim.opt.lazyredraw = true -- Don't redraw during macros
 vim.opt.linebreak = true  -- Break at word boundaries if wrap enabled
-vim.opt.listchars = { tab = "→ ", trail = "·", nbsp = "○", extends = "▸", precedes = "◂", }
 vim.g.loaded_perl_provider = 0
-vim.g.loaded_python_provider = 0
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0 -- Disable some providers for faster startup
 vim.loader.enable()            -- Enable faster Lua module loading
@@ -129,7 +126,6 @@ vim.opt.tabstop = 2                    -- Tab width
 vim.opt.termguicolors = true
 vim.opt.textwidth = 80                 -- Text width for formatting
 vim.opt.timeoutlen = 500               -- More lenient keybindings vs. faster which-key popup
-vim.opt.ttyfast = true                 -- Fast terminal connection
 vim.opt.undofile = true                -- Persistent undo
 vim.opt.updatetime = 250               -- Faster completion (4000ms default)
 vim.opt.virtualedit = "block"
@@ -252,7 +248,8 @@ vim.api.nvim_create_autocmd('CmdlineEnter', {
 
 -- TODO and friends {{{
 -- grep todo keywords and add to quickfix
-if vim.fn.executable('rg') then -- FIXME: redundant: this is already the default
+-- == 1 is required: executable() returns 0/1, and 0 is truthy in Lua
+if vim.fn.executable('rg') == 1 then
   vim.opt.grepprg = "rg --vimgrep --no-hidden --no-heading"
 end
 vim.api.nvim_create_user_command("Todos", function()
@@ -371,12 +368,14 @@ vim.keymap.set('n', '<leader>ut', ToggleTransparent, { desc = 'Toggle transparen
 
 -- listchars display {{{
 -- Show listchars
+-- single definition (glyphs kept from the former duplicate up in Options)
 vim.opt.listchars = {
-  tab = "▸ ",
+  tab = "→ ",
   trail = "·",
+  nbsp = "○",
   space = "·",
-  extends = "⟩",
-  precedes = "⟨",
+  extends = "▸",
+  precedes = "◂",
 }
 
 -- Color all listchars whitespace
@@ -436,9 +435,10 @@ vim.api.nvim_create_autocmd("VimEnter", {
 vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = "init.lua",
   callback = function()
-    vim.opt.foldmethod = "marker"
-    vim.opt.foldmarker = "{{{,}}}"
-    vim.opt.foldlevel = 0
+    -- opt_local: global here would clobber treesitter folding everywhere else
+    vim.opt_local.foldmethod = "marker"
+    vim.opt_local.foldmarker = "{{{,}}}"
+    vim.opt_local.foldlevel = 0
   end,
 })
 -- }}}

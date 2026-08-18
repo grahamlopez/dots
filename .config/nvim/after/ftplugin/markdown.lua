@@ -17,22 +17,24 @@
 -- :scriptnames          " Shows load sequence
 -- :verbose set tabstop? " Reveals *where* option was last set (file:line)
 --
-vim.opt.tabstop = 2        -- Tab width
-vim.opt.shiftwidth = 2     -- Indent width
-vim.opt.softtabstop = 2    -- Soft tab width
-vim.opt.expandtab = true   -- Use spaces instead of tabs
-vim.opt.smartindent = true -- Smart autoindenting
-vim.opt.autoindent = true  -- Copy indent from current line
-vim.opt.breakindent = true -- Maintain indent when wrapping
-vim.opt.wrap = true        -- Don't wrap lines
-vim.opt.linebreak = true   -- Break at word boundaries if wrap enabled
-vim.opt.textwidth = 0      -- Text width for formatting
-vim.opt.foldlevel = 1
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldenable = true
-vim.opt.conceallevel = 2
--- vim.opt.concealcursor = "nc"
+-- opt_local, not opt: these must stay buffer/window-local or they leak into
+-- every other buffer for the rest of the session (see the note above).
+vim.opt_local.tabstop = 2        -- Tab width
+vim.opt_local.shiftwidth = 2     -- Indent width
+vim.opt_local.softtabstop = 2    -- Soft tab width
+vim.opt_local.expandtab = true   -- Use spaces instead of tabs
+vim.opt_local.smartindent = true -- Smart autoindenting
+vim.opt_local.autoindent = true  -- Copy indent from current line
+vim.opt_local.breakindent = true -- Maintain indent when wrapping
+vim.opt_local.wrap = true        -- Wrap long lines visually
+vim.opt_local.linebreak = true   -- Break at word boundaries if wrap enabled
+vim.opt_local.textwidth = 0      -- No hard wrapping in prose
+vim.opt_local.foldlevel = 1
+vim.opt_local.foldmethod = "expr"
+vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt_local.foldenable = true
+vim.opt_local.conceallevel = 2
+-- vim.opt_local.concealcursor = "nc"
 vim.treesitter.start(vim.api.nvim_get_current_buf(), "markdown") -- Force reload TS parser
 
 vim.keymap.set("n", "<leader>P", 'a<C-o>:set paste<cr>[<C-r>+](<C-r>+)<C-o>:set nopaste<cr>', { desc = "url paste" })

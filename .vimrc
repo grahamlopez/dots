@@ -56,10 +56,11 @@ noremap <c-e> 5
 noremap <c-y> 5
 
 " so cursor can navigate within wrapped lines
-noremap  <buffer> <silent> k gk
-noremap  <buffer> <silent> j gj
-noremap  <buffer> <silent> 0 g0
-noremap  <buffer> <silent> $ g$
+" no <buffer> here: at vimrc scope that would bind only the startup buffer
+noremap  <silent> k gk
+noremap  <silent> j gj
+noremap  <silent> 0 g0
+noremap  <silent> $ g$
 " so it also works with operations
 onoremap <silent> j gj
 onoremap <silent> k gk
@@ -107,9 +108,6 @@ nnoremap <c-b> :ls<cr>:b<Space>
 
 " http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
 
-" setting terminal stuff must appear before color/syntax settings
-set t_Co=256
-
 " turn on syntax highlighting support
 syntax enable
 
@@ -145,12 +143,8 @@ highlight SpellBad ctermfg=yellow cterm=undercurl
 ":hi Todo none
 " or change its color
 hi Todo ctermfg=Red ctermbg=NONE guifg=Red guibg=NONE
-" set color of sign column for using things like vim-signify
-" (may have to change these in the plugin itself - gets loaded too late?)
+" keep the sign column transparent
 hi SignColumn guibg=NONE ctermbg=NONE guifg=NONE ctermfg=NONE
-hi SignifySignAdd ctermbg=NONE guibg=NONE
-hi SignifySignDelete ctermbg=NONE guibg=NONE
-hi SignifySignChange ctermbg=NONE guibg=NONE
 
 " color the line numbers a certain way
 highlight LineNr ctermfg=grey guifg=grey
@@ -171,10 +165,12 @@ hi CursorColumn ctermbg=237 guibg=#121212
 "highlight Folded ctermbg=233 guibg=#121212
 highlight Folded cterm=NONE ctermfg=94 guifg=#875f00
 highlight Folded ctermbg=NONE guibg=NONE
-set fillchars="vert:|,fold:"
+" `set fillchars="..."` blanks the option - a double quote starts a comment.
+" `let &opt` takes a normal string, so the trailing space needs no escaping.
+let &fillchars = 'vert:|,fold: '
 
 " show me trailing whitespace
-match ErrorMsg '\s\+$'  " don't need this as vim-airline shows me anyway
+match ErrorMsg '\s\+$'
 
 " change the colors of the popup menu (e.g. in autocompleteions)
 highlight Pmenu ctermfg=15 ctermbg=0 guifg=#ffffff guibg=#000000
@@ -184,14 +180,6 @@ highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Re
 highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Red
-
-" vim-indent-guides
-let g:indent_guides_indent_levels = 6
-let g:indent_guides_auto_colors = 0
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-hi IndentGuidesOdd  ctermbg=234
-hi IndentGuidesEven ctermbg=234
 
 " -----------------------------------------------------------------------------
 " }}}
@@ -372,13 +360,8 @@ highlight markdownItalic ctermfg=red
 highlight markdownBold cterm=bold
 highlight markdownBoldItalic ctermfg=red cterm=bold
 
+" built-in: runtime ftplugin/markdown.vim honors this
 let g:markdown_folding=1
-
-let g:vim_markdown_conceal=1
-
-" tweak vim-mail's behavior in mutt
-let g:VimMailStartFlags="to"
-let g:VimMailDoNotFold=1
 
 " -----------------------------------------------------------------------------
 " }}}
