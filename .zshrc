@@ -59,22 +59,8 @@ export REPORTTIME=5
 # specific environments                                       {{{
 #################################################################
 
-# start a keychain if available
-[ $(command -v keychain) ] && eval "$(keychain --nogui --quiet --eval --agents ssh id_ed25519)"
-
 # disable gnome/kde-ssh keyring nonsense on remote servers
 [ -n "$SSH_CONNECTION" ] && unset SSH_ASKPASS
-
-# use modulefiles if available
-moduleinit=${HOME}/local/apps/modules-4.7.1/init/zsh
-if [[ -f "$moduleinit" ]]; then
-  source $moduleinit
-  module use ~/local/modulefiles
-fi
-
-if [[ -f "/mnt/c/Users/glopez/Synct/notes/bookmarks.md" ]]; then
-  alias bookmarks="vim /mnt/c/Users/glopez/Synct/notes/bookmarks.md"
-fi
 
 export PATH="${HOME}/local/bin:${PATH}"
 export GOBIN="${HOME}/local/bin"
@@ -112,71 +98,31 @@ bindkey '^R' history-incremental-search-backward
 bindkey '^Y' yank
 bindkey '^U' kill-whole-line
 
-# setting defaults
+# general commands defaults
 alias ls="ls --color=auto -F"
 alias grep="grep --color=auto"
 alias less="less -RM"
 [ $(command -v nvim) ] && alias vim="nvim"
 alias vimall="nvim **/*(.)"
 
-# shortcuts
-alias fric='vim ${HOME}/Sync/notes/valence_computing/fric.md'
-alias nvpn='nmcli connection up nvidia\ beaverton'
-alias gpg-kill-agent='gpgconf --kill gpg-agent'
-alias ssh-kill-agent='pkill ssh-agent'
-alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME' # dotfile management
-# launch kitty to trust remote ssh hosts with our local clipboard contents
-alias kitty_trusted='kitty -o clipboard_control="write-clipboard write-primary read-clipboard read-primary no-ask"'
-# Reuse ssh-agent if it’s already running
-if [ -S "${HOME}/.ssh/agent.sock" ]; then
-    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
+# dotfile management
+alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME'
+alias ggit='git --git-dir=$HOME/.dots-gui-git/ --work-tree=$HOME'
+alias agit='git --git-dir=$HOME/.dots-ai-git/ --work-tree=$HOME'
+
+# ssh-agent on a fixed socket, reused across shells.
+# Starts a *keyless* agent if none is reachable - no passphrase prompt here.
+# Keys load on first actual connection via AddKeysToAgent in ~/.ssh/config.
+export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
+ssh-add -l >/dev/null 2>&1
+_ssh_agent_rc=$?               # capture immediately; 2 = no agent reachable
+if [ ${_ssh_agent_rc} -eq 2 ]; then
+    rm -f "${SSH_AUTH_SOCK}"   # clear a stale socket left by a dead agent
+    ssh-agent -a "${SSH_AUTH_SOCK}" >/dev/null 2>&1
 fi
-function agent-ssh () {
-    # Kill any existing agent that might be using this socket
-    [ -S "${HOME}/.ssh/agent.sock" ] && \
-        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 || true
+unset _ssh_agent_rc
 
-    eval "$(ssh-agent -a "${HOME}/.ssh/agent.sock" -s)"
-    export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-    ssh-add "${HOME}/.ssh/id_ed25519"
-}
-function _lazy_ssh_agent() {
-    # If we already have a usable agent with keys, do nothing
-    if [ -S "${HOME}/.ssh/agent.sock" ]; then
-        SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock" ssh-add -l >/dev/null 2>&1 && {
-            export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-            return
-        }
-    fi
-
-    # Otherwise, delegate to the known-good setup
-    agent-ssh
-}
-if [[ -f "${HOME}/.utils/lazy_ssh.sh" ]]; then
-  export GIT_SSH="${HOME}/.utils/lazy_ssh.sh"
-  alias ssh="${HOME}/.utils/lazy_ssh.sh"
-fi
-
-function dark_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-}
-
-function light_theme() {
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
-}
-
-function reset_hypr_scaling() {
-  hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
-}
-
-function opacity_kitty_toggle () {
-  if [ -n "$TMUX" ] ; then
-    echo "Opacity toggle disabled inside tmux" >&2
-    return 1
-  fi
-  kitty @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
-}
-
+# graphical environment related settings
 function brightness_set () {
   local max val backpath
 
@@ -209,6 +155,29 @@ function brightness_set () {
   echo "$val" > ${backpath}/brightness
 }
 
+function dark_theme() {
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+}
+
+function light_theme() {
+  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light'
+}
+
+function reset_hypr_scaling() {
+  hyprctl keyword monitor "eDP-1,preferred,auto,1.33"
+}
+
+# launch kitty to trust remote ssh hosts with our local clipboard contents
+alias kitty_trusted='kitty -o clipboard_control="write-clipboard write-primary read-clipboard read-primary no-ask"'
+
+function opacity_kitty_toggle () {
+  if [ -n "$TMUX" ] ; then
+    echo "Opacity toggle disabled inside tmux" >&2
+    return 1
+  fi
+  kitty @ --to ${KITTY_LISTEN_ON} set-background-opacity --toggle 1.0
+}
+
 # messing with neovim
 alias cvim="NVIM_APPNAME=nvim.cprog nvim"
 alias ovim="NVIM_APPNAME=nvim.old nvim"
@@ -226,77 +195,9 @@ function uninstall_nvim() {
     rm -rf ${HOME}/.cache/nvim.$1
   fi
 }
-function reinstall_lazyvim() {
-  uninstall_nvim "lazyvim"
-  rm -rf ${HOME}/.config/nvim.lazyvim
-  mkdir -p ${HOME}/.config/nvim.lazyvim
-  /usr/bin/git clone https://github.com/LazyVim/starter ${HOME}/.config/nvim.lazyvim
-}
-function reinstall_kickstart() {
-  uninstall_nvim "kickstart"
-  rm -rf ${HOME}/.config/nvim.kickstart
-  mkdir -p ${HOME}/.config/nvim.kickstart
-  /usr/bin/git clone https://github.com/nvim-lua/kickstart.nvim.git ${HOME}/.config/nvim.kickstart
-}
 
-
-# check git repos under current directory
-# needs some work and cleanup
-showAllReposWithChanges() {
-  for n in `find -name .git`
-    do (
-      cd ${n/%.git/}
-      if [ "$(/usr/bin/git status --porcelain)" ]
-        then echo $PWD
-      fi
-    )
-    done
-}
 
 # more homegrown functions
-
-# for config file management
-function git() {
-  if [[ $(pwd) == ${HOME} || $(pwd) == ${HOME}/.config/nvim ]] ; then
-    command git --git-dir=$HOME/.dots-git/ --work-tree=$HOME "$@"
-  else
-    command git "$@"
-  fi
-}
-
-# python and conda related stuff
-function conda_zsh_init() {
-  eval "$(/home/graham/local/apps/miniconda3/bin/conda shell.zsh hook)"
-}
-
-# for docker cleanup
-function dcleanup() {
-    docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-    docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
-}
-
-# pandoc markdown to nice pdf
-function mdtopdf_greek {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    pandoc --pdf-engine=tectonic -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
-}
-
-function mdtopdf_greek {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    pandoc --pdf-engine=tectonic -V mainfont="Gentium Plus" -V monospacefont="Gentium Plus Mono" -V mainlang="greek" -V geometry:margin=1.5in --output=${name}.pdf ${name}.${ext}
-}
-
-# djvu to pdf
-function djvutopdf {
-    name=$1:r
-    ext=$1:e
-    echo "${name}.${ext} --> ${name}.pdf"
-    ddjvu -format=pdf -mode=black ${name}.djvu ${name}.pdf
-}
 
 # bit-perfect compare two directories
 function bit_diff_dirs {
@@ -307,19 +208,12 @@ function bit_diff_dirs {
     diff --color /tmp/src.sha256 /tmp/dst.sha256
 }
 
-# sorting greek words. Ensure that `locale -a` shows `el_GR.utf8`
-# if not, add `el_GR.utf8 UTF-8` to `/etc/locale.gen` and run `locale-gen`
-alias sort_greek='LC_COLLATE=el_GR.utf8 sort'
-
 # abbreviations and magic expansion
 # obtained from stackoverflow (but the link now redirects incorrectly)
-
 setopt extendedglob
 typeset -Ag abbreviations
 abbreviations=(
   "lxe"   "lxc exec __CURSOR__ -- sudo --login --user ubuntu"
-  "lxg"   "lxc exec __CURSOR__ -- su --login graham"
-  "no"    "~/Sync/notes/__CURSOR__"
 )
 
 magic-abbrev-expand() {
@@ -357,7 +251,7 @@ bindkey -M isearch " " self-insert
 #################################################################
 # Appearance and prompt                                       {{{
 #################################################################
-#
+
 eval `/usr/bin/dircolors ~/.dir_colors`
 
 # colored completion - use my LS_COLORS
@@ -424,11 +318,11 @@ export MANPAGER='less -s -M +Gg'
 #################################################################
 # }}}
 #################################################################
-# useful in root shells
-# function boot {
-#     efibootmgr -n $1
-#     reboot
-# }
+
+
+#################################################################
+# Auto installed stuff                                        {{{
+#################################################################
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

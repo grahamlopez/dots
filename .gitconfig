@@ -56,9 +56,6 @@
 [push]
     default = simple
 
-[credential]
-    helper = netrc -f ~/.netrc.gpg -v
-
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
@@ -67,3 +64,5 @@
 
 [include]
     path = ~/.gitconfig-local
+[init]
+	defaultBranch = main
