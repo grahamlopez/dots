@@ -117,7 +117,7 @@ alias vimall="nvim **/*(.)"
 alias dgit='git --git-dir=$HOME/.dots-git/ --work-tree=$HOME'
 alias ggit='git --git-dir=$HOME/.dots-gui-git/ --work-tree=$HOME'
 alias agit='git --git-dir=$HOME/.dots-ai-git/ --work-tree=$HOME'
-alias gs='$HOME/.utils/git-status-all.sh'
+alias gs='$HOME/.utils/git-status-all.sh --fetch'
 
 # ssh-agent on a fixed socket, reused across shells.
 # Starts a *keyless* agent if none is reachable - no passphrase prompt here.
