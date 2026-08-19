@@ -67,6 +67,30 @@ export REPORTTIME=5
 # disable gnome/kde-ssh keyring nonsense on remote servers
 [ -n "$SSH_CONNECTION" ] && unset SSH_ASKPASS
 
+# TERM sanity check: fall back when this terminal has no terminfo entry here.
+# Fresh VMs and minimal containers ship only the ncurses-base entries, so
+# sshing in from kitty leaves every ncurses program looking up an xterm-kitty
+# entry that does not exist. Most degrade quietly; tmux refuses outright:
+#   open terminal failed: missing or unsuitable terminal: xterm-kitty
+# xterm-256color is the landing spot because kitty is xterm-compatible and it
+# is present anywhere ncurses is. Truecolor is unaffected either way: modern
+# programs read $COLORTERM for that, not terminfo.
+#
+# This only downgrades the *name*. To get the real entry onto a remote host,
+# use `term_push HOST` (below) or kitty's own `kitten ssh`.
+if [[ -n $TERM && $TERM != dumb ]] && (( $+commands[infocmp] )); then
+  if ! infocmp -- $TERM &>/dev/null; then
+    for _t in xterm-256color screen-256color xterm vt100; do
+      if infocmp -- $_t &>/dev/null; then
+        print -u2 "note: no terminfo entry for TERM=$TERM here; using $_t"
+        export TERM=$_t
+        break
+      fi
+    done
+    unset _t
+  fi
+fi
+
 # -U keeps these arrays de-duplicated, so re-sourcing this file (or a nested
 # shell) cannot stack the same directory onto PATH twice.
 typeset -U path PATH
@@ -207,6 +231,23 @@ function uninstall_nvim() {
 
 
 # more homegrown functions
+
+# Install a terminfo entry into a remote account, so a host that lacks it gets
+# the real terminal instead of the fallback the TERM guard above picks. Writes
+# to ~/.terminfo, which needs no root and which ncurses searches first.
+# Run this from the machine that HAS the entry:  term_push vm-host
+function term_push {
+    local host=$1 term=$2
+    if [[ -z $term ]]; then
+        # inside tmux $TERM describes tmux, not the emulator that needs pushing
+        [[ -n $TMUX ]] && term=xterm-kitty || term=$TERM
+    fi
+    if [[ -z $host ]]; then
+        print -u2 "usage: term_push <ssh-host> [term-name, default $term]"
+        return 2
+    fi
+    infocmp -x -- $term | ssh $host 'mkdir -p ~/.terminfo && tic -x -o ~/.terminfo -'
+}
 
 # bit-perfect compare two directories
 function bit_diff_dirs {
