@@ -44,6 +44,17 @@ export VISUAL=nvim
 # '-ifqm' lacked - anything piping color to less without the alias showed
 # raw escape codes. MANPAGER below adds only what is man-specific.
 export LESS='-ifqMR'
+# Search-hit highlighting: less draws a match in *standout*, which for man
+# pages means LESS_TERMCAP_so below - white on blue, the same paint as the
+# status line, and unreadable when a hit lands inside already-bold text.
+# --use-color lets less colour search hits in their own right: -DS is black on
+# bright yellow (legible on any background), and -DP keeps the status line
+# looking the way LESS_TERMCAP_so used to draw it, since --use-color otherwise
+# repaints prompts bright cyan. Probed rather than assumed: a less too old for
+# these options rejects them and waits for a keypress on every single launch.
+if less --help 2>/dev/null | grep -q -- --use-color; then
+  LESS="$LESS --use-color -DSkY -DPWb"
+fi
 export PAGER='less'
 
 umask 077
@@ -411,7 +422,7 @@ RPROMPT='$RED%(?..[%?]) $CYAN|$WHITE%*$NOCOLOR'
 
 export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
 export LESS_TERMCAP_md=$'\e[1;33m'     # begin blink
-export LESS_TERMCAP_so=$'\e[01;44;37m' # begin reverse video
+export LESS_TERMCAP_so=$'\e[01;44;37m' # begin reverse video (status line; -DS above colours search hits)
 export LESS_TERMCAP_us=$'\e[01;37m'    # begin underline
 export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
 export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
